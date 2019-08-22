@@ -25,45 +25,24 @@ namespace LearnNetCore
             _config = config;
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
-                              ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.Use(async (context,NextDel) =>
-            {
-                logger.LogInformation("MW1: Incoming Request");
-                //await context.Response.WriteAsync("Hello From 1st MiddleWare! ");
-                await NextDel();
-                logger.LogInformation("MW1: Outgoing Response");
-            });
-
-            app.Use(async (context, NextDel) =>
-            {
-                logger.LogInformation("MW2: Incoming Request");
-                //await context.Response.WriteAsync("Hello From 1st MiddleWare! ");
-                await NextDel();
-                logger.LogInformation("MW2: Outgoing Response");
-            });
-
+            FileServerOptions fileServerOptions = new FileServerOptions();
+            fileServerOptions.DefaultFilesOptions.DefaultFileNames.Clear();
+            fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("foo.html");
+            //DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
+            //defaultFilesOptions.DefaultFileNames.Clear();
+            //defaultFilesOptions.DefaultFileNames.Add("foo.html");
+            ////app.UseDefaultFiles(defaultFilesOptions);
+            ////app.UseStaticFiles();
+            app.UseFileServer(fileServerOptions);
             app.Run(async (context) =>
             {
-                //string strMessage = System.Diagnostics.Process.GetCurrentProcess().ProcessName;
-
-                //if (env.IsDevelopment())
-                //{
-                //    strMessage = _config["MyKey"];
-                //}
-                //else if (env.IsStaging()) 
-                //{
-                //    strMessage = "Staging";
-                //}
-                //await context.Response.WriteAsync("Hello World! " + System.Environment.NewLine + strMessage);
-                await context.Response.WriteAsync("MW3: Request handled and Response produced");
-                logger.LogInformation("MW3: Request handled and Response produced");
+                await context.Response.WriteAsync("hello world!");
             });
         }
     }
