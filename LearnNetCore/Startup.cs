@@ -29,19 +29,25 @@ namespace LearnNetCore
         {
             if (env.IsDevelopment())
             {
+                DeveloperExceptionPageOptions developerExceptionPageOptions = new DeveloperExceptionPageOptions()
+                {
+                    SourceCodeLineCount = 10
+                };
                 app.UseDeveloperExceptionPage();
             }
-            FileServerOptions fileServerOptions = new FileServerOptions();
-            fileServerOptions.DefaultFilesOptions.DefaultFileNames.Clear();
-            fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("foo.html");
-            //DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
-            //defaultFilesOptions.DefaultFileNames.Clear();
-            //defaultFilesOptions.DefaultFileNames.Add("foo.html");
-            ////app.UseDefaultFiles(defaultFilesOptions);
-            ////app.UseStaticFiles();
-            app.UseFileServer(fileServerOptions);
+            //FileServerOptions fileServerOptions = new FileServerOptions();
+            //fileServerOptions.DefaultFilesOptions.DefaultFileNames.Clear();
+            //fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("foo.html");
+            ////DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
+            ////defaultFilesOptions.DefaultFileNames.Clear();
+            ////defaultFilesOptions.DefaultFileNames.Add("foo.html");
+            //////app.UseDefaultFiles(defaultFilesOptions);
+            //////app.UseStaticFiles();
+            //app.UseFileServer(fileServerOptions);
+            app.UseFileServer();
             app.Run(async (context) =>
             {
+                throw new Exception("Some Error processing the request");
                 await context.Response.WriteAsync("hello world!");
             });
         }
