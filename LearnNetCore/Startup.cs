@@ -25,7 +25,8 @@ namespace LearnNetCore
             _config = config;
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+                              ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -34,8 +35,18 @@ namespace LearnNetCore
 
             app.Use(async (context,NextDel) =>
             {
-                await context.Response.WriteAsync("Hello From 1st MiddleWare! ");
+                logger.LogInformation("MW1: Incoming Request");
+                //await context.Response.WriteAsync("Hello From 1st MiddleWare! ");
                 await NextDel();
+                logger.LogInformation("MW1: Outgoing Response");
+            });
+
+            app.Use(async (context, NextDel) =>
+            {
+                logger.LogInformation("MW2: Incoming Request");
+                //await context.Response.WriteAsync("Hello From 1st MiddleWare! ");
+                await NextDel();
+                logger.LogInformation("MW2: Outgoing Response");
             });
 
             app.Run(async (context) =>
@@ -51,7 +62,8 @@ namespace LearnNetCore
                 //    strMessage = "Staging";
                 //}
                 //await context.Response.WriteAsync("Hello World! " + System.Environment.NewLine + strMessage);
-                await context.Response.WriteAsync("Hello From 2nd MiddleWare! ");
+                await context.Response.WriteAsync("MW3: Request handled and Response produced");
+                logger.LogInformation("MW3: Request handled and Response produced");
             });
         }
     }
