@@ -36,7 +36,7 @@ namespace LearnNetCore
 
                 if (env.IsDevelopment())
                 {
-                    strMessage = "Development Environment";
+                    strMessage = _config["MyKey"];
                 }
                 else if (env.IsStaging()) 
                 {
