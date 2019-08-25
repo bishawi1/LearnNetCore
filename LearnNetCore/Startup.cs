@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-
+using LearnNetCore.Models;
 namespace LearnNetCore
 {
     public class Startup
@@ -19,6 +19,9 @@ namespace LearnNetCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+           services.AddMvc().AddXmlSerializerFormatters();
+            services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
+           //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
         }
         public Startup(IConfiguration config)
         {
@@ -29,27 +32,11 @@ namespace LearnNetCore
         {
             if (env.IsDevelopment())
             {
-                DeveloperExceptionPageOptions developerExceptionPageOptions = new DeveloperExceptionPageOptions()
-                {
-                    SourceCodeLineCount = 10
-                };
-                app.UseDeveloperExceptionPage();
+                 app.UseDeveloperExceptionPage();
             }
-            //FileServerOptions fileServerOptions = new FileServerOptions();
-            //fileServerOptions.DefaultFilesOptions.DefaultFileNames.Clear();
-            //fileServerOptions.DefaultFilesOptions.DefaultFileNames.Add("foo.html");
-            ////DefaultFilesOptions defaultFilesOptions = new DefaultFilesOptions();
-            ////defaultFilesOptions.DefaultFileNames.Clear();
-            ////defaultFilesOptions.DefaultFileNames.Add("foo.html");
-            //////app.UseDefaultFiles(defaultFilesOptions);
-            //////app.UseStaticFiles();
-            //app.UseFileServer(fileServerOptions);
-            app.UseFileServer();
-            app.Run(async (context) =>
-            {
-                throw new Exception("Some Error processing the request");
-                await context.Response.WriteAsync("hello world!");
-            });
+            app.UseStaticFiles();
+            app.UseMvcWithDefaultRoute();
+
         }
     }
 }
