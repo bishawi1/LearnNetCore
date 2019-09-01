@@ -1,9 +1,30 @@
-﻿@model LearnNetCore.ViewModels.HomeDetailsViewModel
+﻿@model HomeDetailsViewModel
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title= "Employee Details";
 }
+<div class="row justify-content-center m-3">
+    <div class="col-sm-4">
+        <div class=" card">
+            <div class="card-header">
+                <h1>@Model.Employee.Name</h1>
+            </div>
+            <div class="card-body text-center">
+                <img class="card-img-top" src="~/images/noImage.png" />
+                <h4>Employee ID: @Model.Employee.Id</h4>
+                <h4>E-mail: @Model.Employee.Email</h4>
+                <h4>Department: @Model.Employee.Id</h4>
+            </div>
+            <div class="card-footer text-center">
+                <a href="#" class="btn btn-primary">View</a>
+                <a href="#" class="btn btn-primary">Edit</a>
+                <a href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 @*<h3>@ViewBag.PageTitle</h3>*@
 <h3>@Model.PageTitle</h3>

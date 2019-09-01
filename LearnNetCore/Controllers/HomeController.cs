@@ -23,8 +23,9 @@ namespace LearnNetCore.wwwroot.Controllers
             return Json(new {IsSucceeded="true", ErrorText="",Employee= _employeeRepository.GetEmployee(1)});
             //return Json(new { id=1,Name="John"});
         }
-        public ViewResult Details() {
-            Employee model = _employeeRepository.GetEmployee(1);
+        [Route("Home/Details/{Id?}")]
+        public ViewResult Details(int? Id) {
+            Employee model = _employeeRepository.GetEmployee(Id??1);
             //ViewData["Employee"] = model;
             //ViewData["PageTitle"] = "Employee Details";
             //ViewBag.Employee = model;
