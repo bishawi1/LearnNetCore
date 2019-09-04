@@ -19,6 +19,7 @@ namespace LearnNetCore.wwwroot.Controllers
         }
         public JsonResult Index()
         {
+
             //MockEmployeeRepository employeeRepository  = new MockEmployeeRepository();
             return Json(new {IsSucceeded="true", ErrorText="",Employee= _employeeRepository.GetEmployee(1)});
             //return Json(new { id=1,Name="John"});
