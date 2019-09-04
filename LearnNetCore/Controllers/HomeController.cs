@@ -23,7 +23,7 @@ namespace LearnNetCore.wwwroot.Controllers
             return Json(new {IsSucceeded="true", ErrorText="",Employee= _employeeRepository.GetEmployee(1)});
             //return Json(new { id=1,Name="John"});
         }
-        [Route("Home/Details/{Id?}")]
+        //[Route("Home/Details/{Id?}")]
         public ViewResult Details(int? Id) {
             Employee model = _employeeRepository.GetEmployee(Id??1);
             //ViewData["Employee"] = model;

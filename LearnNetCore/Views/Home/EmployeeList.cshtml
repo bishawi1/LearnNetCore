@@ -12,13 +12,16 @@
                 </div>
                 <img class="card-img-top" src="~/images/noImage.png"/>
                 <div class="card-footer text-center">
-                    <a href="#" class="btn btn-primary">View</a>
+                    @*@Html.ActionLink("View","Details","Home",new  { Id=employee.Id})*@
+                    @*<a asp-controller="home" asp-action="details" asp-route-Id="@employee.Id" class="btn btn-primary">Display</a>*@
+                    <a href=@Url.Action("Details","Home",new { Id=employee.Id}) class="btn btn-primary">View</a>
+                    @*<a href="/Home/Details/@employee.Id" class="btn btn-primary">View</a>*@
                     <a href="#" class="btn btn-primary">Edit</a>
                     <a href="#" class="btn btn-danger">Delete</a>
-                </div>
             </div>
-        }
         </div>
+                    }
+                </div>
         <table>
             <thead>
                 <tr>
