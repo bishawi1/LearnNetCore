@@ -38,7 +38,7 @@ namespace LearnNetCore
             //app.UseMvcWithDefaultRoute();
             app.UseMvc(Routes =>
             {
-                Routes.MapRoute("default", "bishawi/{controller=Home}/{action=Index}/{id?}");
+                Routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
