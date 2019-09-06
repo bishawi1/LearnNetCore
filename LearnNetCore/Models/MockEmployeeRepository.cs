@@ -12,9 +12,9 @@ namespace LearnNetCore.Models
         {
             _EmployeList = new List<Employee>()
             {
-                new Employee() { Id = 1, Name ="Mary" ,Department="HR",Email="Mary@gmail.com"},
-                new Employee() { Id = 2, Name = "John", Department = "IT", Email = "John@gmail.com" },
-                new Employee() { Id = 3, Name = "Sam" ,Department="IT",Email="Sam@gmail.com"}
+                new Employee() { Id = 1, Name ="Mary" ,Department=Dept.HR,Email="Mary@gmail.com"},
+                new Employee() { Id = 2, Name = "John", Department = Dept.IT, Email = "John@gmail.com" },
+                new Employee() { Id = 3, Name = "Sam" ,Department=Dept.IT,Email="Sam@gmail.com"}
             };
         }
 

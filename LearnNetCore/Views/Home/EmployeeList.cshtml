@@ -10,14 +10,14 @@
                 <div class="card-header">
                     <h3>@employee.Name</h3>
                 </div>
-                <img asp-append-version="True" class="card-img-top" src="~/images/noImage.png"/>
+                <img asp-append-version="true" class="card-img-top" src="~/images/noImage.png"/>
                 <div class="card-footer text-center">
                     @*@Html.ActionLink("View","Details","Home",new  { Id=employee.Id})*@
-                    @*<a asp-controller="home" asp-action="details" asp-route-Id="@employee.Id" class="btn btn-primary">Display</a>*@
-                    <a href=@Url.Action("Details","Home",new { Id=employee.Id}) class="btn btn-primary">View</a>
+                    <a asp-controller="home" asp-action="details" asp-route-Id="@employee.Id" class="btn btn-primary m-1">View</a>
+                    @*<a href=@Url.Action("Details","Home",new { Id=employee.Id}) class="btn btn-primary">View</a>*@
                     @*<a href="/Home/Details/@employee.Id" class="btn btn-primary">View</a>*@
-                    <a href="#" class="btn btn-primary">Edit</a>
-                    <a href="#" class="btn btn-danger">Delete</a>
+                    <a href="#" class="btn btn-primary m-1">Edit</a>
+                    <a href="#" class="btn btn-danger m-1">Delete</a>
             </div>
         </div>
                     }

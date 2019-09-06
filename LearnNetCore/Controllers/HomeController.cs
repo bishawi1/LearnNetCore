@@ -17,12 +17,13 @@ namespace LearnNetCore.wwwroot.Controllers
         {
             _employeeRepository = EmployeeRepository;
         }
-        public JsonResult Index()
+        public ViewResult Index()
         {
 
             //MockEmployeeRepository employeeRepository  = new MockEmployeeRepository();
-            return Json(new {IsSucceeded="true", ErrorText="",Employee= _employeeRepository.GetEmployee(1)});
+            //return Json(new {IsSucceeded="true", ErrorText="",Employee= _employeeRepository.GetEmployee(1)});
             //return Json(new { id=1,Name="John"});
+            return View();
         }
         //[Route("Home/Details/{Id?}")]
         public ViewResult Details(int? Id) {
@@ -45,6 +46,10 @@ namespace LearnNetCore.wwwroot.Controllers
         {
             IEnumerable<Employee> model=_employeeRepository.GetAllEmployees();
             return View(model);
+        }
+        public ViewResult Create()
+        {
+            return View();
         }
     }
 }
