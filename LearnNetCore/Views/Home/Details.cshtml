@@ -1,8 +1,8 @@
 ﻿@model HomeDetailsViewModel
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title= "Employee Details";
+    var PhotoPath = "~/images/" + (Model.Employee.PhotoPath ?? "noImage.png");
 }
 <div class="row justify-content-center m-3">
     <div class="col-sm-4">
@@ -11,7 +11,7 @@
                 <h1>@Model.Employee.Name</h1>
             </div>
             <div class="card-body text-center">
-                <img class="card-img-top" src="~/images/noImage.png" />
+                <img class="card-img-top" src="@PhotoPath" asp-append-version="true" />
                 <h4>Employee ID: @Model.Employee.Id</h4>
                 <h4>E-mail: @Model.Employee.Email</h4>
                 <h4>Department: @Model.Employee.Id</h4>

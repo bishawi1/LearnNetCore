@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 namespace LearnNetCore.Models
 {
     public class MockEmployeeRepository : IEmployeeRepository
+
     {
         private List<Employee> _EmployeList;
         public  MockEmployeeRepository()
@@ -23,9 +24,38 @@ namespace LearnNetCore.Models
             return _EmployeList;
         }
 
+
         public Employee GetEmployee(int Id)
         {
             return _EmployeList.FirstOrDefault(e => e.Id == Id);
+        }
+        public Employee Add(Employee employee)
+        {
+            employee.Id = _EmployeList.Max(e => e.Id) + 1;
+            _EmployeList.Add(employee);
+            return employee;
+        }
+
+        public Employee Update(Employee employeeChanges)
+        {
+            Employee employee = _EmployeList.FirstOrDefault(e => e.Id == employeeChanges.Id);
+            if (employee != null)
+            {
+                employee.Name = employeeChanges.Name;
+                employee.Department = employeeChanges.Department;
+                employee.Email = employeeChanges.Email;               
+            }
+            return employee;
+        }
+
+        public Employee Delete(int id)
+        {
+            Employee employee= _EmployeList.FirstOrDefault(e => e.Id == id);
+            if (employee != null)
+            {
+                _EmployeList.Remove(employee);
+            }
+            return employee;            
         }
     }
 }

@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using LearnNetCore.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace LearnNetCore
 {
     public class Startup
@@ -19,9 +21,14 @@ namespace LearnNetCore
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContextPool<AppDBContext>(options => options.UseSqlServer(_config.GetConnectionString("EmployeeDBConnectionString")));
+
+
            services.AddMvc().AddXmlSerializerFormatters();
-            services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
-           //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
+            //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
+           //services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
+           services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
+
         }
         public Startup(IConfiguration config)
         {
