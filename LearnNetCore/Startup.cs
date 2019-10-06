@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using LearnNetCore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace LearnNetCore
 {
@@ -23,11 +26,26 @@ namespace LearnNetCore
         {
             services.AddDbContextPool<AppDBContext>(options => options.UseSqlServer(_config.GetConnectionString("EmployeeDBConnectionString")));
 
+            services.AddIdentity<IdentityUser, IdentityRole>(options => {
+                options.Password.RequiredLength = 10;
+                options.Password.RequiredUniqueChars = 3;
+                options.Password.RequireNonAlphanumeric = false;
+            }).AddEntityFrameworkStores<AppDBContext>();
+            //services.Configure<IdentityOptions>(options => {
+            //    options.Password.RequiredLength = 10;
+            //    options.Password.RequiredUniqueChars = 3;
+            //    options.Password.RequireNonAlphanumeric = false;
+            //});
+            services.AddMvc(options=> {
+                var policy = new AuthorizationPolicyBuilder()
+                               .RequireAuthenticatedUser()
+                               .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
 
-           services.AddMvc().AddXmlSerializerFormatters();
+            }).AddXmlSerializerFormatters();
             //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
            //services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
-           services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
+            services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
 
         }
         public Startup(IConfiguration config)
@@ -41,12 +59,17 @@ namespace LearnNetCore
             {
                  app.UseDeveloperExceptionPage();
             }
-            app.UseStaticFiles();
-            //app.UseMvcWithDefaultRoute();
+            else
+            {
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            }
+            app.UseAuthentication();
             app.UseMvc(Routes =>
             {
                 Routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
-        }
+             app.UseStaticFiles();
+            //app.UseMvcWithDefaultRoute();
+       }
     }
 }

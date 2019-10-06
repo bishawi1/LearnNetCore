@@ -19,7 +19,7 @@
             <div class="card-footer text-center">
                 <a href=@Url.Action("EmployeeList","Home") class="btn btn-primary">Back</a>
                 @*<a asp-controller="home" asp-action="EmployeeList" class="btn btn-primary">Back</a>*@
-                <a href="#" class="btn btn-primary">Edit</a>
+                <a asp-controller="home" asp-action="edit" asp-route="@Model.Employee.Id" class="btn btn-primary">Edit</a>
                 <a href="#" class="btn btn-danger">Delete</a>
             </div>
         </div>

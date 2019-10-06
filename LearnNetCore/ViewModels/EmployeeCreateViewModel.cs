@@ -20,7 +20,7 @@ namespace LearnNetCore.ViewModels
         [Required]// no need to be required because of its datatype is enum and it is by default required
         // to make property optional use ?, Adding requuired here make the requered attribute meaningful 
         public Dept? Department { get; set; }
-        public IFormFile Photo { get; set; }
+        public List<IFormFile> Photos { get; set; }
 
     }
 }

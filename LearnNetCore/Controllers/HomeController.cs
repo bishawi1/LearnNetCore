@@ -8,6 +8,8 @@ using System.Net.Http;
 using LearnNetCore.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LearnNetCore.wwwroot.Controllers
 {
@@ -21,6 +23,7 @@ namespace LearnNetCore.wwwroot.Controllers
             _employeeRepository = EmployeeRepository;
             this.hostingEnvironment = hostingEnvironment;
         }
+        [AllowAnonymous]
         public ViewResult Index()
         {
 
@@ -29,6 +32,26 @@ namespace LearnNetCore.wwwroot.Controllers
             //return Json(new { id=1,Name="John"});
             return View();
         }
+        [HttpGet]
+        public ActionResult Edit(int Id)
+        {
+            Employee employee = _employeeRepository.GetEmployee(Id);
+            EmployeeEditViewModel employeeEditViewModel = new EmployeeEditViewModel {
+                Department=employee.Department,
+                Email=employee.Email,
+                Id=employee.Id,
+                Name=employee.Name,
+                ExistingPhotoPath=employee.PhotoPath
+            };
+            return View(employeeEditViewModel);
+        }
+
+
+
+
+
+
+
         //[Route("Home/Details/{Id?}")]
         public ViewResult Details(int? Id) {
             Employee model = _employeeRepository.GetEmployee(Id??1);
@@ -46,6 +69,7 @@ namespace LearnNetCore.wwwroot.Controllers
             //return View(model);
             //return _employeeRepository.GetEmployee(1).Name;
         }
+        [HttpGet]
         public ViewResult EmployeeList()
         {
             IEnumerable<Employee> model=_employeeRepository.GetAllEmployees();
@@ -62,14 +86,14 @@ namespace LearnNetCore.wwwroot.Controllers
             if (ModelState.IsValid)
             {
                 string uniqueFileName = null;
-                if(model.Photo != null)
+                if(model.Photos != null && model.Photos.Count > 0)
                 {
-                    
+                    foreach(IFormFile photo in model.Photos){ 
                     string UploadFolders= Path.Combine(hostingEnvironment.WebRootPath, "images");
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Photo.FileName);// model.Photo.Name;
+                    uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(photo.FileName);// model.Photo.Name;
                     string filePath= Path.Combine( UploadFolders, uniqueFileName);
-                    model.Photo.CopyTo(new FileStream(filePath,FileMode.Create));
-
+                    photo.CopyTo(new FileStream(filePath,FileMode.Create));
+                    }
                 }
 
                 Employee NewEmplyee = new Employee()
@@ -85,4 +109,7 @@ namespace LearnNetCore.wwwroot.Controllers
             return View();
         }
     }
+
+
+
 }
