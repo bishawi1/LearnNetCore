@@ -1,0 +1,27 @@
+﻿@model ProjectDetailViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card mt-3">
+    <div class="card-header text-center">
+        <h4 class="card-title"> Edit Project Data</h4>
+    </div>
+    <div class="card-body">
+        <h5 class="card-text">Id : @Model.Id</h5>
+        <h5 class="card-text">Code : @Model.Code</h5>
+        <h5 class="card-text">Project Name: @Model.ProjectName</h5>
+        <h5 class="card-text">Address: @Model.CustomerName</h5>
+
+        <h5 class="card-text">Address: @Model.Address</h5>
+        <h5 class="card-text">Mobile: @Model.MobileNo</h5>
+        <h5 class="card-text">Email :@Model.Email</h5>
+        <h5 class="card-text">More Information :@Model.OtheInformation</h5>
+    </div>
+    <div class="card-footer text-center">
+        <a asp-action="ListProjects" asp-controller="Projects" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
+        <a asp-action="Edit" asp-controller="Projects" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+
+    </div>
+</div>
+

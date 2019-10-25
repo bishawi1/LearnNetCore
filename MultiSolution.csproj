@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20190915170708_AddingIdentity.cs" />
+    <Compile Remove="Migrations\20190915170708_AddingIdentity.Designer.cs" />
+    <Compile Remove="Migrations\20191007041643_ExtendUserIdentity.cs" />
+    <Compile Remove="Migrations\20191007041643_ExtendUserIdentity.Designer.cs" />
+    <Compile Remove="Migrations\20191013033056_Customer1.cs" />
+    <Compile Remove="Migrations\20191013033056_Customer1.Designer.cs" />
+    <Compile Remove="MSIS\Migrations\20191013034158_NewCustomer.cs" />
+    <Compile Remove="MSIS\Migrations\20191013034158_NewCustomer.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Controllers\HomeController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GitHub" Version="1.14.2" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="MySql.Data.EntityFrameworkCore" Version="8.0.18" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Reports\" />
+  </ItemGroup>
+
+</Project>

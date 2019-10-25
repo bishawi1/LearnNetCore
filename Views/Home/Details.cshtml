@@ -1,0 +1,38 @@
+﻿@model HomeDetailsViewModel
+
+@{
+    ViewBag.Title= "Employee Details";
+    var PhotoPath = "~/images/" + (Model.Employee.PhotoPath ?? "noImage.png");
+}
+<div class="row justify-content-center">
+        <div class="card col-sm-6 m-3">
+            <div class="card-header text-center">
+                <span class="card-title"><h5> @Model.Employee.Name</h5></span>
+            </div>
+            <div class="card-body">
+                <img class="card-img-top" src="@PhotoPath" asp-append-version="true" />
+                <h4>Employee ID: @Model.Employee.Id</h4>
+                <h4>Identity No: @Model.Employee.IdentityNo</h4>
+                <h4>Education Degree: @Model.Employee.EducationDegree</h4>
+                <h4>Specialization: @Model.Employee.Specialization</h4>
+                <h4>Mobile No: @Model.Employee.MobileNo</h4>
+                <h4>WorkMobile No: @Model.Employee.WorkMobileNo</h4>
+                <h4>More Information: @Model.Employee.OtherInformation</h4>
+                <h4>E-mail: @Model.Employee.Email</h4>
+                <h4>Department: @Model.Employee.Id</h4>
+
+            </div>
+            <div class="card-footer text-center">
+                <a asp-controller="home" asp-action="EmployeeList" class="btn btn-outline-danger" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
+                @*<a asp-controller="home" asp-action="EmployeeList" class="btn btn-primary">Back</a>*@
+                <a asp-controller="home" asp-action="edit" asp-route-Id="@Model.Employee.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+                <a href="#" class="btn btn-danger" hidden>Delete</a>
+            </div>
+        </div>
+
+    </div>
+
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}

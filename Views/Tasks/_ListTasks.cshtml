@@ -1,0 +1,79 @@
+﻿@model List<MSIS.ViewModels.TaskDetailsViewModel>
+<div style=" border:solid 1px black; padding:3px;">
+    <table class="table table-hover" id="myTable">
+        @*gridtable*@
+        <thead class="thead-dark">
+            <tr>
+                <th>Task Date</th>
+                <th>Task Subject</th>
+                <th>Responsible for Task</th>
+                <th style="width:100px;">Task Status</th>
+                <th style="width:30px;"></th>
+                <th style="width:30px;"></th>
+
+            </tr>
+        </thead>
+
+
+
+        @foreach (var task in Model)
+        {
+
+            <tr>
+                <td>@task.TaskStartDate</td>
+                <td>@task.TaskSubject</td>
+                <td>@task.TaskResponsibleName</td>
+                @if (task.TaskStatusId == 1)
+                {
+                    <td class="bg-secondary text-center">@task.TaskStatus </td>
+                }
+                else if (task.TaskStatusId == 2)
+                {
+                    <td class="bg-primary text-center">@task.TaskStatus </td>
+                }
+                else if (task.TaskStatusId == 3)
+                {
+                    <td class="bg-danger text-center">@task.TaskStatus </td>
+                }
+                else if (task.TaskStatusId == 4)
+                {
+                    <td class="bg-warning text-center">@task.TaskStatus </td>
+                }
+                else if (task.TaskStatusId == 5)
+                {
+                    <td class="badge-success text-center">@task.TaskStatus </td>
+                }
+                else
+                {
+                    <td>@task.TaskStatus </td>
+
+                }
+
+                <td><a class="btn btn-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Tasks" asp-route-Id="@task.Id"><i class="fa fa-info-circle"></i></a></td>
+                <td>
+                    <form asp-action="DeleteCustomer" asp-route-Id="@task.Id" method="post">
+                        <span id="confirmDeleteSpan_@task.Id" style="display:none">
+                            <span>Are you sure you want to delete?</span>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                            <a href="#" class="btn btn-primary"
+                               onclick="confirmDelete('@task.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                        </span>
+                        <span id="deleteSpan_@task.Id">
+                            <a href="#" class="btn btn-danger rounded-circle btn-sm" style="width:auto"
+                               onclick="confirmDelete('@task.Id',true)"><i class="fa fa-trash"></i></a>
+                        </span>
+
+
+
+
+
+                    </form>
+                </td>
+            </tr>
+
+        }
+
+
+    </table>
+</div>
+}

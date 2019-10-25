@@ -1,0 +1,122 @@
+﻿
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+   
+    padding-top:5px;
+}
+    .flex-container > div{
+        margin:0px;
+        padding:5px;
+    }
+    .btn {
+        width: 75px;
+    }
+.imageThumpnail{
+    height:200px;
+    width:auto;
+}
+
+
+
+.container {
+    margin: 0 auto;
+    width: 95%;
+    overflow: auto;
+}
+
+table.gridtable {
+    margin: 0 auto;
+    width: 100%;
+    overflow: auto;
+    font-family: helvetica,arial,sans-serif;
+    font-size: 14px;
+    color: #333333;
+    /*border-width: 1px;
+    border-color: #666666;*/
+    /*border-collapse: collapse;
+    text-align: center;*/
+}
+
+    table.gridtable th {
+        /*border-width: 1px;*/
+        padding: 8px;
+        /*border-style: solid;
+        border-color: #666666;*/
+        background-color: #F6B4A5;
+    }
+
+    table.gridtable td {
+        /*border-width: 1px;*/
+        padding: 8px;
+        /*border-style: solid;
+        border-color: #666666;*/
+    }
+/* Large tablet  */
+@media only screen and (min-width : 768px) and (max-width : 1024px) {
+    #container {
+        width: 95%;
+    }
+
+    table.gridtable {
+        width: 100%;
+        font-size: 13px;
+    }
+
+        table.gridtable th {
+            background-color: #A5DDF6;
+        }
+}
+/* Small tablet  */
+@media only screen and (min-width : 569px) and (max-width : 767px) {
+    #container {
+        width: 95%;
+    }
+
+    table.gridtable {
+        width: 100%;
+        font-size: 12px;
+    }
+
+        table.gridtable th {
+            background-color: #89DDB0;
+        }
+}
+/* Smartphone  */
+@media only screen and (min-width : 240px) and (max-width : 568px) {
+    #container {
+        width: 100%;
+    }
+
+    table.gridtable {
+        width: 100%;
+    }
+
+    table thead {
+        display: none;
+    }
+
+    table tr {
+        display: block;
+        margin-top: 5px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #FF5733;
+    }
+
+    table td {
+        display: block;
+        text-align: right;
+        font-size: 13px;
+        border-radius: 5px;
+        margin-bottom: 1px;
+        min-height: 14px
+    }
+
+        table td:before {
+            content: attr(colname);
+            float: left;
+            font-weight: bold;
+        }
+}
+

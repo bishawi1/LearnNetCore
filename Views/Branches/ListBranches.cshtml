@@ -1,0 +1,60 @@
+﻿@model List<MSIS.Models.Branch>
+@{
+    ViewBag.Title = "List Branches";
+}
+
+
+    <h3 class="text-center">List of Branches</h3>
+
+<a class="btn btn-outline-primary  mb-3" asp-action="Create" asp-controller="Branches" style="width:auto"><i class="fa fa-plus-circle"></i></a>
+@if (Model.Any())
+{
+    <div class="container">
+        <div style="border:solid 1px black; padding:3px;">
+            <table class="table gridtable  table-hover" id="myTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th style="width:50px;">Code</th>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th style="width:30px;"></th>
+                        <th style="width:30px;"></th>
+                        @*<th style="width:50px;"></th>*@
+                    </tr>
+                </thead>
+                @foreach (var Branch in Model)
+                {
+                    <tr>
+                        <td>@Branch.Code</td>
+                        <td>@Branch.Name</td>
+                        <td>@Branch.Address</td>
+                        <td><a class="btn btn-outline-primary btn-sm rounded-circle" asp-action="Details" asp-controller="Branches" asp-route-Id="@Branch.Id" style="width:auto"><i class="fa fa-eye"></i></a></td>
+                        <td>
+                            <form asp-action="DeleteBranch" asp-route-Id="@Branch.Id" method="post">
+                                <span id="confirmDeleteSpan_@Branch.Id" style="display:none">
+                                    <span>Are you sure you want to delete?</span>
+                                    <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                                    <a href="#" class="btn btn-primary"
+                                       onclick="confirmDelete('@Branch.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                                </span>
+                                <span id="deleteSpan_@Branch.Id">
+                                    <a href="#" class="btn btn-outline-danger btn-sm rounded-circle" style="width:auto"
+                                       onclick="confirmDelete('@Branch.Id',true)"><i class="fa fa-trash"></i></a>
+                                </span>
+                                @*<button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Are you sure you want to Delete User : @user.UserName')">
+                                Delete
+                            </button>*@
+
+                            </form>
+                        </td>
+
+                    </tr>
+                }
+            </table>
+
+        </div>    </div>
+        }
+        @section Scripts{
+            <script src="~/js/CustomScript.js"></script>
+        }

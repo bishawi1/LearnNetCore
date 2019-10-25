@@ -1,0 +1,55 @@
+﻿@model List<Customer>
+@{
+    ViewData["Title"] = "ListCustomers";
+}
+
+<h3 class="text-center">List of Customers</h3>
+<a class="btn btn-outline-primary mb-3" style="width:auto" asp-action="Create" asp-controller="Customer"><i class="fa fa-plus-circle"></i></a>
+<div style="border:solid 1px black; padding:3px;">
+    <table class="table table-hover gridtable" id="myTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Addresss</th>
+                <th>MobileNo</th>
+                <th>Email</th>
+                <th style="width:30px;"></th>
+                <th style="width:30px;"></th>
+
+            </tr>
+        </thead>
+        @foreach (var customer in Model)
+        {
+            <tr>
+                <td>@customer.CustomerName</td>
+                <td>@customer.Address</td>
+                <td>@customer.MobileNo</td>
+                <td>@customer.Email</td>
+                <td><a class="btn btn-outline-primary btn-sm rounded-circle" asp-action="Details" asp-controller="Customer" asp-route-Id="@customer.Id" style="width:auto"><i class="fa fa-eye"></i></a></td>
+                <td>
+                    <form asp-action="DeleteCustomer" asp-route-Id="@customer.Id" method="post">
+                        <span id="confirmDeleteSpan_@customer.Id" style="display:none">
+                            <span>Are you sure you want to delete?</span>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                            <a href="#" class="btn btn-primary"
+                               onclick="confirmDelete('@customer.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                        </span>
+                        <span id="deleteSpan_@customer.Id">
+                            <a href="#" class="btn btn-outline-danger  btn-sm rounded-circle" style="width:auto"
+                               onclick="confirmDelete('@customer.Id',true)"><i class="fa fa-trash"></i></a>
+                        </span>
+                        @*<button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Are you sure you want to Delete User : @user.UserName')">
+                                Delete
+                            </button>*@
+
+                    </form>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+@section Scripts{ 
+    <script src="~/js/CustomScript.js"></script>
+}

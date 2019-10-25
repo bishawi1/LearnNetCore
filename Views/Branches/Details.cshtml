@@ -1,0 +1,24 @@
+﻿@model Branch;
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+
+<div class="card mt-3">
+    <div class="card-header text-center">
+        <h4 class="card-title"> Branch Details</h4>
+    </div>
+    <div class="card-body">
+        <h5 class="card-text">Code : @Model.Code</h5>
+        <h5 class="card-text">Name: @Model.Name</h5>
+        <h5 class="card-text">Address: @Model.Address</h5>
+        <h5 class="card-text">Mobile: @Model.Mobile</h5>
+        <h5 class="card-text">Phone :@Model.Phone</h5>
+    </div>
+    <div class="card-footer text-center">
+        <a asp-action="ListBranches" asp-controller="Branches" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
+        <a asp-action="Edit" asp-controller="Branches" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+
+    </div>
+</div>
