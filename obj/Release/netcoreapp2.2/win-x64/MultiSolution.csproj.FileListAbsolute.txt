@@ -65,3 +65,10 @@ E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netco
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\MultiSolution.pdb
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\MultiSolution.csproj.CopyComplete
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Tasks\_ListTasks.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Home\_showModal.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Utility\_showModal.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Tasks\ListTasksByProject.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Tasks\ListTasksByResponsible.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Tasks\ListTasksByStatus.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Tasks\ListTasksByTaskOwner.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Tasks\TaskReport.cshtml.g.cs

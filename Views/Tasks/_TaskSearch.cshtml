@@ -1,4 +1,51 @@
-﻿@model List<MSIS.ViewModels.TaskDetailsViewModel>
+﻿@model MSIS.ViewModels.SearchTaskViewModel
+    <div class="flex-container  border" style="padding-left:0px;">
+        <div class="row col-sm-12">
+            <div class="input-group col-sm-5  mt-2">
+                <span class="input-group-text col-sm-4 " id="FromTaskDate-addon">From Task Date</span>
+                <input type="text" asp-for="FromTaskDate" class="form-control col-sm-6 datepicker" placeholder="From Task Date" aria-describedby="FromTaskDate-addon" />
+            </div>
 
+            <div class="input-group col-sm-5  mt-2">
+                <span class="input-group-text col-sm-4 " id="ToTaskDate-addon">To Task Date</span>
+                <input type="text" asp-for="ToTaskDate" class="form-control col-sm-6 datepicker" placeholder="To Task Date" aria-describedby="ToTaskDate-addon" />
+            </div>
+        </div>
+        <div class="row col-sm-12">
+            <div class="input-group  col-sm-5 mt-2">
+                <span class="input-group-text col-sm-4 col-form-label">Task Owner</span>
+                @Html.DropDownListFor(x => Model.TaskOwnerId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                <span asp-validation-for="TaskOwnerId" class="text-danger"></span>
+            </div>
+            <div class="input-group  col-sm-5 mt-2">
+                <span class="input-group-text col-sm-4 col-form-label">Team Leader</span>
+                @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                <span asp-validation-for="TaskResponsibleId" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+            <div class=" mt-3 mb-3">
+                <button onclick="btnTaskSearch_Click()" class="btn btn-outline-secondary" style="width:auto;"><i class="fa fa-running"></i> Search </button>
+            </div>
+        
+        <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+        <script src="~/js/CustomScript.js"></script>
 
+        <script>
 
+            InitDatepicker();
+            function btnTaskSearch_Click() {
+                $.post("/Tasks/TaskSearchAsync",
+                    {
+                        TaskOwnerId: $('#TaskOwnerId').val(),
+                        TaskResponsibleId: $('#TaskResponsibleId').val(),
+                        ProjectId: "-1",
+                        FromTaskDate: $('#FromTaskDate').val(),
+                        ToTaskDate: $('#ToTaskDate').val(),
+                        strGroupBy: "@Model.strGroupBy"
+                    },
+                    function (data, status) {
+                        $('#showWaiting').html(data);
+                    });
+            };
+        </script>

@@ -24,5 +24,7 @@ namespace MSIS.Models
         public DbSet<Customer> Customers { get; set; }
         public DbSet<TaskTeam> TaskTeams { get; set; }
         public DbSet<TaskAction> TaskActions { get; set; }
+        public DbSet<TaskDetailsViewModel> SQLTaskDetails { get; set; }
+
     }
 }

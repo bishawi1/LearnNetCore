@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace MSIS.ViewModels
 {
+    [NotMapped]
     public class EmployeesInTaskViewModel:Models.TaskTeam
     {
         public string EmployeeName { get; set; }

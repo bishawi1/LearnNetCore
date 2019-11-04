@@ -122,5 +122,11 @@ E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcore
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\MultiSolution.pdb
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\MultiSolution.csproj.CopyComplete
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Tasks\_TaskSearch.cshtml.g.cs
-E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\MultiSolution.csprojAssemblyReference.cache
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Tasks\_ListTasks.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Utility\_showModal.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Home\_showModal.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Tasks\TaskReport.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Tasks\ListTasksByProject.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Tasks\ListTasksByTaskOwner.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Tasks\ListTasksByResponsible.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp2.2\Razor\Views\Tasks\ListTasksByStatus.cshtml.g.cs

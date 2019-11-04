@@ -1,0 +1,62 @@
+﻿@model List<MSIS.ViewModels.TaskDetailsViewModel>
+@{
+    ViewData["Title"] = "TaskReport";
+}
+
+<!-- Search -->
+<div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+        <i class="fa fa-search"></i>
+        Search
+    </button>
+    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+    <br />
+
+    <div class="collapse" id="divCriteria">
+
+
+    </div>
+
+    <hr />
+    <div id="printArea">
+        <div class="flex-container border-1">
+            <div class="col-sm-3 bg-light">
+                <span id="dtToday" class="text-left">@DateTime.Now</span>
+            </div>
+            <div class="col-sm-6 bg-light">
+                <h1 style="text-align:center;font-size:24px;"><b>List of Tasks By Project</b></h1>
+            </div>
+            <div class="col-sm-3 bg-light">
+                <h1 style="text-align:left;font-size:16px;"><b>MSIS</b></h1>
+            </div>
+        </div>
+        <div id="showWaiting"></div>
+    </div>
+    <br />
+    <hr />
+    <br />
+</div>
+
+@section Scripts{
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+
+    <script>
+
+        InitDatepicker();
+
+        $('#printReport').on('click', function () {
+            $('#printArea').printThis({
+                impoimportCSS: true
+            });
+        });
+        $.ajax({
+            url: '/Tasks/TaskSearch?strGroupBy=ProjectName',
+            type: 'Get',
+            success: function (response) {
+                $('#divCriteria').html(response);
+            }
+        });
+    </script>
+}

@@ -3,6 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MSIS.Models
 {
@@ -18,6 +24,7 @@ namespace MSIS.Models
         {
             return this.context;
         }
+
         public Tasks Add(Tasks task)
         {
             context.Tasks.Add(task);
@@ -80,6 +87,7 @@ namespace MSIS.Models
         }
         public Tasks Update(Tasks TasksChanges)
         {
+
             var task = context.Tasks.Attach(TasksChanges);
             task.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             context.SaveChanges();
@@ -137,6 +145,56 @@ namespace MSIS.Models
             }
             return result;
         }
+        public ViewModels.TaskCountByStatusViewModel getTaskCountByStatus(int EmployeeId)
+        {
+            TaskCountByStatusViewModel result = new TaskCountByStatusViewModel();
+            if (context.Tasks != null)
+            {
+                var model = context.Tasks
+                       .Where(x => x.TaskStatusId == 5 && (x.TaskOwnerId==EmployeeId || x.TaskResponsibleId == EmployeeId))
+                       .GroupBy(x => new { TaskStatusId = x.TaskStatusId })
+                       .Select(x => new { TaskCount = x.Count() }).FirstOrDefault();
+                if (model != null)
+                {
+                    result.ApprovedCount = model.TaskCount;
+                }
+
+                model = context.Tasks
+                       .Where(x => x.TaskStatusId == 2 && (x.TaskOwnerId == EmployeeId || x.TaskResponsibleId == EmployeeId))
+                       .GroupBy(x => new { TaskStatusId = x.TaskStatusId })
+                       .Select(x => new { TaskCount = x.Count() }).FirstOrDefault();
+                if (model != null)
+                {
+                    result.InProgressCount = model.TaskCount;
+                }
+                model = context.Tasks
+                    .Where(x => x.TaskStatusId == 3 && (x.TaskOwnerId == EmployeeId || x.TaskResponsibleId == EmployeeId))
+                    .GroupBy(x => new { TaskStatusId = x.TaskStatusId })
+                    .Select(x => new { TaskCount = x.Count() }).FirstOrDefault();
+                if (model != null)
+                {
+                    result.RejectedCount = model.TaskCount;
+                }
+                model = context.Tasks
+                      .Where(x => x.TaskStatusId == 4 && (x.TaskOwnerId == EmployeeId || x.TaskResponsibleId == EmployeeId))
+                      .GroupBy(x => new { TaskStatusId = x.TaskStatusId })
+                      .Select(x => new { TaskCount = x.Count() }).FirstOrDefault();
+
+                if (model != null)
+                {
+                    result.DoneCount = model.TaskCount;
+                }
+                model = context.Tasks
+                   .Where(x => x.TaskStatusId == 1 && (x.TaskOwnerId == EmployeeId || x.TaskResponsibleId == EmployeeId))
+                   .GroupBy(x => new { TaskStatusId = x.TaskStatusId })
+                   .Select(x => new { TaskCount = x.Count() }).FirstOrDefault();
+                if (model != null)
+                {
+                    result.WaitingCount = model.TaskCount;
+                }
+            }
+            return result;
+        }
 
         public List<MSIS.ViewModels.TaskDetailsViewModel> getTaskDetailsByStatusId(int status)
         {
@@ -144,6 +202,8 @@ namespace MSIS.Models
             var result = (from task in context.Tasks
                           join employee in context.Employees
                           on task.TaskResponsibleId equals employee.Id
+                          join ownerEmployee in context.Employees
+                          on task.TaskOwnerId equals ownerEmployee.Id
                           join taskStatus in context.TaskStatus
                           on task.TaskStatusId equals taskStatus.Id
                           join project in context.Projects
@@ -162,9 +222,10 @@ namespace MSIS.Models
                               TaskResultDescription = task.TaskResultDescription,
                               TaskStartDate = task.TaskStartDate,
                               TaskSubject = task.TaskSubject,
-                              TaskStatus = taskStatus.StatusName,
+                              StatusName = taskStatus.StatusName,
                               ProjectName = project.ProjectName,
                               TaskStatusId = task.TaskStatusId,
+                              TaskOwnerName=ownerEmployee.Name,
                               BranchName = branch.Name
 
 
@@ -173,12 +234,131 @@ namespace MSIS.Models
             return result;// projectDetailViewModel;
         }
 
-        public List<MSIS.ViewModels.TaskDetailsViewModel> getAllTaskDetails()
+        public List<MSIS.ViewModels.TaskDetailsViewModel> getTaskDetailsByStatusId(int EmployeeId, int status)
         {
             MSIS.ViewModels.TaskDetailsViewModel taskDetailViewModel = null;
             var result = (from task in context.Tasks
                           join employee in context.Employees
-                          on task.TaskResponsibleId equals employee.Id 
+                          on task.TaskResponsibleId equals employee.Id
+                          join ownerEmployee in context.Employees
+                          on task.TaskOwnerId equals ownerEmployee.Id
+                          join taskStatus in context.TaskStatus
+                          on task.TaskStatusId equals taskStatus.Id
+                          join project in context.Projects
+                          on task.ProjectId equals project.Id
+                          join branch in context.Branches
+                          on task.BranchId equals branch.Id
+                          where task.TaskStatusId==status &&(task.TaskOwnerId==EmployeeId || task.TaskResponsibleId ==EmployeeId)
+                          select new MSIS.ViewModels.TaskDetailsViewModel()
+                          {
+                              Id = task.Id,
+                              Description = task.Description,
+                              TaskDate = task.TaskDate,
+                              OtherInformation = task.OtherInformation,
+                              TaskEndDate = task.TaskEndDate,
+                              TaskResponsibleName = employee.Name,
+                              TaskResultDescription = task.TaskResultDescription,
+                              TaskStartDate = task.TaskStartDate,
+                              TaskSubject = task.TaskSubject,
+                              StatusName = taskStatus.StatusName,
+                              ProjectName = project.ProjectName,
+                              TaskStatusId = task.TaskStatusId,
+                              TaskOwnerName=ownerEmployee.Name,
+                              BranchName = branch.Name
+
+
+                          }).ToList();
+
+            return result;// projectDetailViewModel;
+        }
+
+        //private static Func<Employee, bool> GetDynamicQueryWithExpresionTrees(string propertyName, string val)
+        //{
+        //    var param = Expression.Parameter(typeof(Employee), "x");
+
+        //    #region Convert to specific data type
+        //    MemberExpression member = Expression.Property(param, propertyName);
+        //    UnaryExpression valueExpression = GetValueExpression(propertyName, val, param);
+        //    #endregion
+
+        //    Expression body = Expression.Equal(member, valueExpression);
+        //    var final = Expression.Lambda<Func<User, bool>>(body: body, parameters: param);
+        //    return final.Compile();
+        //}
+
+        //private static UnaryExpression GetValueExpression(string propertyName, string val, ParameterExpression param)
+        //{
+        //    var member = Expression.Property(param, propertyName);
+        //    var propertyType = ((PropertyInfo)member.Member).PropertyType;
+        //    var converter = TypeDescriptor.GetConverter(propertyType);
+
+        //    if (!converter.CanConvertFrom(typeof(string)))
+        //        throw new NotSupportedException();
+
+        //    var propertyValue = converter.ConvertFromInvariantString(val);
+        //    var constant = Expression.Constant(propertyValue);
+        //    return Expression.Convert(constant, propertyType);
+        //}
+        public List<MSIS.ViewModels.TaskDetailsViewModel> getAllTaskDetails(ViewModels.SearchTaskViewModel Criteria)
+        {
+            try
+            {
+                string strWhere = "";
+                if (Criteria.TaskOwnerId > 0) {
+                    strWhere = strWhere + " TaskOwnerId = " + Criteria.TaskOwnerId.ToString(); 
+                }
+                if (Criteria.TaskResponsibleId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere =strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskResponsibleId = " + Criteria.TaskResponsibleId.ToString();
+                }
+                if (Criteria.FromTaskDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere =strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskDate >= '" + Criteria.FromTaskDate.ToString() + "'";
+                }
+                if (Criteria.ToTaskDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskDate <= '" + Criteria.ToTaskDate.ToString() + "'";
+                }
+                if (strWhere != "")
+                {
+                    strWhere = " Where " + strWhere;
+                }
+                if (Criteria.strGroupBy != null)
+                {
+                    if (Criteria.strGroupBy.ToLower() != "all") { 
+                        strWhere = strWhere + " Order By " + Criteria.strGroupBy;
+                    }
+                }
+                var result = context.SQLTaskDetails.FromSql("SELECT *,'" + Criteria.strGroupBy + "' As strGroupBy FROM dbo.vTaskDetails " + strWhere).ToList();
+            
+            return result.ToList();// projectDetailViewModel;
+            }catch(Exception ex)
+            {
+                throw ex;
+            };
+        }
+
+        public List<MSIS.ViewModels.TaskDetailsViewModel> getAllTaskDetails()
+        {
+
+            MSIS.ViewModels.TaskDetailsViewModel taskDetailViewModel = null;
+            var result = (from task in context.Tasks
+                          join employee in context.Employees
+                          on task.TaskResponsibleId equals employee.Id
+                          join ownerEmployee in context.Employees
+                          on task.TaskOwnerId equals ownerEmployee.Id
                           join taskStatus in context.TaskStatus
                           on task.TaskStatusId equals taskStatus.Id
                           join project in context.Projects
@@ -196,14 +376,52 @@ namespace MSIS.Models
                               TaskResultDescription=task.TaskResultDescription,
                               TaskStartDate=task.TaskStartDate,
                               TaskSubject=task.TaskSubject,
-                              TaskStatus= taskStatus.StatusName,
+                              StatusName = taskStatus.StatusName,
                               ProjectName=project.ProjectName,
                               TaskStatusId=task.TaskStatusId,
+                              TaskOwnerName=ownerEmployee.Name,
                               BranchName=branch.Name
                              
                                     
                           }).ToList();
          
+            return result;// projectDetailViewModel;
+        }
+        public List<MSIS.ViewModels.TaskDetailsViewModel> getEmployeeTaskDetails(int EmployeeId)
+        {
+            MSIS.ViewModels.TaskDetailsViewModel taskDetailViewModel = null;
+            var result = (from task in context.Tasks
+                          join employee in context.Employees
+                          on task.TaskResponsibleId equals employee.Id
+                          join ownerEmployee in context.Employees
+                          on task.TaskOwnerId equals ownerEmployee.Id
+                          join taskStatus in context.TaskStatus
+                          on task.TaskStatusId equals taskStatus.Id
+                          join project in context.Projects
+                          on task.ProjectId equals project.Id
+                          join branch in context.Branches
+                          on task.BranchId equals branch.Id
+                          where (task.TaskOwnerId==EmployeeId || task.TaskResponsibleId==EmployeeId )
+                          select new MSIS.ViewModels.TaskDetailsViewModel()
+                          {
+                              Id = task.Id,
+                              Description = task.Description,
+                              TaskDate = task.TaskDate,
+                              OtherInformation = task.OtherInformation,
+                              TaskEndDate = task.TaskEndDate,
+                              TaskResponsibleName = employee.Name,
+                              TaskResultDescription = task.TaskResultDescription,
+                              TaskStartDate = task.TaskStartDate,
+                              TaskSubject = task.TaskSubject,
+                              StatusName = taskStatus.StatusName,
+                              ProjectName = project.ProjectName,
+                              TaskStatusId = task.TaskStatusId,
+                              TaskOwnerName=ownerEmployee.Name,
+                              BranchName = branch.Name
+
+
+                          }).ToList();
+
             return result;// projectDetailViewModel;
         }
 
@@ -214,6 +432,8 @@ namespace MSIS.Models
             var result = (from task in context.Tasks
                           join employee in context.Employees
                           on task.TaskResponsibleId equals employee.Id
+                          join ownerEmployee in context.Employees
+                          on task.TaskOwnerId equals ownerEmployee.Id
                           join taskStatus in context.TaskStatus
                           on task.TaskStatusId equals taskStatus.Id
                           join project in context.Projects
@@ -232,12 +452,19 @@ namespace MSIS.Models
                               TaskResultDescription = task.TaskResultDescription,
                               TaskStartDate = task.TaskStartDate,
                               TaskSubject = task.TaskSubject,
-                              TaskStatus = taskStatus.StatusName,
+                              StatusName = taskStatus.StatusName,
                               ProjectName = project.ProjectName,
                               BranchName = branch.Name,
                               TaskStatusId=task.TaskStatusId,
+                              TaskOwnerName=ownerEmployee.Name,
+                              TaskOwnerId=task.TaskOwnerId,
                               TaskTeam=taskTeam
                           }).ToList();
+            var owner = context.Users.Where(x => x.EmployeeId == result[0].TaskOwnerId).FirstOrDefault();
+            if (owner != null)
+            {
+                result[0].TaskOwnerUserName = owner.UserName;
+            }
             return result[0];// projectDetailViewModel;
         }
 
@@ -260,7 +487,7 @@ namespace MSIS.Models
             }
             return task;
         }
-
+        
         public IEnumerable<ViewModels.EmployeesInTaskViewModel> GetAllTaskAssignedEmployees(int TaskID)
         {
             var Result = (from taskTeam in context.TaskTeams

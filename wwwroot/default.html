@@ -1,10 +1,30 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <title></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+$(document).ready(function(){
+  $("button").click(function(){
+
+    $.post("https://localhost:44309/Tasks/TaskSearchAsync",
+    {
+      TaskOwnerId: "3",
+      TaskResponsibleId: "0",
+      ProjectId:"-1"
+    },
+        function (data, status) {
+            $('#subForm').html(data);
+      alert("Data: " + data + "\nStatus: " + status);
+    });
+  });
+});
+    </script>
 </head>
 <body>
-    <h1>hello from default.html</h1>
+
+    <button>Send an HTTP POST request to a page and get the result back</button>
+    <div id="subForm">
+
+    </div>
 </body>
 </html>

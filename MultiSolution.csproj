@@ -31,6 +31,12 @@
 
   <ItemGroup>
     <Folder Include="Reports\" />
+    <Folder Include="wwwroot\lib\datatables-buttons\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\images\img\.DS_Store" />
+    <None Include="wwwroot\images\img\gif\.DS_Store" />
   </ItemGroup>
 
 </Project>

@@ -10,36 +10,39 @@ namespace MSIS.ViewModels
     public class TaskDetailsViewModel
     {
         public int Id { get; set; }
-        [Column(TypeName = "Date")]
         public DateTime TaskDate { get; set; }
-        [Column(TypeName = "Date")]
         public DateTime TaskStartDate { get; set; }
-        [Column(TypeName = "Date")]
         public DateTime TaskEndDate { get; set; }
+        public int TaskOwnerId { get; set; }
 
-        public int TaskOwnerName { get; set; }
-        [Column(TypeName = "nvarchar(300)")]
+        public string TaskOwnerName { get; set; }
         public string TaskSubject { get; set; }
+        public int BranchId { get; set; }
+        public string BranchCode { get; set; }
         public string BranchName { get; set; }
+        public int ProjectId { get; set; }
+        public string ProjectYear { get; set; }
+        public int ProjectSerial { get; set; }
         public string ProjectName { get; set; }
-        public string TaskStatus { get; set; }
         public int TaskStatusId { get; set; }
+        public string TaskStatusCode { get; set; }
+        public string StatusName { get; set; }
+        public int TaskResponsibleId { get; set; }
         public string TaskResponsibleName { get; set; }
-        [Column(TypeName = "nvarchar(Max)")]
         public string OtherInformation { get; set; }
-        [Column(TypeName = "nvarchar(Max)")]
         public string TaskResultDescription { get; set; }
         public string UserName { get; set; }
         public DateTime Time_Stamp { get; set; }
-        [Column(TypeName = "nvarchar(Max)")]
         public string Description { get; set; }
 
         public string TaskActionDetails { get; set; }
         public string TaskOperation { get; set; }
+        public string TaskOwnerUserName { get; set; }
 
+        public string strGroupBy { get; set; }
 
         public List<EmployeesInTaskViewModel> TaskTeam { get; set; }
 
-        
- }
+
+    }
 }

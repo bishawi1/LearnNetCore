@@ -3,36 +3,22 @@
     ViewBag.Title = "List Tasks";
 }
 
+<!-- Search -->
+    <div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+        <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+            <i class="fa fa-search"></i>
+            Search
+        </button>
+        <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+        <br />
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light" hidden>
-    <a class="navbar-brand" href="#">TMS</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+        <div class="collapse" id="divCriteria">
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent" hidden>
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="Tasks" style="width:auto;"><i class="fa fa-plus-circle"></i> Add New Task <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown m-1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Dropdown
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">Action</a>
-                    <a class="dropdown-item" href="#">Another action</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-            </li>
-        </ul>
 
+        </div>
     </div>
-</nav>
+
+
 <div class="flex-container">
     <div class="column">
         <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="Tasks" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
@@ -62,6 +48,7 @@
     </div>
 </div>
 
+
 @*<a class="btn  btn-outline-dark m-3 table-responsive-sm"  style="width:auto" asp-action="Create" asp-controller="Tasks"><i class="fa fa-plus-circle">Add New Task</i></a>*@
 
 <div id="showWaiting" class="column">
@@ -69,11 +56,11 @@
 
     <div style=" border:solid 1px black; padding:3px;">
         <table class="table table-hover" id="myTable">
-            @*gridtable*@
             <thead class="thead-dark">
                 <tr>
                     <th>Task Date</th>
                     <th>Task Subject</th>
+                    <th>Task Owner</th>
                     <th>Responsible for Task</th>
                     <th style="width:100px;">Task Status</th>
                     <th style="width:30px;"></th>
@@ -88,33 +75,34 @@
             {
 
                 <tr>
-                    <td>@task.TaskStartDate</td>
+                    <td>@task.TaskStartDate.ToString("dd/MM/yyyy")</td>
                     <td>@task.TaskSubject</td>
+                    <td>@task.TaskOwnerName</td>
                     <td>@task.TaskResponsibleName</td>
-                    
+
                     @if (task.TaskStatusId == 1)
                     {
-                        <td class="bg-secondary text-center">@task.TaskStatus </td>
+                        <td class="bg-secondary text-center">@task.StatusName </td>
                     }
                     else if (task.TaskStatusId == 2)
                     {
-                        <td class="bg-primary text-center">@task.TaskStatus </td>
+                        <td class="bg-primary text-center">@task.StatusName </td>
                     }
                     else if (task.TaskStatusId == 3)
                     {
-                        <td class="bg-danger text-center">@task.TaskStatus </td>
+                        <td class="bg-danger text-center">@task.StatusName </td>
                     }
                     else if (task.TaskStatusId == 4)
                     {
-                        <td class="bg-warning text-center">@task.TaskStatus </td>
+                        <td class="bg-warning text-center">@task.StatusName </td>
                     }
                     else if (task.TaskStatusId == 5)
                     {
-                        <td class="badge-success text-center">@task.TaskStatus </td>
+                        <td class="badge-success text-center">@task.StatusName </td>
                     }
                     else
                     {
-                        <td>@task.TaskStatus </td>
+                        <td>@task.StatusName </td>
 
                     }
 
@@ -142,98 +130,116 @@
         </table>
     </div>
 </div>
-    <div id="error">
+<div id="error">
 
-    </div>
-    @section Scripts{
-        <script src="~/js/CustomScript.js"></script>
-        <script>
+</div>
+@section Scripts{
 
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+    <script>
+
+        InitDatepicker();
+
+        $('#printReport').on('click', function () {
+            $('#showWaiting').printThis();
+        });
+        $.ajax({
+            url: '/Tasks/TaskSearch?strGroupBy=ALL',
+            type: 'Get',
+            success: function (response) {
+                $('#divCriteria').html(response);
+            }
+        });
+
+        $.ajax({
+            type: 'GET',
+            url: '/Tasks/TaskCountByStatus',
+            headers: { Accept: "application/json;charset=utf-8", "Content-Type": "application/json;charset=utf-8" },
+            success: function (result) {
+
+                $.each(result, function (i, item) {
+                    //var ID = item.Id;
+                    document.getElementById("Approved").innerHTML = result.ApprovedCount;
+                    document.getElementById("Rejected").innerHTML = result.RejectedCount;
+                    document.getElementById("Waiting").innerHTML = result.WaitingCount;
+                    document.getElementById("InProgress").innerHTML = result.InProgressCount;
+                    document.getElementById("Done").innerHTML = result.DoneCount;
+
+                });
+
+            }
+        });
+
+
+        //////////////////////////////// Status filter
+        $('#Waiting').click(function () {
             $.ajax({
-                type: 'GET',
-                url: '/Tasks/TaskCountByStatus',
-                headers: { Accept: "application/json;charset=utf-8", "Content-Type": "application/json;charset=utf-8" },
-                success: function (result) {
-
-                    $.each(result, function (i, item) {
-                        //var ID = item.Id;
-                        document.getElementById("Approved").innerHTML = result.ApprovedCount;
-                        document.getElementById("Rejected").innerHTML = result.RejectedCount;
-                        document.getElementById("Waiting").innerHTML = result.WaitingCount;
-                        document.getElementById("InProgress").innerHTML = result.InProgressCount;
-                        document.getElementById("Done").innerHTML = result.DoneCount;
-
-                    });
-
+                url: '/Tasks/ListWaitingTasks',
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
                 }
             });
+        });
 
-
-            //////////////////////////////// Status filter
-            $('#Waiting').click(function () {
-                $.ajax({
-                    url: '/Tasks/ListWaitingTasks',
-                    type: 'Get',
-                    success: function (response) {
-                        $('#showWaiting').html(response);
-                        $('#myTable').DataTable();
-                    }
-                });
+        $('#InProgress').click(function () {
+            $.ajax({
+                url: '/Tasks/ListInProgressTasks',
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
             });
+        });
 
-            $('#InProgress').click(function () {
-                $.ajax({
-                    url: '/Tasks/ListInProgressTasks',
-                    type: 'Get',
-                    success: function (response) {
-                        $('#showWaiting').html(response);
-                        $('#myTable').DataTable();
-                    }
-                });
+        $('#Done').click(function () {
+            $.ajax({
+                url: '/Tasks/ListDoneTasks',
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
             });
+        });
 
-            $('#Done').click(function () {
-                $.ajax({
-                    url: '/Tasks/ListDoneTasks',
-                    type: 'Get',
-                    success: function (response) {
-                        $('#showWaiting').html(response);
-                        $('#myTable').DataTable();
-                    }
-                });
+        $('#Approved').click(function () {
+            $.ajax({
+                url: '/Tasks/ListApprovedTasks',
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
             });
+        });
+        $('#Rejected').click(function () {
+            $.ajax({
+                url: '/Tasks/ListRejectedTasks',
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
 
-            $('#Approved').click(function () {
-                $.ajax({
-                    url: '/Tasks/ListApprovedTasks',
-                    type: 'Get',
-                    success: function (response) {
-                        $('#showWaiting').html(response);
-                        $('#myTable').DataTable();
-                    }
-                });
+        $('#showAll').click(function () {
+            $.ajax({
+                url: '/Tasks/ListTasksPartial',
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
             });
-            $('#Rejected').click(function () {
-                $.ajax({
-                    url: '/Tasks/ListRejectedTasks',
-                    type: 'Get',
-                    success: function (response) {
-                        $('#showWaiting').html(response);
-                        $('#myTable').DataTable();
-                    }
-                });
-            });
+        });
 
-            $('#showAll').click(function () {
-                $.ajax({
-                    url: '/Tasks/ListTasksPartial',
-                    type: 'Get',
-                    success: function (response) {
-                        $('#showWaiting').html(response);
-                        $('#myTable').DataTable();
-                    }
-                });
-            });
+                          //data:$('form').serialize(),// JSON.stringify(formData),
 
-        </script>
-    }
+    </script>
+}

@@ -42,6 +42,19 @@
     <link href="~/lib/datatables/DataTables-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
     <script src="~/lib/datatables/DataTables-1.10.20/js/jquery.dataTables.min.js"></script>
 
+
+    <link href="~/lib/datatables-buttons/buttons.dataTables.min.css" rel="stylesheet" />
+    <script src="~/lib/datatables-buttons/dataTables.buttons.min.js"></script>
+    <script src="~/lib/datatables-buttons/buttons.flash.min.js"></script>
+    <script src="~/lib/datatables-buttons/jszip.min.js"></script>
+    <script src="~/lib/datatables-buttons/pdfmake.min.js"></script>
+    <script src="~/lib/datatables-buttons/vfs_fonts.js"></script>
+    <script src="~/lib/datatables-buttons/buttons.html5.min.js"></script>
+    <script src="~/lib/datatables-buttons/buttons.print.min.js"></script>
+
+
+    <script src="~/lib/printthis/printThis.js"></script>
+
     <link href="~/css/Site.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
@@ -50,116 +63,185 @@
 <body>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar -->
-        @if (signInManager.IsSignedIn(User) )//&& User.IsInRole("Admin"))
+        @if (signInManager.IsSignedIn(User))// && (User.IsInRole("Admin")))// || User.IsInRole("PowerUsers")) )
         {
-            <div class="bg-dark border-right" id="sidebar-wrapper">
-                <div class="sidebar-heading text-info">Multi Solution </div>
+        <div class="bg-dark border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading text-info">Multi Solution </div>
+            <!-------------- start of Accordion   -->
+            <div class="list-group list-group-flush bg-secondary" >
+                <div id="accordion" class="bg-transparent m-0">
+
+                    <div class="card bg-transparent">
+                        <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                            <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuSettings">
+                                <i class="fa fa-cog"></i>
+                                Settings
+                            </a>
+                        </div>
+                        <div id="mnuSettings" class="collapse hide" data-parent="#accordion">
+                            <div class="card-body" style="padding:0px;">
+                                <a asp-action="EmployeeList" asp-controller="Home" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
+                                <a asp-action="ListBranches" asp-controller="Branches" class="list-group-item list-group-item-action bg-dark text-light">Branches</a>
+                                <a asp-action="ListProjects" asp-controller="Projects" class="list-group-item list-group-item-action bg-dark text-light">Projects</a>
+                                <a asp-action="ListCustomers" asp-controller="Customer" class="list-group-item list-group-item-action bg-dark text-light">Customers</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-transparent">
+                        <div class="card-header"  style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                            <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuTMS">
+                                <i class="fa fa-tasks"></i>
+                                Tasks
+                            </a>
+                        </div>
+                        <div id="mnuTMS" class="collapse show" data-parent="#accordion">
+                            <div class="card-body" style="padding:0px;">
+                                <a asp-action="ListTasks" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">All</a>
+                                <a asp-action="ListTasksByProject" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Project</a>
+                                <a asp-action="ListTasksByTaskOwner" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Task Owner</a>
+                                <a asp-action="ListTasksByResponsible" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Responsible</a>
+                                <a asp-action="ListTasksByStatus" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Status</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card bg-transparent">
+                        <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                            <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuOffers">
+                                <i class="fa fa-shekel-sign"></i>
+                                Offers
+                            </a>
+                        </div>
+                        <div id="mnuOffers" class="collapse hide" data-parent="#accordion">
+                            <div class="card-body" style="padding:0px;">
+                                <a href="#" class="list-group-item list-group-item-action bg-dark text-light">Comming Soon</a>
+
+                            </div>
+                        </div>
+                    </div>
 
 
-                <div class="list-group list-group-flush">
-                    <a asp-action="EmployeeList" asp-controller="Home" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
-                    <a asp-action="ListBranches" asp-controller="Branches" class="list-group-item list-group-item-action bg-dark text-light">Branches</a>
-                    <a asp-action="ListProjects" asp-controller="Projects" class="list-group-item list-group-item-action bg-dark text-light">Projects</a>
-                    <a asp-action="ListCustomers" asp-controller="Customer" class="list-group-item list-group-item-action bg-dark text-light">Customers</a>
-                    <a asp-action="ListTasks" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">Tasks</a>
+                    <!-------------- End of Accordion   -->
+
                 </div>
-            </div>
+
+            </div>            <!-------------- start of Buttons   -->
+
+            @*<div class="list-group list-group-flush">
+
+                <a asp-action="EmployeeList" asp-controller="Home" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
+                <a asp-action="ListBranches" asp-controller="Branches" class="list-group-item list-group-item-action bg-dark text-light">Branches</a>
+                <a asp-action="ListProjects" asp-controller="Projects" class="list-group-item list-group-item-action bg-dark text-light">Projects</a>
+                <a asp-action="ListCustomers" asp-controller="Customer" class="list-group-item list-group-item-action bg-dark text-light">Customers</a>
+                <a asp-action="ListTasks" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">Tasks</a>
+            </div>*@
+            <!-------------- End of Buttons   -->
+        </div>
         }
         <!-- /#sidebar-wrapper -->
         <!-- Page Content -->
-        <div id="page-content-wrapper">
+    <div id="page-content-wrapper">
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom sticky-top">
+            <a class="navbar-brand" asp-controller="Home" asp-action="index">
+                <img src="~/images/msisLogo.jpg" height="30" width="30" />
+            </a>
 
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
-                <a class="navbar-brand" asp-controller="Home" asp-action="index">
-                    <img src="~/images/Employees.jpg" height="30" width="30" />
-
-                </a>
-
-                @if (signInManager.IsSignedIn(User))
-                {
-                    @*<p>I will display &#x226A;</p>*@
-                    <button class="btn btn-dark  btn-sm" id="menu-toggle" style="width:auto;position:absolute;left:60px;"><i class="fa fa-arrow-left"></i>  </button>
-                    <button id="showHide" hidden>Show</button>
-                }
-
+            @if (signInManager.IsSignedIn(User))
+            {
+                @*<p>I will display &#x226A;</p>*@
+                <button class="btn btn-dark  btn-sm" id="menu-toggle" style="width:auto;position:absolute;left:60px;"><i class="fa fa-arrow-left"></i>  </button>
+                <button id="showHide" hidden>Show</button>
+            }
 
 
 
 
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
 
-                <div class="collapse navbar-collapse " id="navbarSupportedContent">
-                     <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                        @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item dropdown">
-                                <a asp-action="ListRoles" asp-controller="Administration" class="nav-link dropdown-toggle"
-                                   id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Manage
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+                    @if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a asp-action="ListRoles" asp-controller="Administration" class="nav-link dropdown-toggle"
+                               id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Manage
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a asp-action="ListUsers" asp-controller="Administration"
+                                   class="dropdown-item">
+                                    Users
                                 </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a asp-action="ListUsers" asp-controller="Administration"
-                                       class="dropdown-item">
-                                        Users
-                                    </a>
-                                    <a asp-action="ListRoles" asp-controller="Administration"
-                                       class="dropdown-item">
-                                        Roles
-                                    </a>
+                                <a asp-action="ListRoles" asp-controller="Administration"
+                                   class="dropdown-item">
+                                    Roles
+                                </a>
 
-                                </div>
-                            </li>
+                            </div>
+                        </li>
 
-                        }
+                    }
 
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Team</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Connect</a>
+                    </li>
+
+
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item ">
+                            <form asp-action="logout" asp-controller="account" method="post">
+                                <button type="submit" class="nav-link btn btn-link " style="width:auto">
+                                    Logout @User.Identity.Name
+                                </button>
+                            </form>
+                        </li>
+
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a asp-action="Register" asp-controller="Account" class="nav-link">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
+                            <a asp-action="login" asp-controller="Account" class="nav-link">Login</a>
                         </li>
+                    }
+                </ul>
 
+            </div>
+        </nav>
 
-                        @if (signInManager.IsSignedIn(User))
-                        {
-                            <li class="nav-item ">
-                                <form asp-action="logout" asp-controller="account" method="post">
-                                    <button type="submit" class="nav-link btn btn-link " style="width:auto">
-                                        Logout @User.Identity.Name
-                                    </button>
-                                </form>
-                            </li>
+        <!-- Page body -->
+        <div class="container-fluid">
+            <div>
 
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a asp-action="Register" asp-controller="Account" class="nav-link">Register</a>
-                            </li>
-                            <li class="nav-item">
-                                <a asp-action="login" asp-controller="Account" class="nav-link">Login</a>
-                            </li>
-                        }
-
-                    </ul>
-
-                </div>
-            </nav>
-
-            <div class="container-fluid">
-                <div>
-                    
-                    @RenderBody()
-                </div>
+                @RenderBody()
             </div>
         </div>
+    </div>
         <!-- /#page-content-wrapper -->
 
-        <div>
+        @*<div>
             @RenderBody()
-        </div>
+        </div>*@
         @if (IsSectionDefined("Scripts"))
         {
             @RenderSection("Scripts", required: true)
@@ -167,8 +249,14 @@
         <!-- Menu Toggle Script -->
         <script>
 
-            $(document).ready( function () {
-                $('#myTable').DataTable();
+            $(document).ready(function () {
+                $('#myTable').DataTable( {
+                    dom: 'Bfrtip',
+                    buttons: [
+                         'print'
+                    ]
+                });
+
             } );
 
             $("#menu-toggle").click(function (e) {

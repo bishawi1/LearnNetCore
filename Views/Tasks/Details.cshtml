@@ -40,28 +40,31 @@
         }
         else if (Model.TaskStatusId == 4)
         {
-            <form asp-action="VerifyTaskExecution">
-                <div class="form-group rounded row">
-                    <input asp-for="Id" hidden />
-                    <div class="form-group row">
-                        @* <label asp-for="TaskOperation" class="col-sm-2 col-form-label"></label>*@
-                        <div class="col-sm-10">
-                            <select asp-for="TaskOperation" asp-items="Html.GetEnumSelectList<TaskOperation>()" class="form-control" style="width:auto;">
-                                <option value="">Verify Task</option>
-                            </select>
-                            <span asp-validation-for="TaskOperation" class="text-danger"></span>
+            @if (User.IsInRole("Admin")||User.Identity.Name==Model.TaskOwnerUserName)
+            {
+                <form asp-action="VerifyTaskExecution">
+                    <div class="form-group rounded row">
+                        <input asp-for="Id" hidden />
+                        <div class="form-group row">
+                            @* <label asp-for="TaskOperation" class="col-sm-2 col-form-label"></label>*@
+                            <div class="col-sm-10">
+                                <select asp-for="TaskOperation" asp-items="Html.GetEnumSelectList<TaskOperation>()" class="form-control" style="width:auto;">
+                                    <option value="">Verify Task</option>
+                                </select>
+                                <span asp-validation-for="TaskOperation" class="text-danger"></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <span>Description</span>
-                    <input asp-for="Description" class="form-control" />
-                </div>
+                    <div class="form-group row">
+                        <span>Description</span>
+                        <input asp-for="Description" class="form-control" />
+                    </div>
 
-                <button type="submit" class="btn btn-primary">Done!</button>
+                    <button type="submit" class="btn btn-primary">Done!</button>
 
 
-            </form>
+                </form>
+            }
             @* <a asp-action="VerifyTaskExecution" asp-controller="Tasks" asp-route-Id="@Model.Id" class="btn btn-primary" style="width:auto;">Approved!</a>
             <a asp-action="RejectTask" asp-controller="Tasks" asp-route-Id="@Model.Id" class="btn btn-primary" style="width:auto;">Rejected!</a>*@
         }

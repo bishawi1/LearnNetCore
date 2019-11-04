@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MSIS.Models;
 using MSIS.ViewModels;
+using Newtonsoft.Json;
 
 namespace MSIS.Controllers
 {
@@ -14,11 +16,17 @@ namespace MSIS.Controllers
     {
         private readonly SQLTasksRepository tasksRepository;
         private readonly IHostingEnvironment hostingEnvironment;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IEmployeeRepository employeeRepository;
 
-        public TasksController(SQLTasksRepository TasksRepository, IHostingEnvironment hostingEnvironment)
+        public TasksController(SQLTasksRepository TasksRepository, IHostingEnvironment hostingEnvironment,
+                                 UserManager<ApplicationUser> userManager,
+                                 IEmployeeRepository employeeRepository)
         {
             tasksRepository = TasksRepository;
             this.hostingEnvironment = hostingEnvironment;
+            this.userManager = userManager;
+            this.employeeRepository = employeeRepository;
         }
         [HttpGet]
         public IActionResult Create()
@@ -126,14 +134,121 @@ namespace MSIS.Controllers
             }
         }
 
-
+  
 
         [HttpGet]
-        public IActionResult ListTasks()
+        public async Task <IActionResult> ListTasks()
         {
-            //var model = tasksRepository.GetAllTasks().ToList();
-            var model = tasksRepository.getAllTaskDetails().ToList();
-            return View( model);
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails().ToList();
+                return View(model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return View(model);
+            }
+
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getAllTaskDetails().ToList();
+            //return View( model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> TaskReport()
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails().ToList();
+                return View(model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return View(model);
+            }
+
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getAllTaskDetails().ToList();
+            //return View( model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ListTasksByProject()
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails().ToList();
+                return View(model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return View(model);
+            }
+
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getAllTaskDetails().ToList();
+            //return View( model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ListTasksByTaskOwner()
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails().ToList();
+                return View(model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return View(model);
+            }
+
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getAllTaskDetails().ToList();
+            //return View( model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ListTasksByResponsible()
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails().ToList();
+                return View(model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return View(model);
+            }
+
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getAllTaskDetails().ToList();
+            //return View( model);
+        }
+        [HttpGet]
+        public async Task<IActionResult> ListTasksByStatus()
+        {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails().ToList();
+                return View(model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return View(model);
+            }
+
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getAllTaskDetails().ToList();
+            //return View( model);
         }
 
         [HttpGet]
@@ -144,51 +259,126 @@ namespace MSIS.Controllers
             return new JsonResult(model);
         }
         [HttpGet]
-        public IActionResult ListTasksPartial()
+        public async Task <IActionResult> ListTasksPartial()
         {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                 var model = tasksRepository.getAllTaskDetails().ToList();
+                return PartialView("_ListTasks", model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return PartialView("_ListTasks", model);
+            }
+
             //var model = tasksRepository.GetAllTasks().ToList();
-            var model = tasksRepository.getAllTaskDetails().ToList();
-            return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public IActionResult ListWaitingTasks()
+        public async Task <IActionResult> ListWaitingTasks()
         {
-            //var model = tasksRepository.GetAllTasks().ToList();
-            var model = tasksRepository.getTaskDetailsByStatusId(1).ToList();
-            return PartialView("_ListTasks", model);
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(1).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            else
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 1).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getTaskDetailsByStatusId(1).ToList();
+            //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public IActionResult ListInProgressTasks()
+        public async Task <IActionResult> ListInProgressTasks()
         {
-            //var model = tasksRepository.GetAllTasks().ToList();
-            var model = tasksRepository.getTaskDetailsByStatusId(2).ToList();
-            return PartialView("_ListTasks", model);
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(2).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            else
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 2).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getTaskDetailsByStatusId(2).ToList();
+            //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public IActionResult ListRejectedTasks()
+        public async Task <IActionResult> ListRejectedTasks()
         {
-            //var model = tasksRepository.GetAllTasks().ToList();
-            var model = tasksRepository.getTaskDetailsByStatusId(3).ToList();
-            return PartialView("_ListTasks", model);
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(3).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            else
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 3).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getTaskDetailsByStatusId(3).ToList();
+            //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public IActionResult ListDoneTasks()
+        public async Task <IActionResult> ListDoneTasks()
         {
-            //var model = tasksRepository.GetAllTasks().ToList();
-            var model = tasksRepository.getTaskDetailsByStatusId(4).ToList();
-            return PartialView("_ListTasks", model);
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(4).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            else
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 4).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            ////var model = tasksRepository.GetAllTasks().ToList();
+            //var model = tasksRepository.getTaskDetailsByStatusId(4).ToList();
+            //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public IActionResult ListApprovedTasks()
+        public async Task <IActionResult> ListApprovedTasks()
         {
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(5).ToList();
+                return PartialView("_ListTasks", model);
+            }
+            else
+            {
+                var model = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 5).ToList();
+                return PartialView("_ListTasks", model);
+            }
+
+
             //var model = tasksRepository.GetAllTasks().ToList();
-            var model = tasksRepository.getTaskDetailsByStatusId(5).ToList();
-            return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public IActionResult TaskCountByStatus()
+        public async Task <IActionResult> TaskCountByStatus()
         {
-            return new JsonResult( tasksRepository.getTaskCountByStatus());
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                return new JsonResult(tasksRepository.getTaskCountByStatus());
+            }
+            else
+            {
+                return new JsonResult(tasksRepository.getTaskCountByStatus(user.EmployeeId));
+            }
+
+            
         }
 
 
@@ -377,10 +567,68 @@ namespace MSIS.Controllers
             //        return View(model);
             //    }
             //}
-            return View(model);
+        //    return View(model);
         }
 
+        [HttpGet]
+        public IActionResult TaskSearch(string strGroupBy)
+        {
+            AppDBContext context = tasksRepository.getContext();
+            MSIS.ViewModels.SearchTaskViewModel model = new ViewModels.SearchTaskViewModel();
+            SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
+            SQLProjectRepository projectRepository = new SQLProjectRepository(context);
+            SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
+            SQLBranchRepository branchRepository = new SQLBranchRepository(context);
+            model.Projects = projectRepository.GetAllProjects().ToList();
+            model.Projects.Insert(0, new Project
+            {
+                Id = -1,
+                ProjectName = "Select Project"
+            });
+            model.Employees = employeeRepository.GetAllEmployees().ToList();
+            model.Employees.Insert(0, new Employee
+            {
+                Id = -1,
+                Name = "Select ..."
+            });
+            model.FromTaskDate = new DateTime(2019,1,1);
+            model.ToTaskDate = DateTime.Today;
+            if (strGroupBy == null)
+            {
+                model.strGroupBy= "";
+            }
+            else
+            {
+                model.strGroupBy = strGroupBy;
+            }
 
+            return PartialView("_TaskSearch", model);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TaskSearchAsync(int TaskOwnerId,int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, string strGroupBy)
+        {
+            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            criteria.ProjectId = ProjectId;
+            criteria.TaskOwnerId = TaskOwnerId;
+            criteria.TaskResponsibleId = TaskResponsibleId;
+            criteria.FromTaskDate = FromTaskDate;
+            criteria.ToTaskDate = ToTaskDate;
+            criteria.strGroupBy = strGroupBy;
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails(criteria).ToList();
+                   return PartialView("_ListTasks", model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                return PartialView("_ListTasks", new JsonResult(model));
+            }
+
+        }
 
 
     }
