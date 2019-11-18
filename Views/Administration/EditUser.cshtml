@@ -58,9 +58,9 @@
     <div class="card-body">
         @if (Model.Roles.Any())
         {
-            foreach(var role in Model.Roles)
+            foreach (var role in Model.Roles)
             {
-                <h5 class="card-title">@role</h5>
+                <h5 class="card-title"> @role</h5>
             }
         }
         else
@@ -68,13 +68,13 @@
             <h5 class="card-title">none at the moment</h5>
         }
     </div>
-    <div class="card-footer">
-        <a class="btn btn-primary" href="#" style="width:auto">Manage Roles</a>
-    </div>
+    @*<div class="card-footer">
+        <a class="btn btn-primary" asp-action="EditRole" asp-controller="Administration" asp-route-Id="@role.Id" style="width:auto">Manage Roles</a>
+    </div>*@
 </div>
 
 
-<div class="card">
+@*<div class="card">
     <div class="card-header">
         <h3>User Claims </h3>
     </div>
@@ -94,4 +94,4 @@
     <div class="card-footer">
         <a class="btn btn-primary" href="#" style="width:auto">Manage Claims</a>
     </div>
-</div>
+</div>*@

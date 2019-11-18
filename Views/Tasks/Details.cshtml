@@ -4,8 +4,9 @@
 }
 
 
-
-
+<div>
+     <a class="btn btn-outline-secondary" asp-action="PrintTaskDetails" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+</div>
 <div class="card mt-3">
     <div class="card-header">
         <h3 class="text-center">Task Details</h3>
@@ -81,7 +82,7 @@
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
                     <span id="Id-addon" class="col-sm-3 input-group-text">Date</span>
-                    <span class="form-control col-sm-6" aria-describedby="Id-addon"><h5>@Model.TaskDate</h5></span>
+                    <span class="form-control col-sm-6" aria-describedby="Id-addon"><h5>@Model.TaskDate.ToString("dd/MM/yyyy")</h5></span>
                 </div>
             </div>
         </div>
@@ -89,13 +90,13 @@
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
                     <span id="TaskStartDate-addon" class="col-sm-3 input-group-text">Strat Date</span>
-                    <span class="form-control col-sm-6" aria-describedby="TaskStartDate-addon"><h5>@Model.TaskStartDate</h5></span>
+                    <span class="form-control col-sm-6" aria-describedby="TaskStartDate-addon"><h5>@Model.TaskStartDate.ToString("dd/MM/yyyy")</h5></span>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
                     <span id="TaskEndDate-addon" class="col-sm-3 input-group-text">End Date</span>
-                    <span class="form-control col-sm-6" aria-describedby="TaskEndDate-addon"><h5>@Model.TaskEndDate</h5></span>
+                    <span class="form-control col-sm-6" aria-describedby="TaskEndDate-addon"><h5>@Model.TaskEndDate.ToString("dd/MM/yyyy")</h5></span>
                 </div>
             </div>
         </div>
@@ -126,9 +127,61 @@
     </div>
     <div class="card-footer">
         <div class="text-center mr-sm-2">
-            <a asp-action="Edit" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
+            @if (User.IsInRole("Admin") || User.Identity.Name == Model.TaskOwnerUserName)
+            {
+                <a asp-action="Edit" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
+            }
             <a asp-action="ListTasks" asp-controller="Tasks" style="width:auto;" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i> Cancel</a>
         </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h4 class="card-title">Task Actions</h4>
+    </div>
+    <div class="card-body">
+        @if (Model.TaskTeam.Any())
+        {
+            <table class="table  border table-hover">
+                <thead class="thead-dark">
+                    <tr >
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>New Status</th>
+                        <th>User Name</th>
+                    </tr>
+                </thead>
+                @foreach (var action in Model.TaskActions)
+                {
+                    <tr>
+                        <td>
+                            <span><h5>@action.ActionDate.ToString("dd/MM/yyyy")</h5></span>
+                        </td>
+                        <td>
+                            <span><h5>@action.Description</h5></span>
+                        </td>
+                        <td>
+                            <span><h5>@action.CurrentTaskStatusName</h5></span>
+                        </td>
+                        <td>
+                            <span><h5>@action.TaskStatusName</h5></span>
+                        </td>
+                        <td>
+                            <span><h5>@action.UserName</h5></span>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            <h5 class="card-title">none at the moment</h5>
+        }
+    </div>
+    <div class="card-footer">
+
     </div>
 </div>
 
@@ -160,7 +213,10 @@
         }
     </div>
     <div class="card-footer">
-        <a asp-action="EditEmployeeInTask" asp-controller="Tasks" asp-route-TaskId="@Model.Id" class="btn btn-outline-primary" style="width:auto"><i class="fa fa-edit"></i> Add or Remove Employee</a>
+        @if (User.IsInRole("Admin") || User.Identity.Name == Model.TaskOwnerUserName)
+        {
+            <a asp-action="EditEmployeeInTask" asp-controller="Tasks" asp-route-TaskId="@Model.Id" class="btn btn-outline-primary" style="width:auto"><i class="fa fa-edit"></i> Add or Remove Employee</a>
+        }
     </div>
     <br />
     <br />

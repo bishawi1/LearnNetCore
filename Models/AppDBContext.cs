@@ -24,7 +24,23 @@ namespace MSIS.Models
         public DbSet<Customer> Customers { get; set; }
         public DbSet<TaskTeam> TaskTeams { get; set; }
         public DbSet<TaskAction> TaskActions { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
+        public DbSet<Currency> Currency { get; set; }
+        public DbSet<ItemUnit> ItemUnits { get; set; }
+        public DbSet<PurchaseOrderDetails> PurchaseOrdersDetails { get; set; }
         public DbSet<TaskDetailsViewModel> SQLTaskDetails { get; set; }
+        public DbSet<ListPurchaseOrderDetailsViewModel> SQLListPurchaseOrderDetailsViewModel { get; set; }
+        public DbSet<PurchaseOrderDetailsViewModel> SQLPurchaseOrderDetailsViewModel { get; set; }
+
+        public DbSet<PurchaseOrderItemsViewModel> SQLPurchaseOrderItemsViewModel { get; set; }
+        public DbSet<ItemCategory> ItemCategories { get; set; }
+        public DbSet<MainItem> MainItems { get; set; }
+
+        public DbSet<Item> Items { get; set; }
+        public DbSet<Offer> Offers { get; set; }
+        public DbSet<OfferDetail> offerDetails { get; set; }
+
 
     }
 }

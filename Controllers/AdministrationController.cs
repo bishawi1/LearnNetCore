@@ -218,10 +218,53 @@ namespace MSIS.Controllers
      //[Authorize]
         public IActionResult ListUsers()
         {
-            var users = userManager.Users.ToList();
+            var users =(from user in userManager.Users 
+                        join employee in employeeRepository.GetAllEmployees()
+                        on user.EmployeeId equals employee.Id
+                        select new UserViewModel { 
+                        City=user.City,
+                        Email=user.Email,
+                        EmployeeId=user.EmployeeId,
+                        EmployeeName=employee.Name,
+                        Id=user.Id,
+                        UserName=user.UserName
+                        } ).ToList();
             return View(users);
         }
-
+        [HttpGet]
+        public IActionResult ChangeUserPassword()
+        {
+            var users = (from user in userManager.Users
+                         join employee in employeeRepository.GetAllEmployees()
+                         on user.EmployeeId equals employee.Id
+                         select new UserViewModel
+                         {
+                             City = user.City,
+                             Email = user.Email,
+                             EmployeeId = user.EmployeeId,
+                             EmployeeName = employee.Name,
+                             Id = user.Id,
+                             UserName = user.UserName
+                         }).ToList();
+            ChangeUserPasswordViewModel model = new ChangeUserPasswordViewModel();
+            model.UserList = users;
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ChangeUserPassword(ChangeUserPasswordViewModel model)
+        {
+            var user =await userManager.FindByEmailAsync(model.Email);
+            var result= await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Home", "Index");
+            }
+            else
+            {
+                ModelState.AddModelError("passwordError", result.Errors.ToList().ToString());
+                return View();
+            }
+        }
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditUser(string id)

@@ -14,6 +14,10 @@
     <Compile Remove="Migrations\20191013033056_Customer1.Designer.cs" />
     <Compile Remove="MSIS\Migrations\20191013034158_NewCustomer.cs" />
     <Compile Remove="MSIS\Migrations\20191013034158_NewCustomer.Designer.cs" />
+    <Compile Remove="MSIS\Migrations\20191109155807_PurchaseOrder01.cs" />
+    <Compile Remove="MSIS\Migrations\20191109155807_PurchaseOrder01.Designer.cs" />
+    <Compile Remove="MSIS\Migrations\20191109165831_PurchaseOrder03.cs" />
+    <Compile Remove="MSIS\Migrations\20191109165831_PurchaseOrder03.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -19,16 +19,31 @@
     
     <hr />
     <div id="printArea">
-        <div class="flex-container border-1">
-            <div class="col-sm-3 bg-info">
-                <span id="dtToday" class="text-left">@DateTime.Now</span>
+        <div class="flex-container "style="border-bottom:3px solid black;">
+            <div class="col-sm-3">
+                <img src="~/images/msisLogo.jpg" style="width:80px;height:80px;"/>
             </div>
-            <div class="col-sm-6 bg-info">
+            <div class="col-sm-6 ">
                 <h1 style="text-align:center;font-size:24px;"><b>كشف المهام</b></h1>
             </div>
-            <div class="col-sm-3 bg-info">
-                <h1 style="text-align:right;font-size:16px;"><b>MSIS</b></h1>
+            <div class="col-sm-3" >
+                <h1 style="text-align:center;font-size:16px;">
+                    <b>شركة ملتي سوليوشنز(حلول متعددة)</b>
+                    <br />
+                    <b>للاستثمار والتوريدات</b>
+                    <br />
+                    <b>
+                        Multi Solutions for Investment
+                    </b>
+                    <br />
+                    <b>
+                        & Supplies
+                    </b>
+                </h1>
             </div>
+        </div>
+        <div class="flex-container">
+            <span id="dtToday" style="text-align:right">@DateTime.Today.ToString("dd/MM/yyyy")</span>
         </div>
         <div id="showWaiting"></div>
     </div>
@@ -52,7 +67,7 @@
             });
         });
         $.ajax({
-            url: '/Tasks/TaskSearch',
+            url: '/Tasks/TaskReportsSearch',
             type: 'Get',
             success: function (response) {
                 $('#divCriteria').html(response);

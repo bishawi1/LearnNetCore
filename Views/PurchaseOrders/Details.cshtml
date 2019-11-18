@@ -1,0 +1,95 @@
+﻿@model PurchaseOrderDetailsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div>
+    <a class="btn btn-outline-secondary" asp-action="PrintTaskDetails" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+</div>
+<div class="card mt-3">
+    <div class="card-header">
+        <h3 class="text-center">Purchase Order Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="PurchaseOrderCode-addon" class="col-sm-3 input-group-text">Order No.</span>
+                    <span class="form-control col-sm-4" aria-describedby="PurchaseOrderCode-addon"><h5>@Model.PurchaseOrderCode</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="PurchaseOrderDate-addon" class="col-sm-3 input-group-text">Date</span>
+                    <span class="form-control col-sm-6" aria-describedby="PurchaseOrderDate-addon"><h5>@Model.PurchaseOrderDate.ToString("dd/MM/yyyy")</h5></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="SupplierName-addon" class="col-sm-3 input-group-text">Supplier</span>
+                    <span class="form-control col-sm-6" aria-describedby="SupplierName-addon"><h5>@Model.SupplierName</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="CurrencyName-addon" class="col-sm-3 input-group-text">Currency</span>
+                    <span class="form-control col-sm-6" aria-describedby="CurrencyName-addon"><h5>@Model.CurrencyName</h5></span>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="bg-light col-sm-12  ">
+            
+            <H3 class="card-title text-center">Purchase Order Items</H3></div>
+            @if (Model.OrderItems.Any())
+            {
+                <table class="table  border table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Item</th>
+                            <th>QNT.</th>
+                            <th>Unit</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                        </tr>
+                    </thead>
+                    @foreach (var orderDetails in Model.OrderItems)
+                    {
+                        <tr>
+                            <td>
+                                <span><h5>@orderDetails.ItemName</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@orderDetails.QNT</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@orderDetails.ItemUnitName</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@orderDetails.UnitPrice</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@orderDetails.TotalPrice</h5></span>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <h5 class="card-title">none at the moment</h5>
+            }
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="text-center mr-sm-2">
+            <a asp-action="Edit" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
+            <a asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" style="width:auto;" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i> Cancel</a>
+        </div>
+    </div>
+</div>
+

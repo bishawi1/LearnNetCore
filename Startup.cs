@@ -62,6 +62,10 @@ namespace MSIS
             services.AddScoped<SQLProjectRepository>();
             services.AddScoped<SQLCustomerRepository>();
             services.AddScoped<SQLTasksRepository>();
+            services.AddScoped<SQLSupplierRepository>();
+            services.AddScoped<SQLPurchaseOrderRepository>();
+            services.AddScoped<SQLSettingsRepository>();
+            services.AddScoped<SQLOffersRepository>();
 
         }
         public Startup(IConfiguration config)

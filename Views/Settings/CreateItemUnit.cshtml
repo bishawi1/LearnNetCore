@@ -1,0 +1,27 @@
+﻿@model ItemUnit
+@{
+    ViewBag.Title = "Create";
+}
+
+<h1>Create</h1>
+
+<form method="post" class="mt-3">
+    <div class="card mt-3">
+        <div class="card-header card-title text-center"><h5>Add New Item Unit</h5></div>
+        <div class="card-body ">
+
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="ItemUnitName-addon">Code</span>
+                <input asp-for="ItemUnitName" class="form-control col-sm-10" placeholder="Name" aria-describedby="ItemUnitName-addon" />
+                <span asp-validation-for="ItemUnitName" class="text-danger"></span>
+            </div>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+        </div>
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-outline-primary" style="width:auto"><i class="fa fa-save"> Save </i></button>
+            <a asp-controller="Settings" asp-action="ListItemUnit" style="width:auto" class="btn btn-outline-danger"><i class="fa fa-times "></i> Cancel</a>
+        </div>
+    </div>
+
+</form>

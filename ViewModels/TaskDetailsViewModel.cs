@@ -42,7 +42,7 @@ namespace MSIS.ViewModels
         public string strGroupBy { get; set; }
 
         public List<EmployeesInTaskViewModel> TaskTeam { get; set; }
-
+        public List<ViewModels.TaskActionDetailsViewModel> TaskActions { get; set; }
 
     }
 }

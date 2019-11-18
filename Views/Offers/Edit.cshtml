@@ -1,0 +1,513 @@
+﻿@model EditOfferViewModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<!----------------------Confirm Delete -->
+<div class="modal fade" id="dlgConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalLabel">title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span><h5 class="card-text">Are you sure you want to delete?</h5></span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> cancel</button>
+                <button id="btnSave" data-dismiss="modal" onclick="DeleteItem()" type="button" class="btn btn-outline-danger" style="width:auto;"><i class="fa fa-trash"></i> Delete </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a class="btn btn-outline-secondary" asp-action="ListOffers" asp-controller="Offers" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+</div>
+<!----------------------Confirmation-->
+<div class="modal fade" id="dlgConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalLabel">title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span><h5 class="card-text">Are you sure you want to delete?</h5></span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> cancel</button>
+                <button id="btnSave" data-dismiss="modal" onclick="DeleteItem()" type="button" class="btn btn-outline-danger" style="width:auto;"><i class="fa fa-trash"></i> Delete </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-----------------------Modal        -->
+<div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div>
+                <input type="text" id="txtEditMode" value="false" />
+            </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Offer Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 row">
+                        <span class="input-group-text col-sm-3 " id="txtItem-addon">Id</span>
+                        <input id="txtId" class="form-control col-sm-9" disabled placeholder="Item" aria-describedby="txtId-addon" />
+                    </div>
+                    <span class="input-group-text col-sm-3 " id="txtItemId-addon">Item</span>
+                    @Html.DropDownList("txtItemId", new SelectList(Model.Items, "Id", "ItemName"), new { @id = "txtItemId", @class = "form-control" })
+
+                    @*<input id="txtUnit" class="form-control col-sm-9" placeholder="Unit" aria-describedby="txtUnit-addon" />*@
+                </div>
+                @*<div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtItem-addon">Item</span>
+                    <input id="txtItem" class="form-control col-sm-9" placeholder="Item" aria-describedby="txtItem-addon" />
+                </div>*@
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtUnit-addon">Unit</span>
+                    @Html.DropDownList("txtUnit", new SelectList(Model.ItemUnits, "Id", "ItemUnitName"), new { @id = "txtUnit", @class = "form-control" })
+
+                    @*<input id="txtUnit" class="form-control col-sm-9" placeholder="Unit" aria-describedby="txtUnit-addon" />*@
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtQnt-addon">Qnt</span>
+                    <input id="txtQnt" type="number" class="form-control col-sm-9" placeholder="Qnt" aria-describedby="txtQnt-addon" />
+                    <span id="errQNT" class="text-danger"></span>
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtPrice-addon">Price</span>
+                    <input id="txtPrice" type="number" class="form-control col-sm-9" placeholder="Price" aria-describedby="txtPrice-addon" />
+                    <span id="errPrice" class="text-danger"></span>
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtTotal-addon">Total Price</span>
+                    <input id="txtTotal" readonly class="form-control col-sm-9" placeholder="Total" aria-describedby="txtTotal-addon" />
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtNotes-addon">Notes</span>
+                    <input id="txtNotes" class="form-control col-sm-9" placeholder="Notes" aria-describedby="txtNotes-addon" />
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close</button>
+                <button id="btnSaveAjax" type="button" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> save</button>
+
+
+                @*<button type="button" class="btn btn-success" id="btnSaveAjax" >Save</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+<!-----------------------Card-->
+<form method="post" class="mt-3">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h3 class="text-center">Offer Details</h3>
+        </div>
+        <div class="card-body">
+            <!--------------------- Main Data -->
+            <div class="flex-container">
+                <div class="input-group col-sm-6 row">
+                    <span class="input-group-text col-sm-3 " id="txtId-addon">Id</span>
+                    <input asp-for="Id" id="txtOfferId" class="form-control col-sm-4 " disabled placeholder="txtOfferId" aria-describedby="txtId-addon" />
+                    @*<input asp-for="PurchaseOrderDetails.PurchaseOrderCode" id="txtPurchaseOrderCode" class="form-control col-sm-4 " disabled placeholder="PurchaseOrderCode" aria-describedby="txtPurchaseOrderCode-addon" />
+                    <span asp-validation-for="PurchaseOrderDetails.Id" class="text-danger"></span>*@
+                </div>
+                <div class="input-group col-sm-6 row">
+                    <span class="input-group-text col-sm-3 " id="OfferDate-addon">Date</span>
+                    <input asp-for="OfferDate" id="txtOfferDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="OfferDate-addon" />
+                    <span asp-validation-for="OfferDate" class="text-danger"></span>
+                </div>
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Currency</span>
+                    @Html.DropDownListFor(x => Model.CurrencyId, new SelectList(Model.CurrencyList, "Id", "CurrencyName"), new { @id = "txtCurrencyId", @class = "form-control" })
+                    <span asp-validation-for="CurrencyId" class="text-danger"></span>
+                </div>
+
+
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Customer</span>
+                    @Html.DropDownListFor(x => Model.CustomerId, new SelectList(Model.Customers, "Id", "CustomerName"), new { @id = "txtCustomerId", @class = "form-control" })
+                    <span asp-validation-for="CustomerId" class="text-danger"></span>
+                </div>
+
+                <div class="input-group row col-sm-12">
+                    <span asp-for="OtherInformation" class="input-group-text col-sm-2 col-form-label" id="OtherInformation-addon">Description</span>
+                    <input id="txtOtherInformation" type="text" asp-for="OtherInformation" class="form-control" placeholder="Description" aria-describedby="OtherInformation-addon" />
+                    <span asp-validation-for="OtherInformation" class="text-danger"></span>
+                </div>
+
+                <div class="form-group row">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                </div>
+                <div class="card-footer">
+                    <div class="text-center mr-sm-2">
+                        <button onclick="saveOffer()" style="width:auto;" type="button" class="btn btn-outline-primary"><i class="fa fa-save"></i> Update</button>
+                        <a style="width:auto;" asp-action="ListOffers" asp-controller="Offers" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i>Cancel</a>
+                    </div>
+                </div>
+                <!-------------------- Items -->
+                <div class="card mt-3 col-12">
+
+                    <div class="card-header">
+                        <div class="flex-container">
+                            <div class="col-11"><h5 class="card-title"> Offer Items</h5></div>
+                            <div class="col-1 "> <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
+                        </div>
+                        @*<button id="btnEditItem" type="button" class="btn btn-primary"  style="width:auto;">
+                                <i class="fa fa-edit"></i>
+                            </button>
+
+                            <button id="btnDeleteItem" class="btn btn-danger" style="width:auto"><i class="fa fa-trash"></i></button>*@
+                    </div>
+                    <div class="card-body">
+                        <div id="OrderItems" class="col-12">
+                            <table id="tblItemDetails" class="table table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Item</th>
+                                        <th style="visibility:hidden;">ItemUnitId</th>
+                                        <th>Unit</th>
+                                        <th>Qnt.</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Price</th>
+                                        <th>Description</th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.OfferItems)
+                                    {
+                                        <tr>
+                                            <td>@item.Id</td>
+                                            <td>@item.ItemName</td>
+                                            <td>@item.ItemUnitId</td>
+                                            <td>@item.ItemUnitName</td>
+                                            <td>@item.QNT</td>
+                                            <td>@item.UnitPrice</td>
+                                            <td>@item.TotalPrice</td>
+                                            <td>@item.Description</td>
+                                            <td>
+                                                <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.Id) style='width:auto'><i class='fa fa-edit'></i></button>
+                                                @*<form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
+                                                    <span id="confirmDeleteSpan_@item.Id" style="display:none">
+                                                        <span>Are you sure you want to delete?</span>
+                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                                                        <a href="#" class="btn btn-primary"
+                                                           onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                                                    </span>
+                                                    <span id="deleteSpan_@item.Id">*@<form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
+                                                    <span id="confirmDeleteSpan_@item.Id" style="display:none">
+                                                        <span></span>
+                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
+                                                        <a href="#" class="btn btn-primary"
+                                                           onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
+                                                    </span>
+                                                    <span id="deleteSpan_@item.Id">
+                                                        <form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
+                                                            <span id="confirmDeleteSpan_@item.Id" style="display:none">
+                                                                <span></span>
+                                                                <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
+                                                                <a href="#" class="btn btn-primary"
+                                                                   onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
+                                                            </span>
+                                                            <span id="deleteSpan_@item.Id">
+                                                                <form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
+                                                                    <span id="confirmDeleteSpan_@item.Id" style="display:none">
+                                                                        <span></span>
+                                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
+                                                                        <a href="#" class="btn btn-primary"
+                                                                           onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
+                                                                    </span>
+                                                                    <span id="deleteSpan_@item.Id">
+                                                                        <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                                                                           onclick="confirmDelete('@item.Id')"><i class="fa fa-trash"></i></a>
+                                                                        @*</span>
+                                                                            </form>*@
+                                                                    </span>
+                                                                </form>
+                                                            </span>
+                                                        </form>
+                                                    </span>
+                                                </form>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</form>
+
+@section Scripts{
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+
+    <script>
+        InitDatepicker();
+
+        //---------------- Ready
+        $(document).ready(function () {
+            // -------------  General
+            $('#txtEditMode').val('true');
+            $('#txtEditMode').hide();
+            $('#errQNT').hide();
+            $('#errPrice').hide();
+
+            var table = $('#tblItemDetails').DataTable({
+                columnDefs: [
+                    { "name": "ItemUnitId", "targets": 2, visible: false }
+                ]
+            });
+
+            //------------- Add Item
+            $('#btnAddItem').on('click', function () {
+                $('#txtEditMode').val('false');
+                $('#txtItem').val('');
+                $('#txtUnit').val('');
+                $('#txtQnt').val(0);
+                $('#txtPrice').val(0);
+                $('#txtTotal').val(0);
+                $('#Notes').val(0);
+                $('#basicExampleModal').modal('show')
+            });
+
+            $('#btnSaveAjax').click(function () {
+                if ($('#txtEditMode').val() == 'true') {
+                        $.post('/PurchaseOrders/EditItem',
+                            {
+                                Id: $('#txtId').val(),
+                                Description: $('#txtNotes').val(),
+                                ItemName: $('#txtItem').val(),
+                                ItemUnitId: $('#txtUnit').val(),
+                                QNT: $('#txtQnt').val(),
+                                PuchaseOrderId: $('#txtOfferId').val(),
+                                UnitPrice: $('#txtPrice').val()
+                            },
+                            function (response, status) {
+                                BuildItemsTable(response);
+                            }
+                        );
+                    } else {
+                        $.post('/PurchaseOrders/AddItem',
+                            {
+                                Id: $('#txtId').val(),
+                                Description: $('#txtNotes').val(),
+                                ItemName: $('#txtItem').val(),
+                                ItemUnitId: $('#txtUnit').val(),
+                                QNT: $('#txtQnt').val(),
+                                PuchaseOrderId: $('#txtOfferId').val(),
+                                UnitPrice: $('#txtPrice').val()
+                            },
+                            function (response, status) {
+                                BuildItemsTable(response);
+                            }
+                        );
+                    }
+                }
+            );
+
+
+        });
+
+        //----------------- Render Table
+        function BuildItemsTable(response) {
+            var i;
+            var strResult = "";
+            strResult = '<table id="tblItemDetails" class="table table-hover">';
+            strResult = strResult + '<thead class="thead-dark">';
+            strResult += "<tr>";
+            strResult += "<th>Id</th>";
+            strResult += "<th>Item</th>";
+            strResult += "<th style='visibility:hidden;'>ItemUnitId</th>";
+            strResult += "<th>Unit</th>";
+            strResult += "<th>Qnt.</th>";
+            strResult += "<th>Unit Price</th>";
+            strResult += "<th>Total Price</th>";
+            strResult += "<th>Description</th>";
+            strResult += "<th style='width:50px;'></th>";
+            strResult += "</tr>";
+            strResult += "</thead>";
+            strResult += "<tbody>";
+
+            var text = "";
+            for (i = 0; i < response.length; i++) {
+                strResult += "<tr>";
+                strResult += "<td>" + response[i].Id + "</td>";
+                strResult += "<td>" + response[i].ItemName + "</td>";
+                strResult += "<td>" + response[i].ItemUnitId + "</td>";
+                strResult += "<td>" + response[i].ItemUnitName + "</td>";
+                strResult += "<td>" + response[i].QNT + "</td>";
+                strResult += "<td>" + response[i].UnitPrice + "</td>";
+                strResult += "<td>" + response[i].TotalPrice + "</td>";
+                strResult += "<td>" + response[i].Description + "</td>";
+                strResult += "<td>";
+                strResult += "<button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(" + response[i].Id + ") style = 'width:auto' > <i class='fa fa-edit'></i></button > ";
+                //strResult += "<form asp-action='DeleteCustomer' asp-route-Id='" + response[i].Id + "' method='post'>";
+                //strResult += "<span id='confirmDeleteSpan_" + response[i].Id + "' style='display:none'>";
+                //strResult += "                <span>Are you sure you want to delete?</span>";
+                //strResult += "                <button type='submit' class='btn btn-danger'><i class='fa fa-check-circle'></i>Yes</button>";
+                //strResult += "                <a href='#' class='btn btn-primary";
+                //strResult += "                   onclick='confirmDelete('" + response[i].Id + "',false)'><i class='fa fa-times-circle'></i> No</a>";
+                //strResult += "             </span>";
+                //strResult += "            <span id='deleteSpan_" + response[i].Id + ">'";
+                strResult += "                <Button Type='Button' class='btn btn-outline-danger rounded-circle btn-sm' style='width:auto'";
+                strResult += "                    onclick=confirmDelete(" + response[i].Id + ")><i class='fa fa-trash'></i></a>";
+                //strResult += "        </span >";
+                //strResult += "    </form >";
+                strResult += "</td>";
+                strResult += "</tr>";
+            };
+            strResult += "</tbody>";
+            strResult += "</table>";
+            console.log(strResult);
+            $('#OrderItems').html(strResult);
+            var table = $('#tblItemDetails').DataTable({
+                columnDefs: [
+                    { "name": "ItemUnitId", "targets": 2, visible: false }
+                ]
+            });
+            return strResult;
+        };
+
+        //----------------- Edit order Items
+        function EditItem(ItemId) {
+            $.get('/PurchaseOrders/getItem',
+                { Id: ItemId },
+                function (data, status) {
+                    $('#txtEditMode').val('true');
+                    $('#txtId').val(data.Id);
+                    $('#txtItem').val(data.ItemName);
+                    $('#txtUnit').val(data.ItemUnitId);
+                    $('#txtQnt').val(data.QNT);
+                    $('#txtPrice').val(data.UnitPrice);
+                    $('#txtTotal').val(data.TotalPrice);
+                    $('#txtNotes').val(data.Description);
+
+                    $('#basicExampleModal').modal('show')
+                }
+            );
+        };
+        //----------------- validate Item
+        function validateItem() {
+            var isValid = false;
+            if ($.isNumeric($('#txtPrice').val())) {
+                if ($.isNumeric($('#txtQnt').val())) {
+                    isValid = true;
+                };
+            };
+            alert(isValid);
+            return isValid;
+        }
+
+        //---------------Confirm Item Delete
+        function confirmDelete(ItemId) {
+            $('#txtDeleteItemID').val(ItemId);
+            $('#dlgConfirmDelete').modal('show');
+        };
+
+        //-------------- Delete Item Button
+        function DeleteItem() {
+            $.post('/PurchaseOrders/DeleteItem',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    BuildItemsTable(response);
+                }
+            );
+        };
+        //------------------- Dialog input Validation
+        //------------------- Validate QNT
+        $('#txtQnt').focusout(function () {
+
+            if ($.isNumeric($('#txtQnt').val())) {
+                $('#errQNT').hide();
+                if ($.isNumeric($('#txtPrice').val())) {
+                    $('#txtTotal').val($('#txtPrice').val() * $('#txtQnt').val())
+                };
+            } else {
+                $('#errQNT').text('not Numeric Value?');
+                $('#errQNT').show();
+
+            };
+        });
+        //------------------- Validate Price
+        $('#txtPrice').focusout(function () {
+
+            if ($.isNumeric($('#txtPrice').val())) {
+                $('#errPrice').hide();
+                if ($.isNumeric($('#txtQnt').val())) {
+                    $('#txtTotal').val($('#txtPrice').val() * $('#txtQnt').val())
+                };
+            } else {
+                $('#errPrice').text('not Numeric Value?');
+                $('#errPrice').show();
+
+            };
+        });
+        //------------------------------- save Offer
+            function saveOffer () {
+                if ($.isNumeric($('#txtOfferId').val())) {
+                    if (true) {
+                        $.post('/Offers/EditOffer',
+                            {
+                                Id: $('#txtOfferId').val(),
+                                OfferDate: $('#txtOfferDate').val(),
+                                CustomerId: $('#txtCustomerId').val(),
+                                CurrencyId: $('#txtCurrencyId').val(),
+                                Notes: $('#txtOtherInformation').val()
+                            },
+                            function (response, status) {
+                                BuildItemsTable(response);
+                            }
+                        );
+                    } else {
+                        $.post('/PurchaseOrders/AddItem',
+                            {
+                                Id: $('#txtId').val(),
+                                Description: $('#txtNotes').val(),
+                                ItemName: $('#txtItem').val(),
+                                ItemUnitId: $('#txtUnit').val(),
+                                QNT: $('#txtQnt').val(),
+                                PuchaseOrderId: $('#txtOfferId').val(),
+                                UnitPrice: $('#txtPrice').val()
+                            },
+                            function (response, status) {
+                                BuildItemsTable(response);
+                            }
+                        );
+                    }
+                }
+            };
+
+    </script>
+}

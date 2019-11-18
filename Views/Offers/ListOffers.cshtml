@@ -1,0 +1,64 @@
+﻿@model List<OfferViewModel>
+@{
+    ViewData["Title"] = "List Offers";
+}
+<div class="flex-container">
+    <div class="column">
+        <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="Offers" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
+    </div>
+</div>
+<div style=" border:solid 1px black; padding:3px;">
+    <table class="table table-hover" id="myTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Id</th>
+                <th>Offer Date</th>
+                <th>Customer</th>
+                <th>Currency</th>
+                <th>Total</th>
+                <th style="width:30px;"></th>
+                <th style="width:30px;"></th>
+
+            </tr>
+        </thead>
+
+
+
+        @foreach (var offer in Model)
+        {
+
+            <tr>
+                <td>@offer.Id</td>
+                <td>@offer.OfferDate.ToString("dd/MM/yyyy")</td>
+                <td>@offer.CustomerName</td>
+                <td>@offer.CurrencyName</td>
+                <td>0</td>
+                <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Offers" asp-route-Id="@offer.Id"><i class="fa fa-eye"></i></a></td>
+                <td>
+                    <form asp-action="DeleteCustomer" asp-route-Id="@offer.Id" method="post">
+                        <span id="confirmDeleteSpan_@offer.Id" style="display:none">
+                            <span>Are you sure you want to delete?</span>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                            <a href="#" class="btn btn-primary"
+                               onclick="confirmDelete('@offer.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                        </span>
+                        <span id="deleteSpan_@offer.Id">
+                            <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                               onclick="confirmDelete('@offer.Id',true)"><i class="fa fa-trash"></i></a>
+                        </span>
+
+                    </form>
+                </td>
+            </tr>
+
+        }
+
+
+    </table>
+</div>
+@section Scripts{
+
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+}

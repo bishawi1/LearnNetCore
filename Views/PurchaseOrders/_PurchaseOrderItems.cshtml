@@ -1,0 +1,47 @@
+﻿@model List<PurchaseOrderItemsViewModel>
+<div class="card mt-3 col-12">
+
+    <div class="card-header">
+        <h5 class="card-title"> Purchase Order Items</h5>
+        <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;">
+            <i class="fa fa-plus-circle"></i>
+        </button>
+        <button id="btnEditItem" type="button" class="btn btn-primary" style="width:auto;">
+            <i class="fa fa-edit"></i>
+        </button>
+
+        <button id="btnDeleteItem" class="btn btn-danger" style="width:auto"><i class="fa fa-trash"></i></button>
+    </div>
+    <div class="card-body">
+        <table id="tblItemDetails" class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Item</th>
+                    <th style="visibility:hidden;">ItemUnitId</th>
+                    <th>Unit</th>
+                    <th>Qnt.</th>
+                    <th>Unit Price</th>
+                    <th>Total Price</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.ItemName</td>
+                        <td>@item.ItemUnitId</td>
+                        <td>@item.ItemUnitName</td>
+                        <td>@item.QNT</td>
+                        <td>@item.UnitPrice</td>
+                        <td>@item.TotalPrice</td>
+                        <td>@item.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

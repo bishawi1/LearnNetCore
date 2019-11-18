@@ -1,0 +1,104 @@
+﻿@model OfferDetailsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div>
+    <a class="btn btn-outline-secondary" asp-action="PrintTaskDetails" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+</div>
+<div class="card mt-3">
+    <div class="card-header">
+        <h3 class="text-center">Offer Details</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="Id-addon" class="col-sm-3 input-group-text">Id</span>
+                    <span class="form-control col-sm-4" aria-describedby="Id-addon"><h5>@Model.Id</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="OfferDate-addon" class="col-sm-3 input-group-text">Date</span>
+                    <span class="form-control col-sm-6" aria-describedby="OfferDate-addon"><h5>@Model.OfferDate.ToString("dd/MM/yyyy")</h5></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="CustomerName-addon" class="col-sm-3 input-group-text">Customer</span>
+                    <span class="form-control col-sm-6" aria-describedby="CustomerName-addon"><h5>@Model.CustomerName</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="CurrencyName-addon" class="col-sm-3 input-group-text">Currency</span>
+                    <span class="form-control col-sm-6" aria-describedby="CurrencyName-addon"><h5>@Model.CurrencyName</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="OtherInformation-addon" class="col-sm-3 input-group-text">Other Information</span>
+                    <span class="form-control col-sm-6" aria-describedby="OtherInformation-addon"><h5>@Model.OtherInformation</h5></span>
+                </div>
+            </div>
+        </div>
+        <br />
+
+    <div class="row">
+        <div class="bg-light col-sm-12  ">
+
+            <H3 class="card-title text-center">Offer Items</H3>
+        </div>
+        @if (Model.OfferItems.Any())
+        {
+            <table class="table  border table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Item</th>
+                        <th>QNT.</th>
+                        <th>Unit</th>
+                        <th>Unit Price</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                @foreach (var item in Model.OfferItems)
+                {
+                    <tr>
+                        <td>
+                            <span><h5>@item.ItemName</h5></span>
+                        </td>
+                        <td>
+                            <span><h5>@item.QNT</h5></span>
+                        </td>
+                        <td>
+                            <span><h5>@item.ItemUnitName</h5></span>
+                        </td>
+                        <td>
+                            <span><h5>@item.UnitPrice</h5></span>
+                        </td>
+                        <td>
+                           @* <span><h5>@item.TotalPrice</h5></span>*@
+                        </td>
+                    </tr>
+                }
+            </table>
+
+        }
+        else
+        {
+            <h5 class="card-title">none at the moment</h5>
+        }
+    </div>
+    </div>
+    <div class="card-footer">
+        <div class="text-center mr-sm-2">
+            <a asp-action="Edit" asp-controller="Offers" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
+            <a asp-action="ListOffers" asp-controller="Offers" style="width:auto;" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i> Cancel</a>
+        </div>
+    </div>
+</div>
+

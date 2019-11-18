@@ -13,6 +13,8 @@ namespace MSIS.Models
         public int Id { get; set; }
         [Required]
         public int TaskId { get; set; }
+        public int TaskStatusId { get; set; }
+        public int CurrentTaskStatusId { get; set; }
         public DateTime ActionDate { get; set; }
         [Column(TypeName ="nvarchar(max)")]
         public string Description { get; set; }

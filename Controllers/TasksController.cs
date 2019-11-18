@@ -147,7 +147,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 return View(model);
             }
 
@@ -166,7 +166,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 return View(model);
             }
 
@@ -185,7 +185,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 return View(model);
             }
 
@@ -204,7 +204,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 return View(model);
             }
 
@@ -223,7 +223,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 return View(model);
             }
 
@@ -242,7 +242,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 return View(model);
             }
 
@@ -269,7 +269,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 return PartialView("_ListTasks", model);
             }
 
@@ -401,6 +401,12 @@ namespace MSIS.Controllers
             var model = tasksRepository.getTaskDetails(Id);
             return View(model);
         }
+        [HttpGet]
+        public IActionResult PrintTaskDetails(int Id)
+        {
+            var model = tasksRepository.getTaskDetails(Id);
+            return View(model);
+        }
         [HttpPost]
         public IActionResult StartTask(EditTaskStatusViewModel model)
         {
@@ -408,6 +414,7 @@ namespace MSIS.Controllers
             {
                 model.TaskStatusID =2;
                 model.UserName = User.Identity.Name;
+                model.CurrentTaskStatusId = 1;
                 tasksRepository.EditTaskStatus(model);
                 return RedirectToAction("ListTasks", "Tasks");
             }
@@ -423,6 +430,7 @@ namespace MSIS.Controllers
             {
                 model.TaskStatusID = 4;
                 model.UserName = User.Identity.Name;
+                model.CurrentTaskStatusId =2;
                 tasksRepository.EditTaskStatus(model);
                 return RedirectToAction("ListTasks", "Tasks");
             }
@@ -447,6 +455,7 @@ namespace MSIS.Controllers
 
                 }
                 model.UserName = User.Identity.Name;
+                model.CurrentTaskStatusId = 4;
                 tasksRepository.EditTaskStatus(model);
                 return RedirectToAction("ListTasks", "Tasks");
             }
@@ -605,6 +614,57 @@ namespace MSIS.Controllers
             return PartialView("_TaskSearch", model);
 
         }
+        [HttpGet]
+        public IActionResult TaskReportsSearch(string strGroupBy)
+        {
+            AppDBContext context = tasksRepository.getContext();
+            MSIS.ViewModels.SearchTaskReportsViewModel model = new ViewModels.SearchTaskReportsViewModel();
+            SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
+            SQLProjectRepository projectRepository = new SQLProjectRepository(context);
+            SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
+            SQLBranchRepository branchRepository = new SQLBranchRepository(context);
+            model.Projects = projectRepository.GetAllProjects().ToList();
+            model.Branches = branchRepository.GetAllBranches().ToList();
+            model.Branches.Insert(0, new Branch
+            {
+                Id = -1,
+                Name = "Select Branch..."
+            });
+
+            model.TaskStatsus = tasksRepository.GetAllTaskStatus().ToList();
+            model.TaskStatsus.Insert(0, new Models.TaskStatus
+            {
+                Id = -1,
+                StatusName = "Select Status..."
+            });
+
+            model.Projects.Insert(0, new Project
+            {
+                Id = -1,
+                ProjectName = "Select Project..."
+            });
+            model.Employees = employeeRepository.GetAllEmployees().ToList();
+            model.Employees.Insert(0, new Employee
+            {
+                Id = -1,
+                Name = "Select ..."
+            });
+
+            model.FromTaskDate = new DateTime(2019, 1, 1);
+            model.ToTaskDate = DateTime.Today;
+            if (strGroupBy == null)
+            {
+                model.strGroupBy = "";
+            }
+            else
+            {
+                model.strGroupBy = strGroupBy;
+            }
+
+            return PartialView("_TaskReportsSearch", model);
+
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> TaskSearchAsync(int TaskOwnerId,int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, string strGroupBy)
@@ -624,12 +684,63 @@ namespace MSIS.Controllers
             }
             else
             {
-                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId).ToList();
-                return PartialView("_ListTasks", new JsonResult(model));
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId, strGroupBy).ToList();
+                return PartialView("_ListTasks",  model);
             }
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> TaskReportsSearchAsync(int TaskOwnerId, int TaskResponsibleId, int ProjectId, int TaskStatusId, int BranchId, DateTime FromTaskDate, DateTime ToTaskDate, string strGroupBy)
+        {
+            MSIS.ViewModels.SearchTaskReportsViewModel criteria = new SearchTaskReportsViewModel();
+            criteria.ProjectId = ProjectId;
+            criteria.TaskOwnerId = TaskOwnerId;
+            criteria.TaskResponsibleId = TaskResponsibleId;
+            criteria.FromTaskDate = FromTaskDate;
+            criteria.ToTaskDate = ToTaskDate;
+            criteria.BranchId = BranchId;
+            criteria.TaskStatusId = TaskStatusId;
+            criteria.strGroupBy = strGroupBy;
+            var user = await userManager.FindByNameAsync(User.Identity.Name);
+            if (await userManager.IsInRoleAsync(user, "Admin"))
+            {
+                var model = tasksRepository.getAllTaskDetails(criteria).ToList();
+                return PartialView("_ListTasksReport", model);
+            }
+            else
+            {
+                var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,criteria).ToList();
+                return PartialView("_ListTasksReport", model);
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteTaskAsync(int Id)
+        {
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            Tasks purchase = tasksRepository.Delete(Id);
+            if (purchase == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+                var user = await userManager.FindByNameAsync(User.Identity.Name);
+                if (await userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    var model = tasksRepository.getAllTaskDetails().ToList();
+                    return RedirectToAction("ListTasks", model);
+                }
+                else
+                {
+                    var model = tasksRepository.getEmployeeTaskDetails(user.EmployeeId, "").ToList();
+                    return RedirectToAction("ListTasks", model);
+                }
+
+            }
+        }
 
     }
 }

@@ -15,7 +15,7 @@
                 <h1 class="display-2"> MSIS </h1>
                 <h3>Multi Solutions for Investment & Supplies</h3>
                 <button class="btn btn-outline-light btn-lg" style="width:auto;">View Demo</button>
-                <button class="btn btn-primary btn-lg" style="width:auto;">Get Started</button>
+                <button id="btnGetStarted" class="btn btn-primary btn-lg" style="width:auto;">Get Started</button>
             </div>
         </div>
         <div class="carousel-item">
@@ -247,6 +247,12 @@
     </div>
 </footer>
 
-
+<script>
+    $(document).ready(function () {
+        $('#btnGetStarted').on('click', function () {
+            $('#mnuTMS').addClass('collapse hide');
+        });
+    });
+</script>
 
 

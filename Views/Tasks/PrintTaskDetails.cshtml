@@ -1,0 +1,206 @@
+﻿@model TaskDetailsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div>
+    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+</div>
+<div id="printArea">
+    <div class="flex-container " style="border-bottom:3px solid black;">
+        <div class="col-sm-3">
+            <img src="~/images/msisLogo.jpg" style="width:80px;height:80px;" />
+        </div>
+        <div class="col-sm-6 ">
+            <h1 style="text-align:center;font-size:24px;"><b>Task Details</b></h1>
+        </div>
+        <div class="col-sm-3">
+            <h1 style="text-align:center;font-size:16px;">
+                <b>شركة ملتي سوليوشنز(حلول متعددة)</b>
+                <br />
+                <b>للاستثمار والتوريدات</b>
+                <br />
+                <b>
+                    Multi Solutions for Investment
+                </b>
+                <br />
+                <b>
+                    & Supplies
+                </b>
+            </h1>
+        </div>
+    </div>
+    <div class="flex-container">
+        <span id="dtToday" style="text-align:right">@DateTime.Today.ToString("dd/MM/yyyy")</span>
+    </div>
+
+    <div class="card mt-3">
+        @*<div class="card-header">
+            <h3 class="text-center">Task Details</h3>
+
+
+        </div>*@
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="Id-addon" class="col-sm-3 input-group-text">Task Id</span>
+                        <span class="form-control col-sm-4" aria-describedby="Id-addon"><h5>@Model.Id</h5></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="Id-addon" class="col-sm-3 input-group-text">Date</span>
+                        <span class="form-control col-sm-6" aria-describedby="Id-addon"><h5>@Model.TaskDate.ToString("dd/MM/yyyy")</h5></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="TaskStartDate-addon" class="col-sm-3 input-group-text">Strat Date</span>
+                        <span class="form-control col-sm-6" aria-describedby="TaskStartDate-addon"><h5>@Model.TaskStartDate.ToString("dd/MM/yyyy")</h5></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="TaskEndDate-addon" class="col-sm-3 input-group-text">End Date</span>
+                        <span class="form-control col-sm-6" aria-describedby="TaskEndDate-addon"><h5>@Model.TaskEndDate.ToString("dd/MM/yyyy")</h5></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mt-sm-3">
+                <span id="taskSubject-addon" class="col-sm-2 input-group-text">Subject</span>
+                <span class="form-control col-sm-8" aria-describedby="taskSubject-addon"><h5>@Model.TaskSubject</h5></span>
+            </div>
+
+            <div class="input-group mt-sm-3">
+                <span id="Responsible-addon" class="col-sm-2 input-group-text">Responsible</span>
+                <span class="form-control col-sm-8" aria-describedby="Responsible-addon"><h5>@Model.TaskResponsibleName</h5></span>
+            </div>
+
+            <div class="input-group mt-sm-3">
+                <span id="Project-addon" class="col-sm-2 input-group-text">Project</span>
+                <span class="form-control col-sm-8" aria-describedby="Project-addon"><h5>@Model.ProjectName</h5></span>
+            </div>
+            <div class="input-group mt-sm-3">
+                <span id="Description-addon" class="col-sm-2 input-group-text">Description</span>
+                <span class="form-control col-sm-8" aria-describedby="Description-addon"><h5>@Model.Description</h5></span>
+            </div>
+            <div class="input-group mt-sm-3">
+                <span id="OtherInformation-addon" class="col-sm-2 input-group-text">More Information</span>
+                <span class="form-control col-sm-8" aria-describedby="OtherInformation-addon"><h5>@Model.OtherInformation</h5></span>
+            </div>
+
+        </div>
+        @*<div class="card-footer">
+                <div class="text-center mr-sm-2">
+                    <a asp-action="Edit" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
+                    <a asp-action="ListTasks" asp-controller="Tasks" style="width:auto;" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i> Cancel</a>
+                </div>
+            </div>*@
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <h4 class="card-title">Task Actions</h4>
+        </div>
+        <div class="card-body">
+            @if (Model.TaskTeam.Any())
+            {
+                <table class="table  border table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>New Status</th>
+                            <th>User Name</th>
+                        </tr>
+                    </thead>
+                    @foreach (var action in Model.TaskActions)
+                    {
+                        <tr>
+                            <td>
+                                <span><h5>@action.ActionDate.ToString("dd/MM/yyyy")</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@action.Description</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@action.CurrentTaskStatusName</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@action.TaskStatusName</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@action.UserName</h5></span>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <h5 class="card-title">none at the moment</h5>
+            }
+        </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
+
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <h4 class="card-title">Task Team </h4>
+        </div>
+        <div class="card-body">
+            @if (Model.TaskTeam.Any())
+            {
+                <table class="table table-light table-hover">
+
+
+                    @foreach (var employee in Model.TaskTeam)
+                    {
+                        <tr>
+                            <td>
+                                <h5 class="card-text">@employee.EmployeeName</h5>
+                            </td>
+                        </tr>
+
+                    }
+                </table>
+            }
+            else
+            {
+                <h5 class="card-title">none at the moment</h5>
+            }
+        </div>
+        @*<div class="card-footer">
+                <a asp-action="EditEmployeeInTask" asp-controller="Tasks" asp-route-TaskId="@Model.Id" class="btn btn-outline-primary" style="width:auto"><i class="fa fa-edit"></i> Add or Remove Employee</a>
+            </div>*@
+        <br />
+        <br />
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+
+    <script>
+
+        InitDatepicker();
+
+        $('#printReport').on('click', function () {
+            $('#printArea').printThis({
+                impoimportCSS: true
+            });
+        });
+
+    </script>
+}

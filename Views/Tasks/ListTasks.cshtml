@@ -1,22 +1,23 @@
-﻿@model List<MSIS.ViewModels.TaskDetailsViewModel>
+﻿@inject SignInManager<ApplicationUser> signInManager;
+@model List<MSIS.ViewModels.TaskDetailsViewModel>
 @{
     ViewBag.Title = "List Tasks";
 }
 
 <!-- Search -->
-    <div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
-        <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
-            <i class="fa fa-search"></i>
-            Search
-        </button>
-        <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
-        <br />
+<div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+        <i class="fa fa-search"></i>
+        Search
+    </button>
+    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+    <br />
 
-        <div class="collapse" id="divCriteria">
+    <div class="collapse" id="divCriteria">
 
 
-        </div>
     </div>
+</div>
 
 
 <div class="flex-container">
@@ -105,10 +106,16 @@
                         <td>@task.StatusName </td>
 
                     }
-
+                    @*@if (User.Identity.)*@
+                    @*{// && (User.IsInRole("Admin")))// || User.IsInRole("PowerUsers")) )
+                    }*@
+                    
                     <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Tasks" asp-route-Id="@task.Id"><i class="fa fa-eye"></i></a></td>
                     <td>
-                        <form asp-action="DeleteCustomer" asp-route-Id="@task.Id" method="post">
+                        @{ 
+                        if (User.IsInRole("Admin") || (User.Identity.Name == @task.TaskOwnerUserName))
+                        {
+                        <form asp-action="DeleteTaskAsync" asp-route-Id="@task.Id" method="post">
                             <span id="confirmDeleteSpan_@task.Id" style="display:none">
                                 <span>Are you sure you want to delete?</span>
                                 <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
@@ -121,6 +128,8 @@
                             </span>
 
                         </form>
+                            }
+                        }
                     </td>
                 </tr>
 
@@ -239,7 +248,7 @@
             });
         });
 
-                          //data:$('form').serialize(),// JSON.stringify(formData),
+                              //data:$('form').serialize(),// JSON.stringify(formData),
 
     </script>
 }

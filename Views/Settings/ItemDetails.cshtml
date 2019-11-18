@@ -1,0 +1,29 @@
+﻿@model ItemDetailsViewModels
+@{
+    ViewBag.Title = "Details";
+}
+
+
+
+<div class="card mt-3">
+    <div class="card-header text-center">
+        <h4 class="card-title"> Item Details</h4>
+    </div>
+    <div class="card-body">
+        <h5 class="card-text">Id : @Model.Id</h5>
+        <h5 class="card-text">Name :@Model.MainItemName</h5>
+        <h5 class="card-text">Main Item :@Model.MainItemName</h5>
+        <h5 class="card-text">Unit :@Model.ItemUnitName</h5>
+        <h5 class="card-text">Price :@Model.UnitPrice</h5>
+        <h5 class="card-text">Currency :@Model.CurrencyName</h5>
+
+        <h5 class="card-text">Other Information :@Model.OtherInformation</h5>
+
+    </div>
+    <div class="card-footer text-center">
+        <a asp-action="ListItems" asp-controller="Settings" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
+        <a asp-action="EditItem" asp-controller="Settings" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+
+    </div>
+</div>
+

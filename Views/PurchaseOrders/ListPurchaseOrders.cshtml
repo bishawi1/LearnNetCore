@@ -1,0 +1,64 @@
+﻿@model List<ListPurchaseOrderDetailsViewModel>
+@{
+    ViewData["Title"] = "ListPurchaseOrders";
+}
+    <div class="flex-container">
+        <div class="column">
+            <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="PurchaseOrders" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
+        </div>
+    </div>
+        <div style=" border:solid 1px black; padding:3px;">
+            <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Order No</th>
+                        <th>Date</th>
+                        <th>Supplier</th>
+                        <th>Currency</th>
+                        <th>Total Price</th>
+                        <th style="width:30px;"></th>
+                        <th style="width:30px;"></th>
+
+                    </tr>
+                </thead>
+
+
+
+                @foreach (var order in Model)
+                {
+
+                    <tr>
+                        <td>@order.PurchaseOrderCode</td>
+                        <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
+                        <td>@order.SupplierName</td>
+                        <td>@order.CurrencyName</td>
+                        <td>@order.TotalPrice</td>
+                        <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>
+                        <td>
+                            <form asp-action="DeleteCustomer" asp-route-Id="@order.Id" method="post">
+                                <span id="confirmDeleteSpan_@order.Id" style="display:none">
+                                    <span>Are you sure you want to delete?</span>
+                                    <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                                    <a href="#" class="btn btn-primary"
+                                       onclick="confirmDelete('@order.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                                </span>
+                                <span id="deleteSpan_@order.Id">
+                                    <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                                       onclick="confirmDelete('@order.Id',true)"><i class="fa fa-trash"></i></a>
+                                </span>
+
+                            </form>
+                        </td>
+                    </tr>
+
+                }
+
+
+            </table>
+        </div>
+        @section Scripts{
+
+            <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+            <script src="~/js/CustomScript.js"></script>
+            <script src="~/lib/printthis/printThis.js"></script>
+        }

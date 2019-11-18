@@ -10,6 +10,8 @@ namespace MSIS.ViewModels
         public int Id { get; set; }
         public DateTime TransactionDate { get; set; }
         public int TaskStatusID { get; set; }
+        public int CurrentTaskStatusId { get; set; }
+
         public string UserName { get; set; }
         public string TaskOperation { get; set; }
 

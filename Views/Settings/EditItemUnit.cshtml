@@ -1,0 +1,31 @@
+﻿@model ItemUnit
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+<form method="post" class="mt-3">
+    <div class="card mt-3">
+        <div class="card-header card-title text-center"><h5>Edit Item Unit Data</h5></div>
+        <div class="card-body ">
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="Id-addon">Id</span>
+                <input asp-for="Id" class="form-control col-sm-2" disabled placeholder="Id" aria-describedby="Id-addon" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="ItemUnitName-addon">Name</span>
+                <input asp-for="ItemUnitName" class="form-control col-sm-2" placeholder="Name" aria-describedby="ItemUnitName-addon" />
+                <span asp-validation-for="ItemUnitName" class="text-danger"></span>
+            </div>
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+        </div>
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> Save</button>
+            <a asp-action="ListItemUnit" asp-controller="Settings" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-times"></i> Cancel</a>
+        </div>
+    </div>
+</form>
