@@ -26,39 +26,39 @@
                 {
                     strProjectName = task.ProjectName;
                     <tr>
-                        <th colspan="7" >
+                        <th colspan="7">
                             <h1>@task.ProjectName</h1>
                         </th>
                     </tr>
                 }
             }
             else if (task.strGroupBy == "TaskOwnerName")
+            {
+                @if (strProjectName != task.TaskOwnerName)
                 {
-                    @if (strProjectName != task.TaskOwnerName)
-                    {
-                        strProjectName = task.TaskOwnerName;
-                            <tr>
-                                <th colspan = "7">
-                                    <h3 class="text-center"> @task.TaskOwnerName</h3>
-                                </th>
+                    strProjectName = task.TaskOwnerName;
+                    <tr>
+                        <th colspan="7">
+                            <h3 class="text-center"> @task.TaskOwnerName</h3>
+                        </th>
 
-                            </tr>
-                    }
+                    </tr>
                 }
+            }
 
             else if (task.strGroupBy == "TaskResponsibleName")
+            {
+                @if (strProjectName != task.TaskResponsibleName)
                 {
-                    @if (strProjectName != task.TaskResponsibleName)
-                    {
-                        strProjectName = task.TaskResponsibleName;
-                            <tr>
-                                <th colspan = "7">
-                                    <h3> @task.TaskResponsibleName</h3>
-                                </th>
+                    strProjectName = task.TaskResponsibleName;
+                    <tr>
+                        <th colspan="7">
+                            <h3> @task.TaskResponsibleName</h3>
+                        </th>
 
-                            </tr>
-                    }
+                    </tr>
                 }
+            }
 
             else
             {
@@ -67,71 +67,72 @@
                     @if (strProjectName != task.TaskStatusCode)
                     {
                         strProjectName = task.TaskStatusCode;
-                            <tr>
-                                <th colspan = "7">
-                                    <h3> @task.TaskStatusCode</h3>
-                                </th>
+                        <tr>
+                            <th colspan="7">
+                                <h3> @task.TaskStatusCode</h3>
+                            </th>
 
-                            </tr>
+                        </tr>
                     }
                 }
             }
 
-        <tr>
-            <td>@task.TaskStartDate</td>
-            <td>@task.TaskSubject</td>
-            <td>@task.TaskOwnerName</td>
-            <td>@task.TaskResponsibleName</td>
-            @if (task.TaskStatusId == 1)
-            {
-                <td class="bg-secondary text-center">@task.StatusName </td>
-            }
-            else if (task.TaskStatusId == 2)
-            {
-                <td class="bg-primary text-center">@task.StatusName </td>
-            }
-            else if (task.TaskStatusId == 3)
-            {
-                <td class="bg-danger text-center">@task.StatusName </td>
-            }
-            else if (task.TaskStatusId == 4)
-            {
-                <td class="bg-warning text-center">@task.StatusName </td>
-            }
-            else if (task.TaskStatusId == 5)
-            {
-                <td class="badge-success text-center">@task.StatusName </td>
-            }
-            else
-            {
-                <td>@task.StatusName </td>
+            <tr>
+                <td>@task.TaskStartDate</td>
+                <td>@task.TaskSubject</td>
+                <td>@task.TaskOwnerName</td>
+                <td>@task.TaskResponsibleName</td>
+                @if (task.TaskStatusId == 1)
+                {
+                    <td class="bg-secondary text-center">@task.StatusName </td>
+                }
+                else if (task.TaskStatusId == 2)
+                {
+                    <td class="bg-primary text-center">@task.StatusName </td>
+                }
+                else if (task.TaskStatusId == 3)
+                {
+                    <td class="bg-danger text-center">@task.StatusName </td>
+                }
+                else if (task.TaskStatusId == 4)
+                {
+                    <td class="bg-warning text-center">@task.StatusName </td>
+                }
+                else if (task.TaskStatusId == 5)
+                {
+                    <td class="badge-success text-center">@task.StatusName </td>
+                }
+                else
+                {
+                    <td>@task.StatusName </td>
 
-            }
+                }
 
-            <td><a class="btn btn-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Tasks" asp-route-Id="@task.Id"><i class="fa fa-info-circle"></i></a></td>
-            <td>
-                <form asp-action="DeleteCustomer" asp-route-Id="@task.Id" method="post">
-                    <span id="confirmDeleteSpan_@task.Id" style="display:none">
-                        <span>Are you sure you want to delete?</span>
-                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
-                        <a href="#" class="btn btn-primary"
-                           onclick="confirmDelete('@task.Id',false)"><i class="fa fa-times-circle"></i> No</a>
-                    </span>
-                    <span id="deleteSpan_@task.Id">
-                        <a href="#" class="btn btn-danger rounded-circle btn-sm" style="width:auto"
-                           onclick="confirmDelete('@task.Id',true)"><i class="fa fa-trash"></i></a>
-                    </span>
-
-
+                <td><a class="btn btn-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Tasks" asp-route-Id="@task.Id"><i class="fa fa-info-circle"></i></a></td>
+                <td>
+                    <form asp-action="DeleteCustomer" asp-route-Id="@task.Id" method="post">
+                        <span id="confirmDeleteSpan_@task.Id" style="display:none">
+                            <span>Are you sure you want to delete?</span>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                            <a href="#" class="btn btn-primary"
+                               onclick="confirmDelete('@task.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                        </span>
+                        <span id="deleteSpan_@task.Id">
+                            <a href="#" class="btn btn-danger rounded-circle btn-sm" style="width:auto"
+                               onclick="confirmDelete('@task.Id',true)"><i class="fa fa-trash"></i></a>
+                        </span>
 
 
 
-                </form>
-            </td>
-        </tr>
-
-    }
 
 
-        </table>
+                    </form>
+                </td>
+            </tr>
+
+        }
+
+
+    </table>
 </div>
+

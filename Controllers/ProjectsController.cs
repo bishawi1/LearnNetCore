@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using MSIS.ViewModels;
 using MSIS.Models;
+using System.Security.Claims;
+
 namespace MSIS.Controllers
 {
     public class ProjectsController : Controller
@@ -19,41 +22,101 @@ namespace MSIS.Controllers
             customersRepository = CustomersRepository;
             this.hostingEnvironment = hostingEnvironment;
         }
+
+        [HttpPost]
+        public IActionResult Delete(int Id)
+        {
+            string errorMessage = "";
+            errorMessage = projectsRepository.ValidateDeletProject(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            if (errorMessage == "")
+            {
+                Project project = projectsRepository.Delete(Id);
+                if (project == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                    //return new JsonResult("{Deleted:true,ErrorText:''}");
+                    List<Project> model = projectsRepository.GetAllProjects().ToList();
+                    return new JsonResult(model);
+
+                    //return PartialView("_PurchaseOrderItems", model);
+
+                }
+
+            }
+            else
+            {
+                return new JsonResult(errorMessage);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ValidateDelete(int Id)
+        {
+            string errorMessage = "";
+            errorMessage = projectsRepository.ValidateDeletProject(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            return new JsonResult(errorMessage);
+        }
+
         [HttpGet]
         public IActionResult ListProjects()
         {
-            var model = projectsRepository.getAllProjectDetails().ToList();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = projectsRepository.GetUserParentMenuPermission(userId, "projects");
+
+            ListProjectsViewModels model = projectsRepository.ListProjects();
+            model.userPermission = permission.UserPermissions[0];
+
             return View(model);
+            //var model = projectsRepository.getAllProjectDetails().ToList();
+            //return View(model);
         }
         [HttpGet]
         public IActionResult Details(int Id)
         {
+            ProjectDetailsViewModels model = new ProjectDetailsViewModels();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = projectsRepository.GetUserParentMenuPermission(userId, "projects");
 
-            Project model = projectsRepository.GetProject(Id);
-            Customer customer = customersRepository.GetCustomer(model.ProjectOwner);
+            if (permission.UserPermissions.Count > 0)
+            {
+                model.Permission = permission.UserPermissions[0];
+            }
+
+            Project project = projectsRepository.GetProject(Id);
+            Customer customer = customersRepository.GetCustomer(project.ProjectOwner);
             MSIS.ViewModels.ProjectDetailViewModel details = new ViewModels.ProjectDetailViewModel() {
-                Code = model.ProjectSerial.ToString() + "/" + model.ProjectYear.ToString() ,
-                Address=model.Address,
-                ProjectSerial=model.ProjectSerial,
-                ProjectYear=model.ProjectYear,
-                Id=model.Id,
+                Code = project.ProjectSerial.ToString() + "/" + project.ProjectYear.ToString() ,
+                Address=project.Address,
+                ProjectSerial=project.ProjectSerial,
+                ProjectYear=project.ProjectYear,
+                Id=project.Id,
                 CustomerName=customer.CustomerName,
                 Email=customer.Email,
                 MobileNo=customer.MobileNo,
-                OtheInformation=model.OtheInformation,
-                ProjectName=model.ProjectName,
-                ProjectOwner=model.ProjectOwner,
-                EndDate=model.EndDate,
-                StartDate=model.StartDate
+                OtheInformation=project.OtheInformation,
+                ProjectName=project.ProjectName,
+                ProjectOwner=project.ProjectOwner,
+                EndDate=project.EndDate,
+                StartDate=project.StartDate
             };
-
-            return View(details);
+            model.ProjectDetails = details;
+            return View(model);
         }
         [HttpGet]
         public IActionResult Create()
         {
             var project = new MSIS.ViewModels.CreateProjectViewModel();
-            project.Customers = customersRepository.GetAllCustomers();
+            project.Customers = customersRepository.GetAllCustomers().ToList();
+            project.Customers.Insert(0,new Customer() { 
+            Id=-1,
+            CustomerName="Select ..."
+            });
+            project.ProjectYear = DateTime.Today.Year;
             return View(project);
         }
         [HttpPost]
@@ -72,7 +135,7 @@ namespace MSIS.Controllers
         {
             var project = projectsRepository.GetProject(Id);
             var model = new MSIS.ViewModels.CreateProjectViewModel();
-            model.Customers = customersRepository.GetAllCustomers();
+            model.Customers = customersRepository.GetAllCustomers().ToList();
             
             model.Id = project.Id;
             model.MobileNo = project.MobileNo;

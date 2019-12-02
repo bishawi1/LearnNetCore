@@ -2,7 +2,16 @@
 @*@inject IEmployeeRepository _employeeRepository*@
 @{
     ViewBag.Title = "Edit Employee";
-    var PhotoPath = "~/images/" + (Model.ExistingPhotoPath ?? "noImage.png");
+    var PhotoPath = "";
+    if (Model.ExistingPhotoPath == null)
+    {
+        PhotoPath = "~/images/" + "noImage.png";
+    }
+    else
+    {
+        PhotoPath = "~/images/" + (Model.ExistingPhotoPath);
+
+    }
 }
 <form enctype="multipart/form-data" asp-controller="Home" asp-action="Edit" class="mt-3" method="post">
     <div class="card mt-3">
@@ -52,7 +61,16 @@
                 <input asp-for="WorkMobileNo" class="form-control col-sm-8" placeholder="WorkMobileNo" aria-describedby="WorkMobileNo-addon" />
                 <span asp-validation-for="WorkMobileNo" class="text-danger"></span>
             </div>
-
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="PhoneNo-addon">Phone No</span>
+                <input asp-for="PhoneNo" class="form-control col-sm-8" placeholder="Phone No" aria-describedby="PhoneNo-addon" />
+                <span asp-validation-for="PhoneNo" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="PhoneNo-addon">Job Description</span>
+                <input asp-for="JobDescription" class="form-control col-sm-8" placeholder="Job Description" aria-describedby="JobDescription-addon" />
+                <span asp-validation-for="JobDescription" class="text-danger"></span>
+            </div>
             <div class="input-group col-sm-12 mt-1 row ">
                 <span class="input-group-text col-sm-2 " id="OtherInformation-addon">More Information</span>
                 <input asp-for="OtherInformation" class="form-control col-sm-10" placeholder="More Information" aria-describedby="OtherInformation-addon" />
@@ -70,12 +88,12 @@
                     </div>
                 </div>*@
             <div class="input-group col-sm-12 mt-1 row">
-                <span class="input-group-text col-sm-2 " id="Photos-addon">Photo</span>
+                <span class="input-group-text col-sm-2 " id="ExistingPhotoPath-addon">Photo</span>
                 <div class="custom-file">
-                    <input multiple asp-for="Photos" class="form-control custom-file-input" aria-describedby="Photos-addon" />
+                    <input asp-for="Photos" class="form-control custom-file-input" aria-describedby="Photos-addon" />
                     <label class="custom-file-label">Click here to change photo...</label>
                 </div>
-                <span asp-validation-for="Photos" class="text-danger"></span>
+                @*<span asp-validation-for="ExistingPhotoPath" class="text-danger"></span>*@
             </div>
 
             <div asp-validation-summary="All" class="text-danger"></div>
@@ -100,9 +118,25 @@
     <script>
         $(document).ready(function () {
             $('.custom-file-input').on('change', function () {
-                var fileName = $(this).val().split('\\').pop();
-                $(this).next('.custom-file-label').html(fileName);
+                //console.log($(this));
+                var fileLable = $(this).next('.custom-file-label');
+                var files = $(this)[0].files;
+                if (files.length > 1) {
+                    fileLable.html(files.length + ' files selected');
+                } else if (files.length == 1) {
+                    fileLable.html(files[0].name);
+                }
+                //                    var fileName = $(this).val().split('\\').pop();
+                //                    $(this).next('.custom-file-label').html(fileName);
             });
+        });
+
+
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuSettings').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
         });
     </script>
 }
+

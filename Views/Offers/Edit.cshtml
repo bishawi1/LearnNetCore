@@ -70,8 +70,8 @@
             <div class="modal-body">
                 <div class="input-group col-sm-12 row">
                     <div class="input-group col-sm-12 row">
-                        <span class="input-group-text col-sm-3 " id="txtItem-addon">Id</span>
-                        <input id="txtId" class="form-control col-sm-9" disabled placeholder="Item" aria-describedby="txtId-addon" />
+                        <span class="input-group-text col-sm-3 " id="txtId-addon">Id</span>
+                        <input id="txtId" class="form-control col-sm-9" disabled placeholder="ID" aria-describedby="txtId-addon" />
                     </div>
                     <span class="input-group-text col-sm-3 " id="txtItemId-addon">Item</span>
                     @Html.DropDownList("txtItemId", new SelectList(Model.Items, "Id", "ItemName"), new { @id = "txtItemId", @class = "form-control" })
@@ -79,9 +79,9 @@
                     @*<input id="txtUnit" class="form-control col-sm-9" placeholder="Unit" aria-describedby="txtUnit-addon" />*@
                 </div>
                 @*<div class="input-group col-sm-12 row">
-                    <span class="input-group-text col-sm-3 " id="txtItem-addon">Item</span>
-                    <input id="txtItem" class="form-control col-sm-9" placeholder="Item" aria-describedby="txtItem-addon" />
-                </div>*@
+                        <span class="input-group-text col-sm-3 " id="txtItem-addon">Item</span>
+                        <input id="txtItem" class="form-control col-sm-9" placeholder="Item" aria-describedby="txtItem-addon" />
+                    </div>*@
                 <div class="input-group col-sm-12 row">
                     <span class="input-group-text col-sm-3 " id="txtUnit-addon">Unit</span>
                     @Html.DropDownList("txtUnit", new SelectList(Model.ItemUnits, "Id", "ItemUnitName"), new { @id = "txtUnit", @class = "form-control" })
@@ -131,11 +131,11 @@
                     <span class="input-group-text col-sm-3 " id="txtId-addon">Id</span>
                     <input asp-for="Id" id="txtOfferId" class="form-control col-sm-4 " disabled placeholder="txtOfferId" aria-describedby="txtId-addon" />
                     @*<input asp-for="PurchaseOrderDetails.PurchaseOrderCode" id="txtPurchaseOrderCode" class="form-control col-sm-4 " disabled placeholder="PurchaseOrderCode" aria-describedby="txtPurchaseOrderCode-addon" />
-                    <span asp-validation-for="PurchaseOrderDetails.Id" class="text-danger"></span>*@
+                        <span asp-validation-for="PurchaseOrderDetails.Id" class="text-danger"></span>*@
                 </div>
                 <div class="input-group col-sm-6 row">
                     <span class="input-group-text col-sm-3 " id="OfferDate-addon">Date</span>
-                    <input asp-for="OfferDate" id="txtOfferDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="OfferDate-addon" />
+                    <input type="text" asp-for="OfferDate" id="txtOfferDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="OfferDate-addon" />
                     <span asp-validation-for="OfferDate" class="text-danger"></span>
                 </div>
                 <div class="input-group row col-sm-6">
@@ -160,110 +160,70 @@
                 <div class="form-group row">
                     <div asp-validation-summary="All" class="text-danger"></div>
                 </div>
-                <div class="card-footer">
-                    <div class="text-center mr-sm-2">
-                        <button onclick="saveOffer()" style="width:auto;" type="button" class="btn btn-outline-primary"><i class="fa fa-save"></i> Update</button>
-                        <a style="width:auto;" asp-action="ListOffers" asp-controller="Offers" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i>Cancel</a>
-                    </div>
-                </div>
-                <!-------------------- Items -->
-                <div class="card mt-3 col-12">
 
-                    <div class="card-header">
-                        <div class="flex-container">
-                            <div class="col-11"><h5 class="card-title"> Offer Items</h5></div>
-                            <div class="col-1 "> <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
-                        </div>
-                        @*<button id="btnEditItem" type="button" class="btn btn-primary"  style="width:auto;">
-                                <i class="fa fa-edit"></i>
-                            </button>
-
-                            <button id="btnDeleteItem" class="btn btn-danger" style="width:auto"><i class="fa fa-trash"></i></button>*@
-                    </div>
-                    <div class="card-body">
-                        <div id="OrderItems" class="col-12">
-                            <table id="tblItemDetails" class="table table-hover">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Item</th>
-                                        <th style="visibility:hidden;">ItemUnitId</th>
-                                        <th>Unit</th>
-                                        <th>Qnt.</th>
-                                        <th>Unit Price</th>
-                                        <th>Total Price</th>
-                                        <th>Description</th>
-                                        <th style="width:50px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.OfferItems)
-                                    {
-                                        <tr>
-                                            <td>@item.Id</td>
-                                            <td>@item.ItemName</td>
-                                            <td>@item.ItemUnitId</td>
-                                            <td>@item.ItemUnitName</td>
-                                            <td>@item.QNT</td>
-                                            <td>@item.UnitPrice</td>
-                                            <td>@item.TotalPrice</td>
-                                            <td>@item.Description</td>
-                                            <td>
-                                                <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.Id) style='width:auto'><i class='fa fa-edit'></i></button>
-                                                @*<form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
-                                                    <span id="confirmDeleteSpan_@item.Id" style="display:none">
-                                                        <span>Are you sure you want to delete?</span>
-                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
-                                                        <a href="#" class="btn btn-primary"
-                                                           onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i> No</a>
-                                                    </span>
-                                                    <span id="deleteSpan_@item.Id">*@<form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
-                                                    <span id="confirmDeleteSpan_@item.Id" style="display:none">
-                                                        <span></span>
-                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
-                                                        <a href="#" class="btn btn-primary"
-                                                           onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
-                                                    </span>
-                                                    <span id="deleteSpan_@item.Id">
-                                                        <form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
-                                                            <span id="confirmDeleteSpan_@item.Id" style="display:none">
-                                                                <span></span>
-                                                                <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
-                                                                <a href="#" class="btn btn-primary"
-                                                                   onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
-                                                            </span>
-                                                            <span id="deleteSpan_@item.Id">
-                                                                <form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
-                                                                    <span id="confirmDeleteSpan_@item.Id" style="display:none">
-                                                                        <span></span>
-                                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
-                                                                        <a href="#" class="btn btn-primary"
-                                                                           onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
-                                                                    </span>
-                                                                    <span id="deleteSpan_@item.Id">
-                                                                        <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
-                                                                           onclick="confirmDelete('@item.Id')"><i class="fa fa-trash"></i></a>
-                                                                        @*</span>
-                                                                            </form>*@
-                                                                    </span>
-                                                                </form>
-                                                            </span>
-                                                        </form>
-                                                    </span>
-                                                </form>
-
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
+        <div class="card-footer">
+            <div class="text-center mr-sm-2">
+                <button onclick="saveOffer()" style="width:auto;" type="button" class="btn btn-outline-primary"><i class="fa fa-save"></i> Update</button>
+                <a style="width:auto;" asp-action="ListOffers" asp-controller="Offers" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i>Cancel</a>
+            </div>
+        </div>
     </div>
+
+    <!-------------------- Items -->
+    <div class="card mt-3 col-12">
+
+        <div class="card-header">
+            <div class="flex-container">
+                <div class="col-11"><h5 class="card-title"> Offer Items</h5></div>
+                <div class="col-1 "> <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="OrderItems" class="col-12">
+                <table id="tblItemDetails" class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Id</th>
+                            <th>Item</th>
+                            <th style="visibility:hidden;">ItemUnitId</th>
+                            <th>Unit</th>
+                            <th>Qnt.</th>
+                            <th>Unit Price</th>
+                            <th>Total Price</th>
+                            <th>Description</th>
+                            <th style="width:30px;"></th>
+                            <th style="width:30px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OfferItems)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.ItemName</td>
+                                <td>@item.ItemUnitId</td>
+                                <td>@item.ItemUnitName</td>
+                                <td>@item.QNT</td>
+                                <td>@item.UnitPrice</td>
+                                <td>@item.TotalPrice</td>
+                                <td>@item.Description</td>
+                                <td>
+                                    <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.Id) style='width:auto'><i class='fa fa-edit'></i></button>
+                                </td>
+                                <td>
+                                    <button type='button' id='btnconfirmDel' class='btn btn-outline-danger btn-sm rounded-circle' onclick=contDelete(@item.Id) style='width:auto'><i class='fa fa-trash'></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 
 </form>
 
@@ -291,7 +251,7 @@
             //------------- Add Item
             $('#btnAddItem').on('click', function () {
                 $('#txtEditMode').val('false');
-                $('#txtItem').val('');
+                $('#txtItemId').val('');
                 $('#txtUnit').val('');
                 $('#txtQnt').val(0);
                 $('#txtPrice').val(0);
@@ -302,32 +262,35 @@
 
             $('#btnSaveAjax').click(function () {
                 if ($('#txtEditMode').val() == 'true') {
-                        $.post('/PurchaseOrders/EditItem',
+                        $.post('/Offers/EditOfferItemDetails',
                             {
                                 Id: $('#txtId').val(),
                                 Description: $('#txtNotes').val(),
-                                ItemName: $('#txtItem').val(),
+                                ItemId: $('#txtItemId').val(),
                                 ItemUnitId: $('#txtUnit').val(),
                                 QNT: $('#txtQnt').val(),
+                                OfferId: $('#txtOfferId').val(),
                                 PuchaseOrderId: $('#txtOfferId').val(),
                                 UnitPrice: $('#txtPrice').val()
                             },
                             function (response, status) {
+                                $('#OrderItems').html('');
                                 BuildItemsTable(response);
                             }
                         );
-                    } else {
-                        $.post('/PurchaseOrders/AddItem',
+                } else {
+                        $.post('/Offers/AddOfferItem',
                             {
                                 Id: $('#txtId').val(),
                                 Description: $('#txtNotes').val(),
-                                ItemName: $('#txtItem').val(),
+                                ItemId: $('#txtItemId').val(),
                                 ItemUnitId: $('#txtUnit').val(),
                                 QNT: $('#txtQnt').val(),
-                                PuchaseOrderId: $('#txtOfferId').val(),
+                                OfferId: $('#txtOfferId').val(),
                                 UnitPrice: $('#txtPrice').val()
                             },
                             function (response, status) {
+                                $('#OrderItems').html('');
                                 BuildItemsTable(response);
                             }
                         );
@@ -353,7 +316,8 @@
             strResult += "<th>Unit Price</th>";
             strResult += "<th>Total Price</th>";
             strResult += "<th>Description</th>";
-            strResult += "<th style='width:50px;'></th>";
+            strResult += "<th style='width:30px;'></th>";
+            strResult += "<th style='width:30px;'></th>";
             strResult += "</tr>";
             strResult += "</thead>";
             strResult += "<tbody>";
@@ -371,6 +335,7 @@
                 strResult += "<td>" + response[i].Description + "</td>";
                 strResult += "<td>";
                 strResult += "<button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(" + response[i].Id + ") style = 'width:auto' > <i class='fa fa-edit'></i></button > ";
+                strResult += "</td>"
                 //strResult += "<form asp-action='DeleteCustomer' asp-route-Id='" + response[i].Id + "' method='post'>";
                 //strResult += "<span id='confirmDeleteSpan_" + response[i].Id + "' style='display:none'>";
                 //strResult += "                <span>Are you sure you want to delete?</span>";
@@ -379,8 +344,9 @@
                 //strResult += "                   onclick='confirmDelete('" + response[i].Id + "',false)'><i class='fa fa-times-circle'></i> No</a>";
                 //strResult += "             </span>";
                 //strResult += "            <span id='deleteSpan_" + response[i].Id + ">'";
+                strResult +="<td>"
                 strResult += "                <Button Type='Button' class='btn btn-outline-danger rounded-circle btn-sm' style='width:auto'";
-                strResult += "                    onclick=confirmDelete(" + response[i].Id + ")><i class='fa fa-trash'></i></a>";
+                strResult += "                    onclick=contDelete(" + response[i].Id + ")><i class='fa fa-trash'></i></a>";
                 //strResult += "        </span >";
                 //strResult += "    </form >";
                 strResult += "</td>";
@@ -400,12 +366,12 @@
 
         //----------------- Edit order Items
         function EditItem(ItemId) {
-            $.get('/PurchaseOrders/getItem',
+            $.get('/Offers/getOfferItemDetails',
                 { Id: ItemId },
                 function (data, status) {
                     $('#txtEditMode').val('true');
                     $('#txtId').val(data.Id);
-                    $('#txtItem').val(data.ItemName);
+                    $('#txtItemId').val(data.ItemId);
                     $('#txtUnit').val(data.ItemUnitId);
                     $('#txtQnt').val(data.QNT);
                     $('#txtPrice').val(data.UnitPrice);
@@ -427,16 +393,25 @@
             alert(isValid);
             return isValid;
         }
+        //---------------Confirm Item Delete
+        function contDelete(ItemId) {
+            $('#txtDeleteItemID').val(ItemId);
+            $('#dlgConfirmDelete').modal('show');
+        };
 
         //---------------Confirm Item Delete
         function confirmDelete(ItemId) {
             $('#txtDeleteItemID').val(ItemId);
             $('#dlgConfirmDelete').modal('show');
         };
-
+                //---------------Confirm Item Delete
+        function contDelete(ItemId) {
+            $('#txtDeleteItemID').val(ItemId);
+            $('#dlgConfirmDelete').modal('show');
+        };
         //-------------- Delete Item Button
         function DeleteItem() {
-            $.post('/PurchaseOrders/DeleteItem',
+            $.post('/Offers/DeleteOfferItem',
                 {
                     Id: $('#txtDeleteItemID').val()
                 },
@@ -490,24 +465,17 @@
                                 BuildItemsTable(response);
                             }
                         );
-                    } else {
-                        $.post('/PurchaseOrders/AddItem',
-                            {
-                                Id: $('#txtId').val(),
-                                Description: $('#txtNotes').val(),
-                                ItemName: $('#txtItem').val(),
-                                ItemUnitId: $('#txtUnit').val(),
-                                QNT: $('#txtQnt').val(),
-                                PuchaseOrderId: $('#txtOfferId').val(),
-                                UnitPrice: $('#txtPrice').val()
-                            },
-                            function (response, status) {
-                                BuildItemsTable(response);
-                            }
-                        );
                     }
                 }
             };
+
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuOffers').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+
+
 
     </script>
 }

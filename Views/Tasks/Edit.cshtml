@@ -4,200 +4,92 @@
 }
 
 
-    <form method="post" class="mt-3">
-        @*<input asp-for="TaskStatusId" hidden class="form-control" placeholder="TaskStatusId" />*@
+<form method="post" class="mt-3">
 
-        <div class="card mt-3">
-            <div class="card-header card-title text-center"><h5>@ViewBag.Title</h5></div>
-            <div class="card-body">
+    <div class="card mt-3">
+        <div class="card-header card-title text-center"><h5>@ViewBag.Title</h5></div>
+        <div class="card-body">
 
-                <input asp-for="TaskStatusId" hidden class="form-control" placeholder="TaskStatusId" />
-                <div class="flex-container">
+            <input asp-for="TaskStatusId" hidden class="form-control" placeholder="TaskStatusId" />
+            <div class="flex-container">
 
-                    <div class="input-group col-sm-6 row">
-                        <span class="input-group-text col-sm-3 " id="taskSubject-addon">Task Subject</span>
-                        <input asp-for="TaskSubject" class="form-control col-sm-9" placeholder="Task Subject" aria-describedby="taskSubject-addon" />
-                        <span asp-validation-for="TaskSubject" class="text-danger"></span>
-                    </div>
-
-
-                    <div class="input-group row col-sm-6">
-                        <span class="input-group-text col-sm-3 " id="taskDate-addon">Date</span>
-                        <input type="text" asp-for="TaskDate" class="form-control datepicker" placeholder="TaskDate" aria-describedby="taskDate-addon" />
-                        <span asp-validation-for="TaskDate" class="text-danger"></span>
-                    </div>
-
-
-                    <div class="input-group row col-sm-6">
-                        <span class="input-group-text col-sm-3 col-form-label">Project Name</span>
-                        @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @class = "form-control" })
-                        <span asp-validation-for="ProjectId" class="text-danger"></span>
-                    </div>
-                    <div class="input-group row col-sm-6">
-                        <span class="input-group-text col-sm-3 col-form-label">Branch Name</span>
-                        @Html.DropDownListFor(x => Model.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @class = "form-control" })
-                        <span asp-validation-for="BranchId" class="text-danger"></span>
-                    </div>
-                    <div class="input-group row col-sm-6">
-                        <span class="input-group-text col-sm-3 col-form-label">Task Owner</span>
-                        @Html.DropDownListFor(x => Model.TaskOwnerId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
-                        <span asp-validation-for="TaskOwnerId" class="text-danger"></span>
-                    </div>
-
-                    <div class="input-group row col-sm-6">
-                        <span class="input-group-text col-sm-3 col-form-label">Team Leader</span>
-                        @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
-                        <span asp-validation-for="TaskResponsibleId" class="text-danger"></span>
-                    </div>
-                    <div class="input-group row col-sm-6">
-                        <span id="startDate-addon" class="input-group-text col-sm-3 col-form-label">Start Date</span>
-                        <input type="text" asp-for="TaskStartDate" class="form-control col-sm-9 datepicker" placeholder="TaskStartDate" aria-describedby="description-addon" />
-                        <span asp-validation-for="TaskStartDate" class="text-danger"></span>
-                    </div>
-                    <div class="input-group row col-sm-6">
-                        <span id="taskEndDate-addon" class="input-group-text col-sm-3 col-form-label">End Date</span>
-                        <input type="text" asp-for="TaskEndDate" class="form-control datepicker " aria-describedby="taskEndDate-addon" />
-                        <span asp-validation-for="TaskEndDate" class="text-danger"></span>
-                    </div>
-                    <div class="input-group row col-sm-12">
-                        <span asp-for="Description" class="input-group-text col-sm-2 col-form-label" id="description-addon">Description</span>
-                        <input type="text" asp-for="Description" class="form-control" placeholder="Description" aria-describedby="description-addon" />
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-                    <div class="input-group row col-sm-12">
-                        <span id="otherInformation-addon" asp-for="OtherInformation" class="input-group-text col-sm-2 col-form-label">more Information</span>
-                        <input asp-for="OtherInformation" class="form-control" placeholder="OtherInformation" aria-describedby="otherInformation-addon" />
-                        <span asp-validation-for="OtherInformation" class="text-danger"></span>
-                    </div>
-
-
-                    <div class="form-group row">
-                        <div asp-validation-summary="All" class="text-danger"></div>
-                    </div>
+                <div class="input-group col-sm-6 row">
+                    <span class="input-group-text col-sm-3 " id="taskSubject-addon">Task Subject</span>
+                    <input asp-for="TaskSubject" class="form-control col-sm-9" placeholder="Task Subject" aria-describedby="taskSubject-addon" />
+                    <span asp-validation-for="TaskSubject" class="text-danger"></span>
                 </div>
-            </div>
-            <div class="card-footer">
-                <div class="text-center mr-sm-2">
-                    <button style="width:auto;" type="submit" class="btn btn-outline-primary"><i class="fa fa-save"></i> Update</button>
-                    <a style="width:auto;" asp-action="ListTasks" asp-controller="Tasks" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i>Cancel</a>
+
+
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 " id="taskDate-addon">Date</span>
+                    <input type="text" asp-for="TaskDate" class="form-control datepicker" placeholder="TaskDate" aria-describedby="taskDate-addon" />
+                    <span asp-validation-for="TaskDate" class="text-danger"></span>
+                </div>
+
+
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Project Name</span>
+                    @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @class = "form-control" })
+                    <span asp-validation-for="ProjectId" class="text-danger"></span>
+                </div>
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Branch Name</span>
+                    @Html.DropDownListFor(x => Model.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @class = "form-control" })
+                    <span asp-validation-for="BranchId" class="text-danger"></span>
+                </div>
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Task Owner</span>
+                    @Html.DropDownListFor(x => Model.TaskOwnerId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                    <span asp-validation-for="TaskOwnerId" class="text-danger"></span>
+                </div>
+
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Team Leader</span>
+                    @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                    <span asp-validation-for="TaskResponsibleId" class="text-danger"></span>
+                </div>
+                <div class="input-group row col-sm-6">
+                    <span id="startDate-addon" class="input-group-text col-sm-3 col-form-label">Start Date</span>
+                    <input type="text" asp-for="TaskStartDate" class="form-control col-sm-9 datepicker" placeholder="TaskStartDate" aria-describedby="description-addon" />
+                    <span asp-validation-for="TaskStartDate" class="text-danger"></span>
+                </div>
+                <div class="input-group row col-sm-6">
+                    <span id="taskEndDate-addon" class="input-group-text col-sm-3 col-form-label">End Date</span>
+                    <input type="text" asp-for="TaskEndDate" class="form-control datepicker " aria-describedby="taskEndDate-addon" />
+                    <span asp-validation-for="TaskEndDate" class="text-danger"></span>
+                </div>
+                <div class="input-group row col-sm-12">
+                    <span asp-for="Description" class="input-group-text col-sm-2 col-form-label" id="description-addon">Description</span>
+                    <input type="text" asp-for="Description" class="form-control" placeholder="Description" aria-describedby="description-addon" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="input-group row col-sm-12">
+                    <span id="otherInformation-addon" asp-for="OtherInformation" class="input-group-text col-sm-2 col-form-label">more Information</span>
+                    <input asp-for="OtherInformation" class="form-control" placeholder="OtherInformation" aria-describedby="otherInformation-addon" />
+                    <span asp-validation-for="OtherInformation" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-group row">
+                    <div asp-validation-summary="All" class="text-danger"></div>
                 </div>
             </div>
         </div>
-
-
-        @section Scripts{
-            <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-            <script src="~/js/CustomScript.js"></script>
-
-            <script>
-                InitDatepicker();
-                            //$(function () {
-                            //    $(".datepicker").datepicker();
-                            //});
-
-
-
-            </script>
-        }
-
-
-
-
-
-
-
-
-
-
-
-        @*<div class="form-group row">
-            <label asp-for="Id" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="Id" disabled class="form-control" placeholder="ID" />
-                <span asp-validation-for="Id" class="text-danger"></span>
+        <div class="card-footer">
+            <div class="text-center mr-sm-2">
+                <button style="width:auto;" type="submit" class="btn btn-outline-primary"><i class="fa fa-save"></i> Update</button>
+                <a style="width:auto;" asp-action="ListTasks" asp-controller="Tasks" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i>Cancel</a>
             </div>
         </div>
-        <div class="form-group row">
-            <label asp-for="TaskSubject" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="TaskSubject" class="form-control" placeholder="Task Subject" />
-                <span asp-validation-for="TaskSubject" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="TaskDate" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="TaskDate" class="form-control" placeholder="TaskDate" />
-                <span asp-validation-for="TaskDate" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="ProjectId" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
+    </div>
 
-                @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @class = "form-control" })
-                <span asp-validation-for="ProjectId" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="BranchId" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
+</form>
 
-                @Html.DropDownListFor(x => Model.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @class = "form-control" })
-                <span asp-validation-for="BranchId" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="TaskResponsibleId" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
+@section Scripts{
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
 
-                @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
-                <span asp-validation-for="TaskResponsibleId" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="TaskStartDate" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="TaskStartDate" class="form-control" placeholder="TaskStartDate" />
-                <span asp-validation-for="TaskStartDate" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="TaskEndDate" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="TaskEndDate" class="form-control" placeholder="TaskEndDate" />
-                <span asp-validation-for="TaskEndDate" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="OtherInformation" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="OtherInformation" class="form-control" placeholder="OtherInformation" />
-                <span asp-validation-for="OtherInformation" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="Description" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="Description" class="form-control" placeholder="Description" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <label asp-for="TaskOwnerId" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-
-                @Html.DropDownListFor(x => Model.TaskOwnerId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
-                <span asp-validation-for="TaskOwnerId" class="text-danger"></span>
-            </div>
-        </div
-
-
-        <div asp-validation-summary="All" class="text-danger"></div>
-        <div class="form-group row">
-            <button type="submit" class="btn btn-primary">Update</button>
-            <a asp-action="ListTasks" asp-controller="Tasks" class="btn btn-primary ml-2">Cancel</a>
-        </div>>*@
-    </form>
-
+    <script>
+        InitDatepicker();
+    </script>
+}

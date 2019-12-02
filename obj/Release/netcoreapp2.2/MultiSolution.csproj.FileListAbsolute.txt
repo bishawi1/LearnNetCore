@@ -104,3 +104,16 @@ E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netco
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Settings\ListItems.cshtml.g.cs
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Settings\ListMainItems.cshtml.g.cs
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Settings\MainItemDetails.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Offers\Create.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Offers\Details.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Offers\Edit.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Offers\ListOffers.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Administration\_ItemDialog.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Administration\_RolePages.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Home\PortalIndex.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Shared\_SideBar.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\PurchaseOrders\printPurchaseOrderForm.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\PurchaseOrders\printPurchaseOrderList.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\PurchaseOrders\_PrintPurchaseOrderList.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\PurchaseOrders\_PurchaseOrderSearch.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\Razor\Views\Shared\_ReportHeader.cshtml.g.cs

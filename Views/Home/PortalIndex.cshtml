@@ -1,0 +1,16 @@
+﻿<div id="divCriteria">
+
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/Home/EmployeeList',
+                type: 'Get',
+                success: function (response) {
+                    $('#divCriteria').html(response);
+                }
+            });
+        });
+    </script>
+}

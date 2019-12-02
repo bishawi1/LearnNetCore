@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using MSIS.Models;
+using MSIS.ViewModels;
+
 namespace MSIS.Controllers
 {
     public class BranchesController : Controller
@@ -17,17 +20,67 @@ namespace MSIS.Controllers
             brachRepository = BrachRepository;
             this.hostingEnvironment = hostingEnvironment;
         }
+
         [HttpGet]
         public IActionResult ListBranches()
         {
-            var model = brachRepository.GetAllBranches().ToList();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = brachRepository.GetUserParentMenuPermission(userId, "Branches");
+
+            ListBranchesViewModel model = brachRepository.ListBranches();
+            model.userPermission = permission.UserPermissions[0];
+
             return View(model);
         }
+
+
+        [HttpPost]
+        public IActionResult Delete(int Id)
+        {
+            string errorMessage = "";
+            errorMessage = brachRepository.ValidateDeletBranch(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            if (errorMessage == "")
+            {
+                Branch branch = brachRepository.Delete(Id);
+                if (branch == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                    //return new JsonResult("{Deleted:true,ErrorText:''}");
+                    List<Branch> model = brachRepository.GetAllBranches().ToList();
+                    return new JsonResult(model);
+
+                    //return PartialView("_PurchaseOrderItems", model);
+
+                }
+
+            }
+            else
+            {
+                return new JsonResult(errorMessage);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ValidateDelete(int Id)
+        {
+            string errorMessage = "";
+            errorMessage = brachRepository.ValidateDeletBranch(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            return new JsonResult(errorMessage);
+        }
+
+
+
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Create(Branch branch)
         {
@@ -42,6 +95,15 @@ namespace MSIS.Controllers
         [HttpGet]
         public IActionResult Details(int Id)
         {
+            BranchDetailsViewModel model = new BranchDetailsViewModel();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = brachRepository.GetUserParentMenuPermission(userId, "Branches");
+
+            if (permission.UserPermissions.Count > 0)
+            {
+                model.Permission = permission.UserPermissions[0];
+            }
+
             Branch branch=brachRepository.GetBranch(Id);
             if (branch == null)
             {
@@ -49,7 +111,8 @@ namespace MSIS.Controllers
             }
             else
             {
-                return View(branch);
+                model.Branch = branch;
+                return View(model);
             }            
         }
 

@@ -21,6 +21,9 @@ namespace MSIS.ViewModels
         public string Specialization { get; set; }
         public string OtherInformation { get; set; }
         public string Address { get; set; }
+        public string PhoneNo { get; set; }
+        public string JobDescription { get; set; }
+        public Boolean Active { get; set; }
 
 
         [Required]

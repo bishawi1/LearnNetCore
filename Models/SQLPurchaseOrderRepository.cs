@@ -20,12 +20,21 @@ namespace MSIS.Models
             return purchaseOrder;
         }
 
-
-        public List<MSIS.ViewModels.ListPurchaseOrderDetailsViewModel> getPurchaseOrderList()
+        public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
+        {            
+            UserPermissionsViewModel model = new UserPermissionsViewModel();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'PurchaseOrder' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var Menues = result.Select(x => x.ParentName).Distinct().ToList();
+            model.ParentMenus = Menues;
+            model.UserPermissions = result;
+            return model;
+        }
+        public MSIS.ViewModels.ListPurchaseOrdersViewModel getPurchaseOrderList()
         {
             var result =context.SQLListPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders ").ToList();
-
-            return result;// projectDetailViewModel;
+            ListPurchaseOrdersViewModel model = new ListPurchaseOrdersViewModel();
+            model.ListPurchaseOrders = result;
+            return model;// projectDetailViewModel;
 
         }
         public int retPurchaseOrderNo()
@@ -51,16 +60,145 @@ namespace MSIS.Models
             model.suppliers = context.Suppliers.ToList();
             model.CurrencyList = context.Currency.ToList();
             model.Units = context.ItemUnits.ToList();
+            model.Projects = context.Projects.ToList();
+            model.Employees = context.Employees.ToList();
+            model.Branches = context.Branches.ToList();
+
             return model;// projectDetailViewModel;
+        }
+        public AppDBContext getContext()
+        {
+            return this.context;
+        }
+        public List<MSIS.ViewModels.PurchaseOrderDetailsViewModel> getAllPurchaseOrderDetails(ViewModels.PurchaseOrderSearchViewModel Criteria)
+        {
+            try
+            {
+                string strWhere = "";
+                if (Criteria.BranchId > 0)
+                {
+                    strWhere = strWhere + " BranchId = " + Criteria.BranchId.ToString();
+                }
+                if (Criteria.CurrencyId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " CurrencyId = " + Criteria.CurrencyId.ToString();
+                }
+                if (Criteria.EmployeeId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " EmployeeId = " + Criteria.EmployeeId.ToString();
+                }
+                if (Criteria.OrderNo > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " OrderNo = " + Criteria.OrderNo.ToString();
+                }
+                if (Criteria.OrderYear > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " OrderYear = " + Criteria.OrderYear.ToString();
+                }
+                if (Criteria.ProjectId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " ProjectId = " + Criteria.ProjectId.ToString();
+                }
+                if (Criteria.SupplierId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " SupplierId = " + Criteria.SupplierId.ToString();
+                }
+
+                if (Criteria.FromDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " PurchaseOrderDate >= '" + Criteria.FromDate.ToString() + "'";
+                }
+                if (Criteria.ToDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " PurchaseOrderDate <= '" + Criteria.ToDate.ToString() + "'";
+                }
+                if (strWhere != "")
+                {
+                    strWhere = " Where " + strWhere;
+                }
+                if (Criteria.strGroupBy != null)
+                {
+                    if (Criteria.strGroupBy.ToLower() != "all")
+                    {
+                        strWhere = strWhere + " Order By " + Criteria.strGroupBy;
+                    }
+                }
+                var result = context.SQLPurchaseOrderDetailsViewModel.FromSql("SELECT *,'" + Criteria.strGroupBy + "' As strGroupBy FROM dbo.vPurchaseOrders " + strWhere).ToList();
+
+                return result.ToList();// projectDetailViewModel;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            };
         }
         public MSIS.ViewModels.CreatePurchaseOrderViewModel getCreatePurchaseOrderDetails()
         {
             PurchaseOrderDetailsViewModel result = new PurchaseOrderDetailsViewModel();
 
             CreatePurchaseOrderViewModel model = new CreatePurchaseOrderViewModel();
+            result.PurchaseOrderDate = DateTime.Today;
             model.PurchaseOrderDetails = result;
             model.suppliers = context.Suppliers.ToList();
+            model.suppliers.Insert(0,new Models.Supplier()
+            {
+                Id = -1,
+                SupplierName = "Select Supplier ..."
+            });
             model.CurrencyList = context.Currency.ToList();
+            model.Projects = context.Projects.ToList();
+            model.Projects.Insert(0,new Models.Project()
+            {
+                Id = -1,
+                ProjectName = "Select Project ..."
+            });
+
+            model.Employees = context.Employees.ToList();
+            model.Employees.Insert(0, new Models.Employee()
+            {
+                Id = -1,
+                Name = "Select Employee ..."
+            });
+
+            model.Branches = context.Branches.ToList();
+            model.Branches.Insert(0, new Models.Branch()
+            {
+                Id = -1,
+                Name = "Select Branch ..."
+            });
+
             return model;// projectDetailViewModel;
         }
         public List<MSIS.ViewModels.PurchaseOrderItemsViewModel> getPurchaseOrderItems(int Id)
@@ -104,6 +242,35 @@ namespace MSIS.Models
                 context.SaveChanges();
             }
             return Details;
+        }
+        public Boolean DeletePurchaseOrder(int Id)
+        {
+            context.Database.BeginTransaction();
+            try{
+                PurchaseOrder purchaseOrder = context.PurchaseOrders.Find(Id);
+                if (purchaseOrder != null)
+                {
+                    context.PurchaseOrdersDetails.RemoveRange(context.PurchaseOrdersDetails.Where(x=>x.PuchaseOrderId==Id).ToList());
+                    context.SaveChanges();
+                    context.PurchaseOrders.Remove(purchaseOrder);
+                    context.SaveChanges();
+                }
+                context.Database.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            };
+            return true;
+
+            //PurchaseOrder purchaseOrder = context.PurchaseOrders.Find(Id);
+            ////PurchaseOrderDetails purchaseOrderDetails = context.PurchaseOrdersDetails.Find(id);
+            //if (purchaseOrder != null)
+            //{
+            //    context.PurchaseOrders.Remove(purchaseOrder);
+            //    context.SaveChanges();
+            //}
+            //return purchaseOrder;
         }
         public PurchaseOrder Update(PurchaseOrder purchaseOrderChanges)
         {

@@ -12,7 +12,18 @@
                 <input asp-for="Id" class="form-control col-sm-2" disabled placeholder="Id" aria-describedby="Id-addon" />
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>
-
+            <div class="flex-container col-sm-12 m-0 p-0">
+                <div class="input-group col-sm-6 ml-0 pl-0">
+                    <span class="input-group-text col-sm-4 " id="ProjectYear-addon">Year</span>
+                    <input asp-for="ProjectYear" class="form-control col-sm-4" placeholder="Year" aria-describedby="ProjectYear-addon" />
+                    <span asp-validation-for="ProjectYear" class="text-danger"></span>
+                </div>
+                <div class="input-group col-sm-6  ">
+                    <span class="input-group-text col-sm-4 " id="ProjectSerial-addon">Project No</span>
+                    <input asp-for="ProjectSerial" class="form-control col-sm-4" placeholder="Project No" aria-describedby="ProjectSerial-addon" />
+                    <span asp-validation-for="ProjectSerial" class="text-danger"></span>
+                </div>
+            </div>
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="ProjectName-addon">Project Name</span>
                 <input asp-for="ProjectName" class="form-control col-sm-10" placeholder="Project Name" aria-describedby="ProjectName-addon" />
@@ -61,3 +72,12 @@
         </div>
     </div>
 </form>
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

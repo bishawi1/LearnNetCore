@@ -1,60 +1,151 @@
-﻿@model List<MSIS.ViewModels.ProjectDetailViewModel>
+﻿@model ListProjectsViewModels
 
 
 @{
     ViewBag.Title = "List Projects";
 }
+<!----------------------Confirm Delete -->
+<div class="modal fade" id="dlgConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
 
-<h3 class="text-center">List of Projects</h3>
-<a asp-action="Create" asp-controller="Projects" class="btn btn-outline-primary mt-2 mb-2" style="width:auto"><i class="fa fa-plus-circle"></i></a>
-<div style="border:solid 1px black; padding:3px;">
-    <table class="table gridtable table-hover" id="myTable">
-        <thead class="thead-dark">
-            <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Customer</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th style="width:30px;"></th>
-                <th style="width:30px;"></th>
-            </tr>
-        </thead>
-        @foreach (var project in Model)
-        {
-            <tr>
-                <td>@project.ProjectSerial/@project.ProjectYear</td>
-                <td>@project.ProjectName</td>
-                <td>@project.CustomerName</td>
-                <td>@project.Address</td>
-                <td>@project.Email</td>
-                <td><a class="btn btn-outline-primary btn-sm rounded-circle" asp-action="Details" asp-controller="Projects" asp-route-Id="@project.Id" style="width:auto"><i class="fa fa-eye"></i></a></td>
-                <td>
-                    <form asp-action="DeleteProject" asp-route-Id="@project.Id" method="post">
-                        <span id="confirmDeleteSpan_@project.Id" style="display:none">
-                            <span>Are you sure you want to delete?</span>
-                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
-                            <a href="#" class="btn btn-primary"
-                               onclick="confirmDelete('@project.Id',false)"><i class="fa fa-times-circle"></i> No</a>
-                        </span>
-                        <span id="deleteSpan_@project.Id">
-                            <a href="#" class="btn btn btn-sm btn-outline-danger rounded-circle" style="width:auto"
-                               onclick="confirmDelete('@project.Id',true)"><i class="fa fa-trash"></i></a>
-                        </span>
-                        @*<button type="submit" class="btn btn-danger"
-                                    onclick="return confirm('Are you sure you want to Delete User : @user.UserName')">
-                                Delete
-                            </button>*@
+                <h5 class="modal-title" id="exampleModalLabel">title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span><h5 class="card-text">Are you sure you want to delete?</h5></span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> cancel</button>
+                <button id="btnSave" data-dismiss="modal" onclick="ValidateDelete()" type="button" class="btn btn-outline-danger" style="width:auto;"><i class="fa fa-trash"></i> Delete </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!----------------------Inform Dialog -->
+<div class="modal fade" id="dlgInform" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
 
-                    </form>
-                </td>
-            </tr>
-        }
-    </table>
+                <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span id="ErrorMessage" class="card-text">Are you sure you want to delete?</span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 
+<div class="card">
+    <div class="card-header">
+        <div class="flex-container text-center">
+            <span class="col-11"><h5> Projects List</h5></span>
+            @if (Model.userPermission.CanAdd) { 
+                <a asp-action="Create" asp-controller="Projects" class="btn btn-outline-secondary mt-2 mb-2" style="width:auto"><i class="fa fa-plus-circle"></i></a>
+            }
+        </div>
+    </div>
+    <div style="border:solid 1px black; padding:3px;">
+        <table class="table gridtable table-hover" id="myTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Customer</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th style="width:30px;"></th>
+                    @if (Model.userPermission.CanDelete)
+                    {
+                        <th style="width:30px;"></th>
+                    }
+                </tr>
+            </thead>
+            @foreach (var project in Model.Projects)
+            {
+                <tr>
+                    <td>@project.ProjectSerial/@project.ProjectYear</td>
+                    <td>@project.ProjectName</td>
+                    <td>@project.CustomerName</td>
+                    <td>@project.Address</td>
+                    <td>@project.Email</td>
+                    <td><a class="btn btn-outline-primary btn-sm rounded-circle" asp-action="Details" asp-controller="Projects" asp-route-Id="@project.Id" style="width:auto"><i class="fa fa-eye"></i></a></td>
+                    @if (Model.userPermission.CanDelete) { 
+                        <td>
+                            <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                               onclick="contDelete('@project.Id',true)"><i class="fa fa-trash"></i></a>
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+
+
 @section Scripts{
     <script src="~/js/CustomScript.js"></script>
+    <script>
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuSettings').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+
+        //---------------Confirm Item Delete
+        function contDelete(ItemId) {
+            $('#txtDeleteItemID').val(ItemId);
+            $('#dlgConfirmDelete').modal('show');
+        };
+
+        //-------------- Delete Item Button
+        function DeleteItem() {
+            $.post('/Projects/Delete',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    location.reload(true);
+
+                }
+            );
+        };
+
+
+        //-------------- Validate Delete
+        function ValidateDelete() {
+            $.post('/Projects/ValidateDelete',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    if (response == "") {
+                        DeleteItem();
+                    } else {
+                        $('#ErrorMessage').text(response);
+                        $('#dlgInform').modal('show');
+                    }
+                    //location.reload(true);
+
+                }
+            );
+        };
+
+    </script>
 }

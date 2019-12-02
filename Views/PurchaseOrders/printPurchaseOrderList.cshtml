@@ -1,0 +1,87 @@
+﻿@model List<ListPurchaseOrderDetailsViewModel>
+@{
+    ViewData["Title"] = "ListPurchaseOrders";
+}
+
+<!-- Search -->
+<div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+        <i class="fa fa-search"></i>
+        Search
+    </button>
+    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+    <br />
+
+    <div class="collapse" id="divCriteria">
+
+
+    </div>
+</div>
+
+<div id="printArea">
+    @await Html.PartialAsync("~/Views/Shared/_ReportHeader.cshtml", new PageTitleViewModel() { PageTitle = "Purchase Order List" })
+
+    <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
+        <table class="table table-hover" id="myTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Order No</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Currency</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+
+
+
+            @foreach (var order in Model)
+            {
+
+                <tr>
+                    <td>@order.PurchaseOrderCode</td>
+                    <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
+                    <td>@order.SupplierName</td>
+                    <td>@order.CurrencyName</td>
+                    <td>@order.TotalPrice</td>
+
+                </tr>
+
+            }
+
+        </table>
+    </div>
+</div>
+@section Scripts{
+
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+    <script>
+        $(document).ready(function () {
+            //----------- ajax
+            $.ajax({
+            url: '/PurchaseOrders/PurchaseOrderSearchAsync?strGroupBy=ALL',
+            type: 'Get',
+                success: function (response) {
+                $('#divCriteria').html(response);
+
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+            //------------- end ajax
+        });
+        $('#printReport').on('click', function () {
+            $('#printArea').printThis();
+        });
+
+
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuPurchaseOrders').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+    </script>
+}

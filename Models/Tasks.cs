@@ -26,14 +26,19 @@ namespace MSIS.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DataType(DataType.Date)]
         public DateTime TaskEndDate { get; set; }
-
         [Required]
         public int TaskOwnerId { get; set; }
         [Column(TypeName ="nvarchar(300)")]
         public string TaskSubject { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Branch,Please enter a value From List")]
+        [Required]
         public int BranchId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Project,Please enter a value From List")]
+        [Required]
         public int ProjectId { get; set; }
         public int TaskStatusId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Team Leader,Please enter a value From List")]
+        [Required]
         public int TaskResponsibleId { get; set;}
         [Column(TypeName ="nvarchar(Max)")]
         public string OtherInformation { get; set; }

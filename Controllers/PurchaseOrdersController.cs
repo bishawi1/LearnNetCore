@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MSIS.Models;
 using MSIS.ViewModels;
@@ -19,17 +21,160 @@ namespace MSIS.Controllers
         }
 
         [HttpGet]
-        public IActionResult ListPurchaseOrders()
-        { 
-            List<ListPurchaseOrderDetailsViewModel> model= purchaseOrderRepository.getPurchaseOrderList();
+        public IActionResult PurchaseOrderSearchAsync(string strGroupBy)
+        {
+            AppDBContext context = purchaseOrderRepository.getContext();
+            MSIS.ViewModels.PurchaseOrderSearchViewModel model = new ViewModels.PurchaseOrderSearchViewModel();
+            SQLSettingsRepository settingRepository = new SQLSettingsRepository(context);
+            SQLProjectRepository projectRepository = new SQLProjectRepository(context);
+            SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
+            SQLBranchRepository branchRepository = new SQLBranchRepository(context);
+            model.Projects = projectRepository.GetAllProjects().ToList();
+            model.Projects.Insert(0, new Project
+            {
+                Id = -1,
+                ProjectName = "Select Project"
+            });
+            model.Employees = employeeRepository.GetAllEmployees().ToList();
+            model.Employees.Insert(0, new Employee
+            {
+                Id = -1,
+                Name = "Select ..."
+            });
+            model.Branches = branchRepository.GetAllBranches().ToList();
+            model.Branches.Insert(0, new Branch
+            {
+                Id = -1,
+                Name = "Select ..."
+            });
+            model.suppliers =context.Suppliers.ToList();
+            model.suppliers.Insert(0, new Supplier
+            {
+                Id = -1,
+                SupplierName = "Select ..."
+            });
+            model.CurrencyList = context.Currency.ToList();
+            model.CurrencyList.Insert(0, new Currency
+            {
+                Id = -1,
+                CurrencyName = "Select ..."
+            });
+
+
+            model.FromDate = new DateTime(2019, 1, 1);
+            model.ToDate = DateTime.Today;
+            if (strGroupBy == null)
+            {
+                model.strGroupBy = "";
+            }
+            else
+            {
+                model.strGroupBy = strGroupBy;
+            }
+
+            return PartialView("_PurchaseOrderSearch", model);
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> PurchaseOrderSearchAsync(int CurrencyId, int BranchId, int ProjectId, int SupplierId,int OrderNo,int OrderYear, DateTime FromDate, DateTime ToDate, string strGroupBy)
+        {
+            List<PurchaseOrderDetailsViewModel> model=new List<PurchaseOrderDetailsViewModel>();
+            try
+            {
+                MSIS.ViewModels.PurchaseOrderSearchViewModel criteria = new PurchaseOrderSearchViewModel();
+                                
+                criteria.ProjectId = ProjectId;
+                criteria.BranchId = BranchId;
+                criteria.CurrencyId = CurrencyId;
+                criteria.SupplierId = SupplierId;
+                criteria.OrderNo = OrderNo;
+                criteria.OrderYear = OrderYear;          
+                criteria.FromDate = FromDate;
+                criteria.ToDate = ToDate;
+                criteria.strGroupBy = strGroupBy;
+
+                model = purchaseOrderRepository.getAllPurchaseOrderDetails(criteria).ToList();
+                //return new JsonResult( model);
+                return PartialView("_PrintPurchaseOrderList", model);
+
+            }
+            catch(Exception ex)
+            {
+                ModelState.AddModelError("PurchaseOrderSearchAsync", ex.Message.ToString());
+                
+            }
+
             return View(model);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult ListPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+
+            ListPurchaseOrdersViewModel model= purchaseOrderRepository.getPurchaseOrderList();
+            model.userPermission = permission.UserPermissions[0];
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult Delete(int Id)
+        {
+            ListPurchaseOrdersViewModel model = new ListPurchaseOrdersViewModel();
+            PurchaseOrder purchaseOrder = purchaseOrderRepository.GetPurchaseOrder(Id);
+            if(purchaseOrder == null){
+                return View("NotFound");
+            }else
+            {
+                purchaseOrderRepository.DeletePurchaseOrder(Id);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+
+                model = purchaseOrderRepository.getPurchaseOrderList();
+                model.userPermission = permission.UserPermissions[0];
+            }
+
+            return new JsonResult(model);// RedirectToAction("ListPurchaseOrders","PurchaseOrders" );
         }
         [HttpGet]
         public IActionResult Details(int Id)
         {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission= purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
             var model = purchaseOrderRepository.getPurchaseOrderDetails(Id);
+            if (permission.UserPermissions.Count > 0)
+            {
+                model.Permission = permission.UserPermissions[0];
+            }
             return View(model);
         }
+        [HttpGet]
+        public IActionResult printPurchaseOrderForm(int Id)
+        {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var model = purchaseOrderRepository.getPurchaseOrderDetails(Id);
+            if (permission.UserPermissions.Count > 0)
+            {
+                model.Permission = permission.UserPermissions[0];
+            }
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult printPurchaseOrderList(int Id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList();
+            model.userPermission = permission.UserPermissions[0];
+            return View(model);
+        }
+
         [HttpGet]
         public IActionResult Create()
         {
@@ -140,7 +285,7 @@ namespace MSIS.Controllers
             }
         }
         [HttpPost]
-        public IActionResult EditPurchase(int Id,DateTime PurchaseOrderDate,int SupplierId, int CurrencyId, float CurrencyRate,string Notes,List<Models.PurchaseOrderDetails> data)
+        public IActionResult EditPurchase(int Id,DateTime PurchaseOrderDate,int SupplierId, int BranchId,int ProjectId, int EmployeeId, int CurrencyId, float CurrencyRate,string Notes,List<Models.PurchaseOrderDetails> data)
         {
             if (ModelState.IsValid)
             {
@@ -151,6 +296,9 @@ namespace MSIS.Controllers
                 }
                 else
                 {
+                    model.ProjectId = ProjectId;
+                    model.BranchId = BranchId;
+                    model.EmployeeId = EmployeeId;
                     model.CurrencyId = CurrencyId;
                     model.CurrencyRate = CurrencyRate;
                     model.Notes = Notes;
@@ -167,7 +315,7 @@ namespace MSIS.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPurchase( DateTime PurchaseOrderDate, int SupplierId, int CurrencyId, float CurrencyRate, string Notes, List<Models.PurchaseOrderDetails> data)
+        public IActionResult AddPurchase( DateTime PurchaseOrderDate, int SupplierId, int BranchId,int ProjectId, int EmployeeId, int CurrencyId, float CurrencyRate, string Notes, List<Models.PurchaseOrderDetails> data)
         {
             if (ModelState.IsValid)
             {
@@ -179,6 +327,9 @@ namespace MSIS.Controllers
                 }
                 else
                 {
+                    model.BranchId = BranchId;
+                    model.EmployeeId = EmployeeId;
+                    model.ProjectId = ProjectId;
                     model.CurrencyId = CurrencyId;
                     model.CurrencyRate = CurrencyRate;
                     model.Notes = Notes;
@@ -243,7 +394,9 @@ namespace MSIS.Controllers
                 {
                 //return new JsonResult("{Deleted:true,ErrorText:''}");
                 List<PurchaseOrderItemsViewModel> model = purchaseOrderRepository.getPurchaseOrderItems(purchase.PuchaseOrderId);
-                return PartialView("_PurchaseOrderItems", model);
+                return new JsonResult(model);
+
+                //return PartialView("_PurchaseOrderItems", model);
 
                 }
         }

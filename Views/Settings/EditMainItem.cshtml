@@ -16,17 +16,17 @@
 
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="MainItemName-addon">Name</span>
-                <input asp-for="MainItemName" class="form-control col-sm-2" placeholder="Name" aria-describedby="MainItemName-addon" />
+                <input asp-for="MainItemName" class="form-control col-sm-10" placeholder="Name" aria-describedby="MainItemName-addon" />
                 <span asp-validation-for="MainItemName" class="text-danger"></span>
             </div>
-            <div class="input-group row col-sm-12">
+            <div class="input-group  mt-1 row col-sm-12">
                 <span class="input-group-text col-sm-2 col-form-label">Item Category</span>
                 @Html.DropDownListFor(x => Model.ItemCategoryId, new SelectList(Model.ItemCategories, "Id", "CategoryName"), new { @class = "form-control" })
                 <span asp-validation-for="ItemCategoryId" class="text-danger"></span>
             </div>
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="OtherInformation-addon">Other Information</span>
-                <input asp-for="OtherInformation" class="form-control col-sm-2" placeholder="Other Information" aria-describedby="OtherInformation-addon" />
+                <input asp-for="OtherInformation" class="form-control col-sm-10" placeholder="Other Information" aria-describedby="OtherInformation-addon" />
                 <span asp-validation-for="OtherInformation" class="text-danger"></span>
             </div>
 
@@ -39,3 +39,12 @@
         </div>
     </div>
 </form>
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

@@ -12,6 +12,7 @@ namespace MSIS.ViewModels
     {
         public int Id { get; set; }
         public string ExistingPhotoPath { get; set; }
-        
+        public IFormFile Photo { get; set; }
+
     }
 }

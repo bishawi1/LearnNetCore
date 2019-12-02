@@ -1,4 +1,4 @@
-﻿@model ItemUnit
+﻿@model ItemUnitsDetailsViewModel
 @{
     ViewBag.Title = "Details";
 }
@@ -10,13 +10,30 @@
         <h4 class="card-title"> Item Unit Details</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-text">Id : @Model.Id</h5>
-        <h5 class="card-text">Code :@Model.ItemUnitName</h5>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="Id-addon">Id</span>
+            <span class="form-control col-sm-8" placeholder="Id" aria-describedby="Id-addon"> @Model.ItemUnit.Id</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " ItemUnitName="ItemUnitName-addon">Unit Name</span>
+            <span class="form-control col-sm-8" placeholder="Unit Name" aria-describedby="ItemUnitName-addon"> @Model.ItemUnit.ItemUnitName</span>
+        </div>
+
     </div>
     <div class="card-footer text-center">
         <a asp-action="ListItemUnit" asp-controller="Settings" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-        <a asp-action="EditItemUnit" asp-controller="Settings" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-
+        @if (Model.Permission.CanEdit) { 
+            <a asp-action="EditItemUnit" asp-controller="Settings" asp-route-Id="@Model.ItemUnit.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+        }
     </div>
 </div>
 
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

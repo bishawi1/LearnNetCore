@@ -74,7 +74,7 @@
                 </div>
                 <div class="input-group col-sm-12 row">
                     <span class="input-group-text col-sm-3 " id="txtItem-addon">Item</span>
-                    <input id="txtItem" class="form-control col-sm-9" placeholder="Item" aria-describedby="txtItem-addon" />
+                    <textarea id="txtItem" class="form-control col-sm-9" placeholder="Item" aria-describedby="txtItem-addon" ></textarea>
                 </div>
                 <div class="input-group col-sm-12 row">
                     <span class="input-group-text col-sm-3 " id="txtUnit-addon">Unit</span>
@@ -98,7 +98,7 @@
                 </div>
                 <div class="input-group col-sm-12 row">
                     <span class="input-group-text col-sm-3 " id="txtNotes-addon">Notes</span>
-                    <input id="txtNotes" class="form-control col-sm-9" placeholder="Notes" aria-describedby="txtNotes-addon" />
+                    <textarea id="txtNotes" class="form-control col-sm-9" placeholder="Notes" aria-describedby="txtNotes-addon" ></textarea>
                 </div>
 
             </div>
@@ -128,10 +128,11 @@
                     <span asp-validation-for="PurchaseOrderDetails.Id" class="text-danger"></span>
                 </div>
                 <div class="input-group col-sm-6 row">
-                    <span class="input-group-text col-sm-3 " id="taskSubject-addon">Date</span>
-                    <input asp-for="PurchaseOrderDetails.PurchaseOrderDate" id="txtPurchaseOrderDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="PurchaseOrderDate-addon" />
+                    <span class="input-group-text col-sm-3 " id="PurchaseOrderDate-addon">Date</span>
+                    <input type="text" asp-for="PurchaseOrderDetails.PurchaseOrderDate" id="txtPurchaseOrderDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="PurchaseOrderDate-addon" />
                     <span asp-validation-for="PurchaseOrderDetails.PurchaseOrderDate" class="text-danger"></span>
                 </div>
+
                 <div class="input-group row col-sm-6">
                     <span class="input-group-text col-sm-3 col-form-label">Currency</span>
                     @Html.DropDownListFor(x => Model.PurchaseOrderDetails.CurrencyId, new SelectList(Model.CurrencyList, "Id", "CurrencyName"), new { @id = "txtCurrencyId", @class = "form-control" })
@@ -144,7 +145,23 @@
                     @Html.DropDownListFor(x => Model.PurchaseOrderDetails.SupplierId, new SelectList(Model.suppliers, "Id", "SupplierName"), new { @id = "txtSupplierId", @class = "form-control" })
                     <span asp-validation-for="PurchaseOrderDetails.SupplierId" class="text-danger"></span>
                 </div>
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Employee</span>
+                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.EmployeeId, new SelectList(Model.Employees, "Id", "Name"), new { @id = "txtEmployeeId", @class = "form-control" })
+                    <span asp-validation-for="PurchaseOrderDetails.EmployeeId" class="text-danger"></span>
+                </div>
 
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Project</span>
+                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @id = "txtProjectId", @class = "form-control" })
+                    <span asp-validation-for="PurchaseOrderDetails.ProjectId" class="text-danger"></span>
+                </div>
+
+                <div class="input-group row col-sm-6">
+                    <span class="input-group-text col-sm-3 col-form-label">Branch</span>
+                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @id = "txtBranchId", @class = "form-control" })
+                    <span asp-validation-for="PurchaseOrderDetails.BranchId" class="text-danger"></span>
+                </div>
                 <div class="input-group row col-sm-12">
                     <span asp-for="PurchaseOrderDetails.Notes" class="input-group-text col-sm-2 col-form-label" id="Notes-addon">Description</span>
                     <input id="txtOrderNotes" type="text" asp-for="PurchaseOrderDetails.Notes" class="form-control" placeholder="Notes" aria-describedby="Notes-addon" />
@@ -154,100 +171,72 @@
                 <div class="form-group row">
                     <div asp-validation-summary="All" class="text-danger"></div>
                 </div>
-                <div class="card-footer">
-                    <div class="text-center mr-sm-2">
-                        <button onclick="savePurchaseOrder()" style="width:auto;" type="button" class="btn btn-outline-primary"><i class="fa fa-save"></i> Update</button>
-                        <a style="width:auto;" asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i>Cancel</a>
-                    </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="text-center mr-sm-2">
+                <button onclick="savePurchaseOrder()" style="width:auto;" type="button" class="btn btn-outline-primary"><i class="fa fa-save"></i> Update</button>
+                <a style="width:auto;" asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i>Cancel</a>
+            </div>
+        </div>
+    </div>
+        <!-------------------- Items -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <div class="flex-container">
+                    <div class="col-11"><h5 class="card-title"> Purchase Order Items</h5></div>
+                    <div class="col-1 "> <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
                 </div>
-                <!-------------------- Items -->
-                <div class="card mt-3 col-12">
-
-                    <div class="card-header">
-                        <div class="flex-container">
-                            <div class="col-11"><h5 class="card-title"> Purchase Order Items</h5></div>
-                            <div class="col-1 "> <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
-                        </div>
-                        @*<button id="btnEditItem" type="button" class="btn btn-primary"  style="width:auto;">
+                @*<button id="btnEditItem" type="button" class="btn btn-primary"  style="width:auto;">
                     <i class="fa fa-edit"></i>
                 </button>
 
                 <button id="btnDeleteItem" class="btn btn-danger" style="width:auto"><i class="fa fa-trash"></i></button>*@
-                    </div>
-                    <div class="card-body">
-                        <div id="OrderItems" class="col-12">
-                            <table id="tblItemDetails" class="table table-hover">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Item</th>
-                                        <th style="visibility:hidden;">ItemUnitId</th>
-                                        <th>Unit</th>
-                                        <th>Qnt.</th>
-                                        <th>Unit Price</th>
-                                        <th>Total Price</th>
-                                        <th>Description</th>
-                                        <th style="width:50px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model.PurchaseOrderDetails.OrderItems)
-                                    {
-                                        <tr>
-                                            <td>@item.Id</td>
-                                            <td>@item.ItemName</td>
-                                            <td>@item.ItemUnitId</td>
-                                            <td>@item.ItemUnitName</td>
-                                            <td>@item.QNT</td>
-                                            <td>@item.UnitPrice</td>
-                                            <td>@item.TotalPrice</td>
-                                            <td>@item.Description</td>
-                                            <td>
-                                                <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.Id) style='width:auto'><i class='fa fa-edit'></i></button>
-                                                @*<form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
-                                        <span id="confirmDeleteSpan_@item.Id" style="display:none">
-                                            <span>Are you sure you want to delete?</span>
-                                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
-                                            <a href="#" class="btn btn-primary"
-                                               onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i> No</a>
-                                        </span>
-                                        <span id="deleteSpan_@item.Id">*@<form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
-                                                    <span id="confirmDeleteSpan_@item.Id" style="display:none">
-                                                        <span></span>
-                                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
-                                                        <a href="#" class="btn btn-primary"
-                                                           onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
-                                                    </span>
-                                                    <span id="deleteSpan_@item.Id">
-                                                        <form asp-action="DeleteCustomer" asp-route-Id=@item.Id method="post">
-                                                            <span id="confirmDeleteSpan_@item.Id" style="display:none">
-                                                                <span></span>
-                                                                <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i></button>
-                                                                <a href="#" class="btn btn-primary"
-                                                                   onclick="confirmDelete('@item.Id',false)"><i class="fa fa-times-circle"></i></a>
-                                                            </span>
-                                                            <span id="deleteSpan_@item.Id">
-                                                                <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
-                                                                   onclick="confirmDelete('@item.Id')"><i class="fa fa-trash"></i></a>
-                                                                @*</span>
-                                                        </form>*@
-                                                            </span>
-                                                        </form>
-                                                    </span>
-                                                </form>
+            </div>
+            <div class="card-body">
+                <div id="OrderItems"  class="col-12">
+                    <table id="tblItemDetails" class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Id</th>
+                                <th colspan="2">Item</th>
+                                @*<th style="visibility:hidden;width:1px;">Unit Id</th>*@
+                                <th>Unit</th>
+                                <th>Qnt.</th>
+                                <th>Unit Price</th>
+                                <th>Total Price</th>
+                                <th>Description</th>
+                                <th style="width:30px;"></th>
+                                <th style="width:30px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PurchaseOrderDetails.OrderItems)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.ItemName</td>
+                                    <td style="visibility:hidden;width:1px;">@item.ItemUnitId</td>
+                                    <td>@item.ItemUnitName</td>
+                                    <td>@item.QNT</td>
+                                    <td>@item.UnitPrice</td>
+                                    <td>@item.TotalPrice</td>
+                                    <td>@item.Description</td>
+                                    <td>
+                                        <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.Id) style='width:auto'><i class='fa fa-edit'></i></button>
+                                    </td>
+                                    <td>
+                                        <button type='button' id='btnconfirmDel' class='btn btn-outline-danger btn-sm rounded-circle' onclick=contDelete(@item.Id) style='width:auto'><i class='fa fa-trash'></i></button>
 
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-
-    </div>
+ 
 
 </form>
 
@@ -284,37 +273,52 @@
                 $('#basicExampleModal').modal('show')
             });
 
+            function ClearItems() {
+                $('#txtEditMode').val('false');
+                $('#txtItem').val('');
+                $('#txtUnit').val('');
+                $('#txtQnt').val(0);
+                $('#txtPrice').val(0);
+                $('#txtTotal').val(0);
+                $('#Notes').val(0);
+                $('#basicExampleModal').modal('show')
+            };
             $('#btnSaveAjax').click(function () {
-                if ($('#txtEditMode').val() == 'true') {
-                        $.post('/PurchaseOrders/EditItem',
-                            {
-                                Id: $('#txtId').val(),
-                                Description: $('#txtNotes').val(),
-                                ItemName: $('#txtItem').val(),
-                                ItemUnitId: $('#txtUnit').val(),
-                                QNT: $('#txtQnt').val(),
-                                PuchaseOrderId: $('#txtOrderId').val(),
-                                UnitPrice: $('#txtPrice').val()
-                            },
-                            function (response, status) {
-                                BuildItemsTable(response);
-                            }
-                        );
-                    } else {
-                        $.post('/PurchaseOrders/AddItem',
-                            {
-                                Id: $('#txtId').val(),
-                                Description: $('#txtNotes').val(),
-                                ItemName: $('#txtItem').val(),
-                                ItemUnitId: $('#txtUnit').val(),
-                                QNT: $('#txtQnt').val(),
-                                PuchaseOrderId: $('#txtOrderId').val(),
-                                UnitPrice: $('#txtPrice').val()
-                            },
-                            function (response, status) {
-                                BuildItemsTable(response);
-                            }
-                        );
+                if (validateItem()) {
+                    if ($('#txtEditMode').val() == 'true') {
+                            $.post('/PurchaseOrders/EditItem',
+                                {
+                                    Id: $('#txtId').val(),
+                                    Description: $('#txtNotes').val(),
+                                    ItemName: $('#txtItem').val(),
+                                    ItemUnitId: $('#txtUnit').val(),
+                                    QNT: $('#txtQnt').val(),
+                                    PuchaseOrderId: $('#txtOrderId').val(),
+                                    UnitPrice: $('#txtPrice').val()
+                                },
+                                function (response, status) {
+                                    $('#OrderItems').html('');
+                                    BuildItemsTable(response);
+                                }
+                            );
+                        } else {
+                            $.post('/PurchaseOrders/AddItem',
+                                {
+                                    Id: $('#txtId').val(),
+                                    Description: $('#txtNotes').val(),
+                                    ItemName: $('#txtItem').val(),
+                                    ItemUnitId: $('#txtUnit').val(),
+                                    QNT: $('#txtQnt').val(),
+                                    PuchaseOrderId: $('#txtOrderId').val(),
+                                    UnitPrice: $('#txtPrice').val()
+                                },
+                                function (response, status) {
+                                    $('#OrderItems').html('');
+                                    BuildItemsTable(response);
+                                    ClearItems();
+                                }
+                            );
+                        }
                     }
                 }
             );
@@ -337,8 +341,11 @@
             strResult += "<th>Unit Price</th>";
             strResult += "<th>Total Price</th>";
             strResult += "<th>Description</th>";
-            strResult += "<th style='width:50px;'></th>";
+            strResult += "<th style='width:30px;'></th>";
+            strResult += "<th style='width:30px;'></th>";
+
             strResult += "</tr>";
+
             strResult += "</thead>";
             strResult += "<tbody>";
 
@@ -355,6 +362,7 @@
                 strResult += "<td>" + response[i].Description + "</td>";
                 strResult += "<td>";
                 strResult += "<button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(" + response[i].Id + ") style = 'width:auto' > <i class='fa fa-edit'></i></button > ";
+                strResult +="</td>"
                 //strResult += "<form asp-action='DeleteCustomer' asp-route-Id='" + response[i].Id + "' method='post'>";
                 //strResult += "<span id='confirmDeleteSpan_" + response[i].Id + "' style='display:none'>";
                 //strResult += "                <span>Are you sure you want to delete?</span>";
@@ -363,8 +371,9 @@
                 //strResult += "                   onclick='confirmDelete('" + response[i].Id + "',false)'><i class='fa fa-times-circle'></i> No</a>";
                 //strResult += "             </span>";
                 //strResult += "            <span id='deleteSpan_" + response[i].Id + ">'";
+                strResult +="<td>"
                 strResult += "                <Button Type='Button' class='btn btn-outline-danger rounded-circle btn-sm' style='width:auto'";
-                strResult += "                    onclick=confirmDelete(" + response[i].Id + ")><i class='fa fa-trash'></i></a>";
+                strResult += "                    onclick=contDelete(" + response[i].Id + ")><i class='fa fa-trash'></i></a>";
                 //strResult += "        </span >";
                 //strResult += "    </form >";
                 strResult += "</td>";
@@ -402,18 +411,28 @@
         };
         //----------------- validate Item
         function validateItem() {
-            var isValid = false;
+            var isValid = true;
             if ($.isNumeric($('#txtPrice').val())) {
                 if ($.isNumeric($('#txtQnt').val())) {
-                    isValid = true;
+                    if ($('#txtPrice').val() == 0 || $('#txtQnt').val() == 0) {
+                        isValid = false;
+                        alert('Price and Qnt must be more than 0');
+                    };
+                } else {
+                        isValid = false;
+                        alert('Qnt must be Numeric Value');
                 };
-            };
-            alert(isValid);
+
+                } else {
+                        isValid = false;
+                        alert('Price must be Numeric Value');
+                };
+
             return isValid;
         }
 
         //---------------Confirm Item Delete
-        function confirmDelete(ItemId) {
+        function contDelete(ItemId) {
             $('#txtDeleteItemID').val(ItemId);
             $('#dlgConfirmDelete').modal('show');
         };
@@ -425,6 +444,7 @@
                     Id: $('#txtDeleteItemID').val()
                 },
                 function (response, status) {
+                    alert(response);
                     BuildItemsTable(response);
                 }
             );
@@ -468,6 +488,9 @@
                                 Id: $('#txtOrderId').val(),
                                 PurchaseOrderDate: $('#txtPurchaseOrderDate').val(),
                                 SupplierId: $('#txtSupplierId').val(),
+                                EmployeeId: $('#txtEmployeeId').val(),
+                                ProjectId: $('#txtProjectId').val(),
+                                BranchId: $('#txtBranchId').val(),
                                 CurrencyId: $('#txtCurrencyId').val(),
                                 CurrencyRate: 1,
                                 Notes: $('#txtOrderNotes').val(),
@@ -494,7 +517,15 @@
                         );
                     }
                 }
-            };
+        };
+
+
+
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuPurchaseOrders').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
 
     </script>
 }

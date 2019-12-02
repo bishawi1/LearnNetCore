@@ -1,4 +1,4 @@
-﻿@model Branch;
+﻿@model BranchDetailsViewModel;
 @{
     ViewData["Title"] = "Details";
 }
@@ -10,15 +10,41 @@
         <h4 class="card-title"> Branch Details</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-text">Code : @Model.Code</h5>
-        <h5 class="card-text">Name: @Model.Name</h5>
-        <h5 class="card-text">Address: @Model.Address</h5>
-        <h5 class="card-text">Mobile: @Model.Mobile</h5>
-        <h5 class="card-text">Phone :@Model.Phone</h5>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Code-addon">Identity No</span>
+            <span class="form-control col-sm-8" placeholder=" Code" aria-describedby="Code-addon"> @Model.Branch.Code</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Name-addon">Name</span>
+            <span class="form-control col-sm-8" placeholder="Name" aria-describedby="Code-addon"> @Model.Branch.Name</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Address-addon">Address</span>
+            <span class="form-control col-sm-8" placeholder="Address" aria-describedby="Address-addon"> @Model.Branch.Address</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Address-addon">Mobile</span>
+            <span class="form-control col-sm-8" placeholder="Mobile" aria-describedby="Mobile-addon"> @Model.Branch.Mobile</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Phone-addon">Phone</span>
+            <span class="form-control col-sm-8" placeholder="Phone" aria-describedby="Phone-addon"> @Model.Branch.Phone</span>
+        </div>
+
     </div>
     <div class="card-footer text-center">
         <a asp-action="ListBranches" asp-controller="Branches" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-        <a asp-action="Edit" asp-controller="Branches" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-
+        @if (Model.Permission.CanEdit) { 
+            <a asp-action="Edit" asp-controller="Branches" asp-route-Id="@Model.Branch.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+        }
     </div>
 </div>
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

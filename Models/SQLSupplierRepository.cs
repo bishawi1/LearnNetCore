@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using MSIS.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +15,29 @@ namespace MSIS.Models
         {
             context = Context;
         }
+        public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
+        {
+            UserPermissionsViewModel model = new UserPermissionsViewModel();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Settings' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var Menues = result.Select(x => x.ParentName).Distinct().ToList();
+            model.ParentMenus = Menues;
+            model.UserPermissions = result;
+            return model;
+        }
+        public string ValidateDeletSupplier(int Id)
+        {
+            string ErrorMessage = "";
+
+                var purchaseOrder = context.PurchaseOrders.Where(x => x.SupplierId == Id).ToList();
+                if (purchaseOrder.Count > 0)
+                {
+                    ErrorMessage = "cannot delete Supplier, Supplier has Purchase Order or more";
+                }
+
+            return ErrorMessage;
+        }
+
+
         public Supplier Add(Supplier supplier)
         {
             context.Suppliers.Add(supplier);
@@ -30,7 +55,12 @@ namespace MSIS.Models
             }
             return supplier;
         }
-
+        public ListSupplierViewModel ListSuppliers()
+        {
+            ListSupplierViewModel model = new ListSupplierViewModel();
+            model.Suppliers = context.Suppliers.ToList();
+            return model;
+        }
         public IEnumerable<Supplier> GetAllSuppliers()
         {
             return context.Suppliers;

@@ -24,21 +24,31 @@
                     <th>Unit Price</th>
                     <th>Total Price</th>
                     <th>Description</th>
+                    <th style="width:30px;"></th>
+                    <th style="width:30px;"></th>
+
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
-                        <td>@item.Id</td>
-                        <td>@item.ItemName</td>
-                        <td>@item.ItemUnitId</td>
-                        <td>@item.ItemUnitName</td>
-                        <td>@item.QNT</td>
-                        <td>@item.UnitPrice</td>
-                        <td>@item.TotalPrice</td>
-                        <td>@item.Description</td>
-                    </tr>
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.ItemUnitId</td>
+                    <td>@item.ItemUnitName</td>
+                    <td>@item.QNT</td>
+                    <td>@item.UnitPrice</td>
+                    <td>@item.TotalPrice</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.Id) style='width:auto'><i class='fa fa-edit'></i></button>
+                    </td>
+                    <td>
+                        <button type='button' id='btnconfirmDel' class='btn btn-outline-danger btn-sm rounded-circle' onclick=contDelete(@item.Id) style='width:auto'><i class='fa fa-trash'></i></button>
+                    </td>
+
+                </tr>
                 }
             </tbody>
         </table>

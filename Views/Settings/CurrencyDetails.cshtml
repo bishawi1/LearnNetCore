@@ -1,4 +1,4 @@
-﻿@model Currency
+﻿@model CurrencyDetailsViewModel
 @{
     ViewBag.Title = "Details";
 }
@@ -10,14 +10,34 @@
         <h4 class="card-title"> Currency Details</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-text">Id : @Model.Id</h5>
-        <h5 class="card-text">Code :@Model.CurrencyCode</h5>
-        <h5 class="card-text">Name: @Model.CurrencyName</h5>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="Id-addon">Id</span>
+            <span class="form-control col-sm-8" placeholder="Id" aria-describedby="Id-addon"> @Model.Currency.Id</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="CurrencyCode-addon">Code</span>
+            <span class="form-control col-sm-8" placeholder="Code" aria-describedby="CurrencyCode-addon"> @Model.Currency.CurrencyCode</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="CurrencyName-addon">Name</span>
+            <span class="form-control col-sm-8" placeholder="Name" aria-describedby="CurrencyName-addon"> @Model.Currency.CurrencyName</span>
+        </div>
+
     </div>
     <div class="card-footer text-center">
         <a asp-action="ListCurrency" asp-controller="Settings" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-        <a asp-action="EditCurrency" asp-controller="Settings" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-
+        @if (Model.Permission.CanEdit) {
+            <a asp-action="EditCurrency" asp-controller="Settings" asp-route-Id="@Model.Currency.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+         }
     </div>
 </div>
 
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

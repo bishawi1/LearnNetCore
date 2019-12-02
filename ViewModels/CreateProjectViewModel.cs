@@ -8,6 +8,6 @@ namespace MSIS.ViewModels
 {
     public class CreateProjectViewModel:Project
     {
-            public IEnumerable<Customer> Customers { get; set; }
+            public List<Customer> Customers { get; set; }
     }
 }

@@ -1,0 +1,119 @@
+﻿@model List<String>;
+@inject SignInManager<ApplicationUser> signInManager;
+@*@model List<UserAllowedParentMenuViewModel>;*@
+<!-- Sidebar -->
+@{
+    var ShowSetting = false;
+    var ShowTask = false;
+    var ShowPurchase = false;
+    var ShowOffer = false;
+}
+@foreach (var item in Model)
+{
+    @if (item == "Settings")
+    {
+        ShowSetting = true;
+    }
+}
+@if (signInManager.IsSignedIn(User))// && (User.IsInRole("Admin")))// || User.IsInRole("PowerUsers")) )
+{
+    <div class="bg-dark border-right" id="sidebar-wrapper">
+        <div class="sidebar-heading text-info">Multi Solution </div>
+        <!-------------- start of Accordion   -->
+        <div class="list-group list-group-flush bg-secondary">
+            <div id="accordion" class="bg-transparent m-0">
+
+                @if (signInManager.IsSignedIn(User) && ShowSetting == true) // && User.IsInRole("Admin"))
+                {
+                    <div class="card bg-transparent">
+                        <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                            <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuSettings">
+                                <i class="fa fa-cog"></i>
+                                Settings
+                            </a>
+                        </div>
+                        <div id="mnuSettings" data-collapsed="false" class="collapse hide" data-parent="#accordion">
+                            <div class="card-body" style="padding:0px;">
+                                <a mnu="btnEmployees" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
+
+                                <a asp-action="EmployeeList" asp-controller="Home" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
+                                <a asp-action="ListBranches" asp-controller="Branches" class="list-group-item list-group-item-action bg-dark text-light">Branches</a>
+                                <a asp-action="ListProjects" asp-controller="Projects" class="list-group-item list-group-item-action bg-dark text-light">Projects</a>
+                                <a asp-action="ListCustomers" asp-controller="Customer" class="list-group-item list-group-item-action bg-dark text-light">Customers</a>
+                                <a asp-action="ListSuppliers" asp-controller="Suppliers" class="list-group-item list-group-item-action bg-dark text-light">Suppliers</a>
+                                <a asp-action="ListItemUnit" asp-controller="Settings" class="list-group-item list-group-item-action bg-dark text-light">Item Units</a>
+                                <a asp-action="ListItems" asp-controller="Settings" class="list-group-item list-group-item-action bg-dark text-light">Items</a>
+                                <a asp-action="ListMainItems" asp-controller="Settings" class="list-group-item list-group-item-action bg-dark text-light">Main Items</a>
+                                <a asp-action="ListItemCategory" asp-controller="Settings" class="list-group-item list-group-item-action bg-dark text-light">Item Categories</a>
+                                <a asp-action="ListCurrency" asp-controller="Settings" class="list-group-item list-group-item-action bg-dark text-light">Currency</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="card bg-transparent">
+                    <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                        <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuTMS">
+                            <i class="fa fa-tasks"></i>
+                            Tasks
+                        </a>
+                    </div>
+                    <div id="mnuTMS" class="collapse show" data-parent="#accordion">
+                        <div class="card-body" style="padding:0px;">
+                            <a asp-action="ListTasks" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">All</a>
+                            <a asp-action="ListTasksByProject" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Project</a>
+                            <a asp-action="ListTasksByTaskOwner" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Task Owner</a>
+                            <a asp-action="ListTasksByResponsible" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Responsible</a>
+                            <a asp-action="ListTasksByStatus" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">By Status</a>
+                            <a asp-action="TaskReport" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">Task Reports</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-transparent">
+                    <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                        <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuPurchaseOrders">
+                            <i class="fa fa-dollar-sign"></i>
+                            Orders
+                        </a>
+                    </div>
+                    <div id="mnuPurchaseOrders" class="collapse hide" data-parent="#accordion">
+                        <div class="card-body" style="padding:0px;">
+                            <a asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" class="list-group-item list-group-item-action bg-dark text-light">Purchase Orders</a>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-transparent">
+                    <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                        <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuOffers">
+                            <i class="fa fa-dollar-sign"></i>
+                            Offers
+                        </a>
+                    </div>
+                    <div id="mnuOffers" class="collapse hide" data-parent="#accordion">
+                        <div class="card-body" style="padding:0px;">
+                            <a asp-action="ListOffers" asp-controller="Offers" class="list-group-item list-group-item-action bg-dark text-light">Offers List</a>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-------------- End of Accordion   -->
+
+            </div>
+
+        </div>            <!-------------- start of Buttons   -->
+        @*<div class="list-group list-group-flush">
+
+                <a asp-action="EmployeeList" asp-controller="Home" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
+                <a asp-action="ListBranches" asp-controller="Branches" class="list-group-item list-group-item-action bg-dark text-light">Branches</a>
+                <a asp-action="ListProjects" asp-controller="Projects" class="list-group-item list-group-item-action bg-dark text-light">Projects</a>
+                <a asp-action="ListCustomers" asp-controller="Customer" class="list-group-item list-group-item-action bg-dark text-light">Customers</a>
+                <a asp-action="ListTasks" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">Tasks</a>
+            </div>*@
+        <!-------------- End of Buttons   -->
+    </div>
+}
+<!-- /#sidebar-wrapper -->

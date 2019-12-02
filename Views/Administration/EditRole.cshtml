@@ -1,53 +1,197 @@
 ﻿@model EditRoleViewModel
 @{
-    ViewData["Title"] = "EditRole";
+    ViewData["Title"] = "Edit Role";
 }
+    <partial name="_itemDialog.cshtml" />
 
-<h1>EditRole</h1>
+    <form method="post" class="mt-3">
 
-<form method="post" class="mt-3">
-    <div class="form-group row">
-        <label asp-for="Id" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="Id" disabled class="form-control" />
-            <div class="col-sm-10">
-                <span asp-validation-for="Id" class="text-danger"></span>
+        <div class="card p-3">
+            <div class="card-header text-center">
+                <span><h5 class="card-title">EditRole</h5></span>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <label asp-for="Id" class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <input asp-for="Id" disabled class="form-control" />
+                        <div class="col-sm-10">
+                            <span asp-validation-for="Id" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="RoleName" class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        @if (Model.RoleName.ToLower() == "admin")
+                        {
+                            <input readonly asp-for="RoleName" class="form-control" placeholder="Role Name" />
+                        }
+                        else
+                        {
+                            <input asp-for="RoleName" class="form-control" placeholder="Role Name" />
+                        }
+                        <span asp-validation-for="RoleName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="form-group row">
+                    <div class="col-sm-12 text-center">
+                        <button type="submit" class="btn btn-secondary mr-3" style="width:auto">Update</button>
+                        <a asp-action="ListRoles" asp-controller="Administration" class="btn btn-secondary ml-3">Cancel</a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="form-group row">
-        <label asp-for="RoleName" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="RoleName" class="form-control" placeholder="Role Name" />
-            <span asp-validation-for="RoleName" class="text-danger"></span>
-        </div>
-    </div>
-    <div class="form-group row">
-        <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary" style="width:auto">Update</button>
-            <a asp-action="ListRoles" asp-controller="Administration" class="btn btn-primary">Cancel</a>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header">
-            <h3> Users in this Role</h3>
-        </div>
-        <div class="card-body">
-            @if (Model.Users.Any())
-            {
-                foreach (var user in Model.Users)
+        <div class="card">
+            <div class="card-header">
+                <h3> Users in this Role</h3>
+            </div>
+            <div class="card-body">
+                @if (Model.Users.Any())
                 {
-                    <h5 class="card-title">@user</h5>
+                    foreach (var user in Model.Users)
+                    {
+                        <h5 class="card-title">@user</h5>
+                    }
                 }
-            }
-            else
-            {
-                <h5 class="card-title">not at the moment</h5>
-            }
+                else
+                {
+                    <h5 class="card-title">not at the moment</h5>
+                }
+
+            </div>
+            <div class="card-footer">
+                <a asp-action="EditUserInRole" asp-controller="Administration" asp-route-RoleId="@Model.Id" hidden class="btn btn-secondary" style="width:auto">Add or Remove Users</a>
+            </div>
+        </div>
+    </form>
+<hr />
+<div class="card">
+    <div class="card-header">
+
+        <div class="flex-container text-center">
+            <span class="col-11"><h5> Role Detaile (pages)</h5></span>
+            <span class="col-1"> <button id="btnVerifyRolePages" type="button" class="btn btn-secondary" style="width:auto;text-align:left;"><i class="fa fa-check-circle"></i></button></span>
+            @*<span class="col-1"> <button id="btnAddItem" type="button" class="btn btn-secondary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></span>*@
+        </div>
+    </div>
+    <div class="card-body">
+
+        <div id="divCriteria">
 
         </div>
-        <div class="card-footer">
-            <a asp-action="EditUserInRole" asp-controller="Administration" asp-route-RoleId="@Model.Id" class="btn btn-primary" style="width:auto">Add or Remove Users</a>
-        </div>
     </div>
-</form>
+    <div class="card-footer">
+
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable();
+            $.ajax({
+                url: '/Administration/RolePages?RoleId=' + $('#Id').val(),
+                type: 'Get',
+                success: function (response) {
+                    $('#divCriteria').html(response);
+                }
+            });
+
+
+            $('#btnSaveAjax').click(function () {
+                if ($('#txtEditMode').val() == 'true') {
+                    $.post('/Administration/EditRolePage',
+                        {
+                            Id: $('#txtId').val(),
+                            RoleId: $('#Id').val(),
+                            PageId: $('#txtPageId').val(),
+                            CanView: $('#chkCanView').prop('checked'),
+                            CanAdd: $('#chkCanAdd').prop('checked'),
+                            CanEdit: $('#chkCanEdit').prop('checked'),
+                            CanDelete: $('#chkCanDelete').prop('checked')
+                        },
+                        function (response, status) {
+                            $('#divCriteria').html(response);
+                            $('#rolePageModal').modal('hide')
+                            //BuildItemsTable(response);
+                        }
+                    );
+                } else {
+                    $.post('/Administration/AddRolePage',
+                        {
+                            RoleId: $('#Id').val(),
+                            PageId: $('#txtPageId').val(),
+                            CanView: $('#chkCanView').prop('checked'),
+                            CanAdd: $('#chkCanAdd').prop('checked'),
+                            CanEdit: $('#chkCanEdit').prop('checked'),
+                            CanDelete: $('#chkCanDelete').prop('checked'),
+                        },
+                        function (response, status) {
+                            //BuildItemsTable(response);
+                            $('#divCriteria').html(response);
+                            ClearDialogFields();
+                        }
+                    );
+                }
+
+            });
+
+            //------------- verifyRolePages
+            $('#btnVerifyRolePages').on('click', function () {
+                $.post('/Administration/verifyRolePages',
+                    {
+                        RoleId: $('#Id').val()
+                    },
+                    function (response, status) {
+                        $('#divCriteria').html(response);
+                        //BuildItemsTable(response);
+                    }
+                );
+            });
+
+
+            //------------- Add Role Page
+            $('#btnAddItem').on('click', function () {
+                $('#modalTitle').text('Add Page To Role');
+                $('#txtEditMode').val('false');
+                $('#txtPageId').val('');
+                $('#chkCanView').prop('checked', true);
+                $('#chkCanAdd').prop('checked', true);
+                $('#chkCanEdit').prop('checked', true);
+                $('#chkCanDelete').prop('checked', true);
+                $('#rolePageModal').modal('show')
+            });
+        });
+        //---------------------   Clear Dialog Fields
+        function ClearDialogFields() {
+                $('#txtPageId').val('');
+                $('#chkCanView').prop('checked', true);
+                $('#chkCanAdd').prop('checked', true);
+                $('#chkCanEdit').prop('checked', true);
+                $('#chkCanDelete').prop('checked', true);
+        };
+        //----------------- Edit Role Page
+        function EditItem(pageID) {
+            $.get('/Administration/getRolePage',
+                { Id: pageID ,RoleId: $('#Id').val()},
+                function (data, status) {
+                    $('#txtEditMode').val('true');
+                    $('#txtPageId').val(data.PageId);
+                    $('#txtId').val(data.RolePageId);
+                    $('#chkCanView').prop('checked', data.CanView);
+                    $('#chkCanAdd').prop('checked', data.CanAdd);
+                    $('#chkCanEdit').prop('checked',data.CanEdit);
+                    $('#chkCanDelete').prop('checked',data.CanDelete);
+
+                    $('#rolePageModal').modal('show')
+                }
+            );
+        };
+    </script>
+}

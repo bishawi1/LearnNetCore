@@ -12,7 +12,100 @@
     }
 }
 
+function ApplyPermission(response) {
+    var i;
+    for (i = 0; i < response.ParentMenus.length; ++i) {
+        if (response.ParentMenus[i] == "Settings") {
+            $('#crdSettings').show();
+        } else if (response.ParentMenus[i] == "Task") {
+            $('#crdTasks').show();
+        } else if (response.ParentMenus[i] == "PurchaseOrder") {
+            $('#crdOrders').show();
+        } else if (response.ParentMenus[i] == "Offers") {
+            $('#crdOffers').show();
+        }
+    };
+    for (i = 0; i < response.UserPermissions.length; ++i) {
+        if (response.UserPermissions[i].PageName == "Employees") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkEmployees').removeClass('hideElem');            
+            };
+        } else if (response.UserPermissions[i].PageName == "Branches") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkBranches').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "projects") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkProjects').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Customers") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkCustomers').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Suppliers") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkSuppliers').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Item Units") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkItemUnits').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Items") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkItems').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Main Items") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkMainItems').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Item Categories") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkItemCategory').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Currency") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkCurrency').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "All Tasks") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkAllTasks').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Tasks By Project") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkTaskByProject').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Tasks By Owner") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkTaskByOwner').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Tasks By Responsible") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkTaskByResponsible').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Tasks By Status") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkTaskByStatus').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Tasks Reports") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkTaskReports').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "All Purchase Orders") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkAllPurchaseOrders').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Purchase Orders Reports") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkPurchaseOrdersReports').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "All Offers") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkAllOffers').removeClass('hideElem');
+            };
+        }
+    };
 
+};
 function InitDatepicker () {
     $(".datepicker").datepicker({
         dateFormat: 'yy-mm-dd',

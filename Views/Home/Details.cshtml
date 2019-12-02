@@ -1,38 +1,83 @@
-﻿@model HomeDetailsViewModel
+﻿@model EmployeeDetailsViewModel
 
 @{
     ViewBag.Title= "Employee Details";
     var PhotoPath = "~/images/" + (Model.Employee.PhotoPath ?? "noImage.png");
 }
 <div class="row justify-content-center">
-        <div class="card col-sm-6 m-3">
-            <div class="card-header text-center">
-                <span class="card-title"><h5> @Model.Employee.Name</h5></span>
-            </div>
-            <div class="card-body">
-                <img class="card-img-top" src="@PhotoPath" asp-append-version="true" />
-                <h4>Employee ID: @Model.Employee.Id</h4>
-                <h4>Identity No: @Model.Employee.IdentityNo</h4>
-                <h4>Education Degree: @Model.Employee.EducationDegree</h4>
-                <h4>Specialization: @Model.Employee.Specialization</h4>
-                <h4>Mobile No: @Model.Employee.MobileNo</h4>
-                <h4>WorkMobile No: @Model.Employee.WorkMobileNo</h4>
-                <h4>More Information: @Model.Employee.OtherInformation</h4>
-                <h4>E-mail: @Model.Employee.Email</h4>
-                <h4>Department: @Model.Employee.Id</h4>
-
-            </div>
-            <div class="card-footer text-center">
-                <a asp-controller="home" asp-action="EmployeeList" class="btn btn-outline-danger" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-                @*<a asp-controller="home" asp-action="EmployeeList" class="btn btn-primary">Back</a>*@
-                <a asp-controller="home" asp-action="edit" asp-route-Id="@Model.Employee.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-                <a href="#" class="btn btn-danger" hidden>Delete</a>
-            </div>
+    <div class="card col-sm-6 m-3">
+        <div class="card-header text-center">
+            <span class="card-title"><h5> @Model.Employee.Name</h5></span>
         </div>
+        <div class="card-body">
+            <img class="card-img-top" src="@PhotoPath" asp-append-version="true" />
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="EmployeeID-addon">Employee ID</span>
+                <span class="form-control col-sm-8" placeholder="Employee ID" aria-describedby="EmployeeID-addon"> @Model.Employee.Id</span>
+            </div>
 
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="IdentityNo-addon">Identity No</span>
+                <span class="form-control col-sm-8" placeholder="Identity No" aria-describedby="IdentityNo-addon"> @Model.Employee.IdentityNo</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="EducationDegree-addon">Education Degree</span>
+                <span class="form-control col-sm-8" placeholder="Education Degree" aria-describedby="EducationDegree-addon"> @Model.Employee.EducationDegree</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="Specialization-addon">Specialization</span>
+                <span class="form-control col-sm-8" placeholder="Specialization" aria-describedby="Specialization-addon"> @Model.Employee.Specialization</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="Email-addon">e-mail</span>
+                <span class="form-control col-sm-8" placeholder="e-mail" aria-describedby="Email-addon"> @Model.Employee.Email</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="MobileNo-addon">Mobile No</span>
+                <span class="form-control col-sm-8" placeholder="Mobile No" aria-describedby="MobileNo-addon"> @Model.Employee.MobileNo</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="WorkMobileNo-addon">Work Mobile No</span>
+                <span class="form-control col-sm-8" placeholder="WorkMobile No" aria-describedby="WorkMobileNo-addon"> @Model.Employee.WorkMobileNo</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="PhoneNo-addon">Phone No</span>
+                <span class="form-control col-sm-8" placeholder="Phone No" aria-describedby="PhoneNo-addon"> @Model.Employee.PhoneNo</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="JobDescription-addon">Job Description</span>
+                <span class="form-control col-sm-8" placeholder="Job Description" aria-describedby="JobDescription-addon"> @Model.Employee.JobDescription</span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-4 " id="OtherInformation-addon">Other Information</span>
+                <span class="form-control col-sm-8" placeholder="Other Information" aria-describedby="OtherInformation-addon"> @Model.Employee.OtherInformation</span>
+            </div>
+
+
+            @*<h4>Department: @Model.Employee.Id</h4>*@
+
+        </div>
+        <div class="card-footer text-center">
+            <a asp-controller="home" asp-action="EmployeeList" class="btn btn-outline-danger" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
+            @if (Model.Permission.CanEdit)
+            {
+                <a asp-controller="home" asp-action="edit" asp-route-Id="@Model.Employee.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+            }
+        </div>
     </div>
+
+</div>
 
 
 @section Scripts{
     <script src="~/js/CustomScript.js"></script>
+    <script>
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuSettings').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+    </script>
+    
+
 }

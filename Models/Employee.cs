@@ -29,5 +29,10 @@ namespace MSIS.Models
         public Dept? Department { get; set; }
 
         public string PhotoPath { get; set; }
+        public string PhoneNo { get; set; }
+        public string JobDescription { get; set; }
+        public Boolean Active { get; set; }
+
+
     }
 }

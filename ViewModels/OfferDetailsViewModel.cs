@@ -10,6 +10,9 @@ namespace MSIS.ViewModels
     public class OfferDetailsViewModel:OfferViewModel
     {
         public List<OfferItemsViewModel> OfferItems { get; set; }
+        [NotMapped]
+        public UserPermissionDetailsViewModel Permission { get; set; }
+
 
     }
 }

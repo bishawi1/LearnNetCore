@@ -1,0 +1,146 @@
+﻿@model PurchaseOrderDetailsViewModel
+@{
+    ViewData["Title"] = "printPurchaseOrderForm";
+}
+<div>
+    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+</div>
+<div id="printArea">
+    @await Html.PartialAsync("~/Views/Shared/_ReportHeader.cshtml",new PageTitleViewModel(){PageTitle="Purchase Order"})
+    <div class="card mt-3">
+        @*<div class="card-header">
+            <h3 class="text-center">Purchase Order Details</h3>
+        </div>*@
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="PurchaseOrderCode-addon" class="col-sm-3 input-group-text">Order No.</span>
+                        <span class="form-control col-sm-4" aria-describedby="PurchaseOrderCode-addon"><h5>@Model.PurchaseOrderCode</h5></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="PurchaseOrderDate-addon" class="col-sm-3 input-group-text">Date</span>
+                        <span class="form-control col-sm-4" aria-describedby="PurchaseOrderDate-addon"><h5>@Model.PurchaseOrderDate.ToString("dd/MM/yyyy")</h5></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="SupplierName-addon" class="col-sm-3 input-group-text">Supplier</span>
+                        <span class="form-control col-sm-9" aria-describedby="SupplierName-addon"><h5>@Model.SupplierName</h5></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="CurrencyName-addon" class="col-sm-3 input-group-text">Currency</span>
+                        <span class="form-control col-sm-4" aria-describedby="CurrencyName-addon"><h5>@Model.CurrencyName</h5></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="EmployeeName-addon" class="col-sm-3 input-group-text">Employee</span>
+                        <span class="form-control col-sm-9" aria-describedby="EmployeeName-addon"><h5>@Model.EmployeeName</h5></span>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="ProjectName-addon" class="col-sm-3 input-group-text">Project</span>
+                        <span class="form-control col-sm-9" aria-describedby="ProjectName-addon"><h5>@Model.ProjectName</h5></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="BranchName-addon" class="col-sm-3 input-group-text">Branch</span>
+                        <span class="form-control col-sm-9" aria-describedby="BranchName-addon"><h5>@Model.BranchName</h5></span>
+                    </div>
+                </div>
+                @*<div class="col-sm-6">
+                        <div class="input-group mt-sm-3">
+                            <span id="ProjectName-addon" class="col-sm-3 input-group-text">Project</span>
+                            <span class="form-control col-sm-6" aria-describedby="ProjectName-addon"><h5>@Model.ProjectName</h5></span>
+                        </div>
+                    </div>*@
+            </div>
+            <br />
+            <div class="row">
+                @*<div class="bg-light col-sm-12  ">
+
+                    <H3 class="card-title text-center">Purchase Order Items</H3>
+                </div>*@
+                @if (Model.OrderItems.Any())
+                {
+                    <table class="table  border table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Item</th>
+                                <th>QNT.</th>
+                                <th>Unit</th>
+                                <th>Unit Price</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        @foreach (var orderDetails in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>
+                                    <span><h5>@orderDetails.ItemName</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.QNT</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.ItemUnitName</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.UnitPrice</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.TotalPrice</h5></span>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                }
+                else
+                {
+                    <h5 class="card-title">none at the moment</h5>
+                }
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="flex-container">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+
+    <script>
+
+        InitDatepicker();
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuPurchaseOrders').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+
+        $('#printReport').on('click', function () {
+            $('#printArea').printThis();
+        });
+
+    </script>
+}
+

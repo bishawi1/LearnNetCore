@@ -110,6 +110,7 @@ namespace MSIS.Controllers
                         }
                         else
                         {
+                            //return RedirectToAction("PortalIndex", "home");
                             return RedirectToAction("index", "home");
                         }
 

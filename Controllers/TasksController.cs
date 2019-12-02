@@ -38,13 +38,33 @@ namespace MSIS.Controllers
             SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
             SQLBranchRepository branchRepository = new SQLBranchRepository(context);
             model.Customers = customerRepository.GetAllCustomers().ToList();
+            model.Customers.Insert(0,new Customer() { 
+                Id=-1,
+                CustomerName="Select ..."
+            });
             model.Projects = projectRepository.GetAllProjects().ToList();
+            model.Projects.Insert(0, new Project()
+            {
+                Id = -1,
+                ProjectName = "Select ..."
+            });
             model.Employees = employeeRepository.GetAllEmployees().ToList();
+            model.Employees.Insert(0, new Employee()
+            {
+                Id = -1,
+                Name = "Select ..."
+            });
             model.Branches = branchRepository.GetAllBranches().ToList();
+            model.Branches.Insert(0, new Branch()
+            {
+                Id = -1,
+                Name = "Select ..."
+            });
             model.TaskStatusList = tasksRepository.GetAllTaskStatus().ToList();
             model.TaskStatusId = 1;
             model.TaskDate = DateTime.Today;
             model.TaskStartDate = DateTime.Today;
+            model.TaskEndDate = DateTime.Today.AddDays(1);
             return View(model);
         }
         [HttpPost]

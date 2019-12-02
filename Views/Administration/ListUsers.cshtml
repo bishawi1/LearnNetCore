@@ -3,128 +3,141 @@
     ViewData["Title"] = "All Users";
 }
 
-@if (Model.Any())
-{
-    <a class="btn btn-primary mb-3 mt-3" style="width:auto" asp-action="Register" asp-controller="Account">
-        <i class="fa fa-plus-circle"></i>
-    </a>
+<div class="card">
+    <div class="card-header">
+        <div class="flex-container text-center ">
+            <span class="col-11"><h5 class="card-title">Users List</h5></span>
+            <span class="col-1">
+                <a class="btn btn-primary mb-1 mt-1" style="width:auto" asp-action="Register" asp-controller="Account"><i class="fa fa-plus-circle"></i></a>
+            </span>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div style=" border:solid 1px black; padding:3px;">
+                <table class="table table-hover" id="myTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            @*<th>Id</th>*@
+                            <th>Name</th>
+                            <th>Employee</th>
+                            <th>Role</th>
+                            <th style="width:30px;"></th>
+                            <th style="width:30px;"></th>
+
+                        </tr>
+                    </thead>
 
 
-    <div style=" border:solid 1px black; padding:3px;">
-        <table class="table table-hover" id="myTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Employee</th>
-                    <th style="width:30px;"></th>
-                    <th style="width:30px;"></th>
 
-                </tr>
-            </thead>
+                    @foreach (var user in Model)
+                    {
+
+                        <tr>
+                            @*<td>@user.Id</td>*@
+                            <td>@user.UserName</td>
+                            <td>@user.EmployeeName</td>
+                            <td>@user.AppRoleName</td>
+
+                            <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="EditUser" asp-controller="Administration" asp-route-Id="@user.Id"><i class="fa fa-edit"></i></a></td>
+                            <td>
+                                @{
+                                    //if (User.IsInRole("Admin") || (User.Identity.Name == @task.TaskOwnerUserName))
+                                    //{
+                                    <form asp-action="DeleteUser" asp-route-Id="@user.Id" method="post">
+                                        <span id="confirmDeleteSpan_@user.Id" style="display:none">
+                                            <span>Are you sure you want to delete?</span>
+                                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                                            <a href="#" class="btn btn-primary"
+                                               onclick="confirmDelete('@user.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                                        </span>
+                                        <span id="deleteSpan_@user.Id">
+                                            <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                                               onclick="confirmDelete('@user.Id',true)"><i class="fa fa-trash"></i></a>
+                                        </span>
+
+                                    </form>
+                                    @*}*@
+                                }
+                            </td>
+                        </tr>
+
+                    }
+
+
+                </table>
+            </div>
 
 
 
-            @foreach (var user in Model)
-            {
 
-                <tr>
-                    <td>@user.Id</td>
-                    <td>@user.UserName</td>
-                    <td>@user.EmployeeName</td>
 
-                    <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="EditUser" asp-controller="Administration" asp-route-Id="@user.Id"><i class="fa fa-eye"></i></a></td>
-                    <td>
-                        @{
-                            //if (User.IsInRole("Admin") || (User.Identity.Name == @task.TaskOwnerUserName))
-                            //{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            @*foreach (var user in Model)
+                {
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            User ID: @user.Id
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">@user.UserName</h5>
+                        </div>
+                        <div class="card-footer">
                             <form asp-action="DeleteUser" asp-route-Id="@user.Id" method="post">
+                                <a class="btn btn-primary" asp-action="EditUser" asp-controller="Administration" asp-route-Id="@user.Id">Edit</a>
                                 <span id="confirmDeleteSpan_@user.Id" style="display:none">
                                     <span>Are you sure you want to delete?</span>
-                                    <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                                    <button type="submit" class="btn btn-danger">Yes</button>
                                     <a href="#" class="btn btn-primary"
-                                       onclick="confirmDelete('@user.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                                       onclick="confirmDelete('@user.Id',false)">No</a>
                                 </span>
                                 <span id="deleteSpan_@user.Id">
-                                    <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
-                                       onclick="confirmDelete('@user.Id',true)"><i class="fa fa-trash"></i></a>
+                                    <a href="#" class="btn btn-danger"
+                                       onclick="confirmDelete('@user.Id',true)">Delete</a>
                                 </span>
 
+
                             </form>
-                            @*}*@
-                        }
-                    </td>
-                </tr>
-
+                        </div>
+                    </div>
+                }
             }
-
-
-        </table>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @*foreach (var user in Model)
+            else
             {
-                <div class="card mb-3">
+                <div class="card">
                     <div class="card-header">
-                        User ID: @user.Id
+                        No Users Created yet
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title">@user.UserName</h5>
+                        <h5 class="card-title">
+                            Use the Button below to create a User
+                        </h5>
+                        <a class="btn btn-primary" style="width:auto" asp-controller="Account" asp-action="Register">
+                            Create User
+                        </a>
                     </div>
-                    <div class="card-footer">
-                        <form asp-action="DeleteUser" asp-route-Id="@user.Id" method="post">
-                            <a class="btn btn-primary" asp-action="EditUser" asp-controller="Administration" asp-route-Id="@user.Id">Edit</a>
-                            <span id="confirmDeleteSpan_@user.Id" style="display:none">
-                                <span>Are you sure you want to delete?</span>
-                                <button type="submit" class="btn btn-danger">Yes</button>
-                                <a href="#" class="btn btn-primary"
-                                   onclick="confirmDelete('@user.Id',false)">No</a>
-                            </span>
-                            <span id="deleteSpan_@user.Id">
-                                <a href="#" class="btn btn-danger"
-                                   onclick="confirmDelete('@user.Id',true)">Delete</a>
-                            </span>
-
-
-                        </form>
-                    </div>
-                </div>
-            }
+                </div>*@
         }
-        else
-        {
-            <div class="card">
-                <div class="card-header">
-                    No Users Created yet
-                </div>
-                <div class="card-body">
-                    <h5 class="card-title">
-                        Use the Button below to create a User
-                    </h5>
-                    <a class="btn btn-primary" style="width:auto" asp-controller="Account" asp-action="Register">
-                        Create User
-                    </a>
-                </div>
-            </div>*@
-}
+    </div>
+    <div class="card-footer">
+
+    </div>
+</div>
+
 
 @section Scripts{
     <script src="~/js/CustomScript.js"></script>

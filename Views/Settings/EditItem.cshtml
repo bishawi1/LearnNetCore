@@ -1,13 +1,17 @@
 ﻿@model ItemDetailsViewModels
 @{
     ViewData["Title"] = "Edit";
+    var PhotoPath = "~/images/" + (Model.PhotoPath ?? "noImage.png");
+
 }
 
 
-<form method="post" class="mt-3">
+<form enctype="multipart/form-data" method="post" class="mt-3">
     <div class="card mt-3">
         <div class="card-header card-title text-center"><h5>Edit Item Data</h5></div>
         <div class="card-body ">
+            <input hidden asp-for="PhotoPath" />
+
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="Id-addon">Id</span>
                 <input asp-for="Id" class="form-control col-sm-2" disabled placeholder="Id" aria-describedby="Id-addon" />
@@ -16,20 +20,20 @@
 
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="ItemName-addon">Name</span>
-                <input asp-for="ItemName" class="form-control col-sm-2" placeholder="Name" aria-describedby="ItemName-addon" />
+                <textarea asp-for="ItemName" class="form-control col-sm-10" placeholder="Name" aria-describedby="ItemName-addon"></textarea>
                 <span asp-validation-for="ItemName" class="text-danger"></span>
             </div>
-            <div class="input-group row col-sm-12">
+            <div class="input-group mt-1 row col-sm-12">
                 <span class="input-group-text col-sm-2 col-form-label">Main Item</span>
                 @Html.DropDownListFor(x => Model.MainItemId, new SelectList(Model.MainItems, "Id", "MainItemName"), new { @class = "form-control" })
                 <span asp-validation-for="MainItemId" class="text-danger"></span>
             </div>
-            <div class="input-group row col-sm-12">
+            <div class="input-group mt-1 row col-sm-12">
                 <span class="input-group-text col-sm-2 col-form-label">Unit</span>
                 @Html.DropDownListFor(x => Model.ItemUnitId, new SelectList(Model.ItemUnits, "Id", "ItemUnitName"), new { @class = "form-control" })
                 <span asp-validation-for="ItemUnitId" class="text-danger"></span>
             </div>
-            <div class="input-group row col-sm-12">
+            <div class="input-group mt-1 row col-sm-12">
                 <span class="input-group-text col-sm-2 col-form-label">Currency</span>
                 @Html.DropDownListFor(x => Model.CurrencyId, new SelectList(Model.CurrencyList, "Id", "CurrencyName"), new { @class = "form-control" })
                 <span asp-validation-for="CurrencyId" class="text-danger"></span>
@@ -42,12 +46,21 @@
 
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="OtherInformation-addon">Other Information</span>
-                <input asp-for="OtherInformation" class="form-control col-sm-2" placeholder="Other Information" aria-describedby="OtherInformation-addon" />
+                <textarea asp-for="OtherInformation" class="form-control col-sm-10" placeholder="Other Information" aria-describedby="OtherInformation-addon"></textarea>
                 <span asp-validation-for="OtherInformation" class="text-danger"></span>
             </div>
-
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="ExistingPhotoPath-addon">Photo</span>
+                <div class="custom-file">
+                    <input asp-for="Photos" class="form-control custom-file-input" aria-describedby="Photos-addon" />
+                    <label class="custom-file-label">Click here to change photo...</label>
+                </div>
+                @*<span asp-validation-for="ExistingPhotoPath" class="text-danger"></span>*@
+            </div>
             <div asp-validation-summary="All" class="text-danger"></div>
-
+            <div class="form-group row col-sm-4 offset-4">
+                <img src="@PhotoPath" class="imageThumpnail" asp-append-version="true" />
+            </div>
         </div>
         <div class="card-footer text-center">
             <button type="submit" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> Save</button>
@@ -55,3 +68,31 @@
         </div>
     </div>
 </form>
+
+
+@section Scripts    {
+    <script>
+        $(document).ready(function () {
+            $('.custom-file-input').on('change', function () {
+                //console.log($(this));
+                var fileLable = $(this).next('.custom-file-label');
+                var files = $(this)[0].files;
+                if (files.length > 1) {
+                    fileLable.html(files.length + ' files selected');
+                } else if (files.length == 1) {
+                    fileLable.html(files[0].name);
+                }
+                //                    var fileName = $(this).val().split('\\').pop();
+                //                    $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+
+
+
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+     </script>
+}

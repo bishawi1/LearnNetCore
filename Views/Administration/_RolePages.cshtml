@@ -1,0 +1,30 @@
+﻿@model List<MSIS.ViewModels.RolePagesViewModels>
+<table id="myTable" class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Page</th>
+            <th>View</th>
+            <th>Add</th>
+            <th>Edit</th>
+            <th>Delete</th>
+            <th style="width:50px;"></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td> @item.PageName</td>
+            <td><input type="checkbox" checked="@item.CanView"/></td>
+            <td><input type="checkbox" checked="@item.CanAdd" /></td>
+            <td><input type="checkbox" checked="@item.CanEdit"/></td>
+            <td><input type="checkbox" checked="@item.CanDelete"/> </td>
+            <td>
+                <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.PageId) style='width:auto'><i class='fa fa-edit'></i></button>
+            </td>
+        </tr>
+        }
+    </tbody>
+    </table>
+

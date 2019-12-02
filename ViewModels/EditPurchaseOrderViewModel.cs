@@ -13,6 +13,9 @@ namespace MSIS.ViewModels
 
         [NotMapped]
         public List<Models.Supplier> suppliers { get; set; }
+        public List<Models.Project> Projects { get; set; }
+        public List<Models.Branch> Branches { get; set; }
+        public List<Models.Employee> Employees { get; set; }
 
         [NotMapped]
         public List<Models.Currency> CurrencyList { get; set; }

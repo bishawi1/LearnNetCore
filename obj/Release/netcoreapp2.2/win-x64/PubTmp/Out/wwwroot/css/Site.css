@@ -1,4 +1,7 @@
-﻿
+﻿.hideElem {
+    display: none;
+}
+
 .flex-container {
     display: flex;
     flex-direction: row;

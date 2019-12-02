@@ -1,4 +1,4 @@
-﻿@model ProjectDetailViewModel
+﻿@model ProjectDetailsViewModels
 @{
     ViewData["Title"] = "Details";
 }
@@ -8,20 +8,55 @@
         <h4 class="card-title"> Edit Project Data</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-text">Id : @Model.Id</h5>
-        <h5 class="card-text">Code : @Model.Code</h5>
-        <h5 class="card-text">Project Name: @Model.ProjectName</h5>
-        <h5 class="card-text">Address: @Model.CustomerName</h5>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Id-addon">Id</span>
+            <span class="form-control col-sm-8" placeholder="Id" aria-describedby="Id-addon"> @Model.ProjectDetails.Id</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Code-addon">Code</span>
+            <span class="form-control col-sm-8" placeholder="Code" aria-describedby="Code-addon"> @Model.ProjectDetails.Code</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="ProjectName-addon">Project Name</span>
+            <span class="form-control col-sm-8" placeholder="Project Name" aria-describedby="ProjectName-addon"> @Model.ProjectDetails.ProjectName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="CustomerName-addon">Customer Name</span>
+            <span class="form-control col-sm-8" placeholder="Customer Name" aria-describedby="CustomerName-addon"> @Model.ProjectDetails.CustomerName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Address-addon">Address</span>
+            <span class="form-control col-sm-8" placeholder="Address" aria-describedby="Address-addon"> @Model.ProjectDetails.Address</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="MobileNo-addon">Mobile No</span>
+            <span class="form-control col-sm-8" placeholder="Mobile No" aria-describedby="MobileNo-addon"> @Model.ProjectDetails.MobileNo</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Email-addon">e-mail</span>
+            <span class="form-control col-sm-8" placeholder="e-mail" aria-describedby="MobileNo-addon"> @Model.ProjectDetails.Email</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="OtheInformation-addon">Othe Information</span>
+            <span class="form-control col-sm-8" placeholder="OtheIn formation" aria-describedby="OtheInformation-addon"> @Model.ProjectDetails.OtheInformation</span>
+        </div>
 
-        <h5 class="card-text">Address: @Model.Address</h5>
-        <h5 class="card-text">Mobile: @Model.MobileNo</h5>
-        <h5 class="card-text">Email :@Model.Email</h5>
-        <h5 class="card-text">More Information :@Model.OtheInformation</h5>
     </div>
     <div class="card-footer text-center">
         <a asp-action="ListProjects" asp-controller="Projects" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-        <a asp-action="Edit" asp-controller="Projects" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-
+        @if (Model.Permission.CanEdit)
+        {
+            <a asp-action="Edit" asp-controller="Projects" asp-route-Id="@Model.ProjectDetails.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+        }
     </div>
 </div>
 
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

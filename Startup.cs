@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace MSIS
 {
@@ -84,6 +86,18 @@ namespace MSIS
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
             app.UseStaticFiles();
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //                    Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images")),
+            //                    RequestPath = new PathString("/images")
+            //});
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions()
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //        Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\images")),
+            //    RequestPath = new PathString("/images")
+            //});
             app.UseAuthentication();
             app.UseMvc(Routes =>
             {

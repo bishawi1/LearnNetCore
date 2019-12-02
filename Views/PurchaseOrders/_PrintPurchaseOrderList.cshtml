@@ -1,0 +1,35 @@
+﻿@model List<PurchaseOrderDetailsViewModel>
+    <table class="table table-hover" id="myTable">
+        <thead class="thead-dark">
+            <tr>
+                <th>Order No</th>
+                <th>Date</th>
+                <th>Supplier</th>
+                <th>Currency</th>
+                <th>Total Price</th>
+            </tr>
+        </thead>
+
+
+        @{
+            foreach (var order in Model)
+            {
+                try
+                {
+                    <tr>
+                        <td>@order.PurchaseOrderCode</td>
+                        <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
+                        <td>@order.SupplierName</td>
+                        <td>@order.CurrencyName</td>
+                        <td>@order.TotalPrice</td>
+
+                    </tr>
+                }
+                catch (Exception ex)
+                {
+                    <td class="text-danger"> ex.Massage.toString()</td>
+                }
+
+            }
+        }
+    </table>

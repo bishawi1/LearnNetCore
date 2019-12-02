@@ -125,8 +125,10 @@ namespace MSIS.Models
                     .Where(x => x.TaskStatusId == 3)
                     .GroupBy(x => new { TaskStatusId = x.TaskStatusId })
                     .Select(x => new { TaskCount = x.Count() }).FirstOrDefault();
-                result.RejectedCount = model.TaskCount;
-
+                if (model != null)
+                {
+                    result.RejectedCount = model.TaskCount;
+                }
                 model = context.Tasks
                       .Where(x => x.TaskStatusId == 4)
                       .GroupBy(x => new { TaskStatusId = x.TaskStatusId })

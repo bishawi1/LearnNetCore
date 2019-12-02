@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MSIS.ViewModels;
 
 namespace MSIS.Models
 {
@@ -56,6 +57,21 @@ namespace MSIS.Models
                 _EmployeList.Remove(employee);
             }
             return employee;            
+        }
+
+        public string ValidateDeletEmployee(int Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public UserPermissionsViewModel GetUserParentMenuPermission(string userId, string PageName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ListEmployeesViewModel ListEmployees()
+        {
+            throw new NotImplementedException();
         }
     }
 }

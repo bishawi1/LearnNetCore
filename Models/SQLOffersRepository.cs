@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MSIS.ViewModels;
 namespace MSIS.Models
 {
@@ -18,9 +19,48 @@ namespace MSIS.Models
             context.SaveChanges();
             return offer;
         }
+        public Boolean DeleteOffer(int Id)
+        {
+            context.Database.BeginTransaction();
+            try
+            {
+                Offer offer = context.Offers.Find(Id);
+                if (offer != null)
+                {
+                    context.offerDetails.RemoveRange(context.offerDetails.Where(x => x.OfferId == Id).ToList());
+                    context.SaveChanges();
+                    context.Offers.Remove(offer);
+                    context.SaveChanges();
+                }
+                context.Database.CommitTransaction();
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            };
+            return true;
 
+            //PurchaseOrder purchaseOrder = context.PurchaseOrders.Find(Id);
+            ////PurchaseOrderDetails purchaseOrderDetails = context.PurchaseOrdersDetails.Find(id);
+            //if (purchaseOrder != null)
+            //{
+            //    context.PurchaseOrders.Remove(purchaseOrder);
+            //    context.SaveChanges();
+            //}
+            //return purchaseOrder;
+        }
 
-        public List<OfferViewModel> getOfferList()
+        public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
+        {
+            UserPermissionsViewModel model = new UserPermissionsViewModel();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Offers' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var Menues = result.Select(x => x.ParentName).Distinct().ToList();
+            model.ParentMenus = Menues;
+            model.UserPermissions = result;
+            return model;
+        }
+
+        public OfferListViewModels getOfferList()
         {
             var result = (from offer in context.Offers
                           join currency in context.Currency
@@ -38,14 +78,20 @@ namespace MSIS.Models
                               OfferDate=offer.OfferDate,
                               OtherInformation=offer.OtherInformation
                           }).ToList();
-
-            return result;// projectDetailViewModel;
+            OfferListViewModels model = new OfferListViewModels();
+            model.OfferList = result;
+            return model;
 
         }
         public CreateOfferViewModel NewOffer()
         {
             CreateOfferViewModel model = new CreateOfferViewModel();
+            model.OfferDate = DateTime.Today;
             model.Customers = context.Customers.ToList();
+            model.Customers.Add(new Customer() { 
+            Id=-1,
+            CustomerName="Select ..."
+            });
             model.CurrencyList = context.Currency.ToList();
             return model;
         }
@@ -160,6 +206,36 @@ namespace MSIS.Models
             context.SaveChanges();
             return offerChanges;
         }
+        public OfferDetail AddOfferItem(OfferDetail offerItem)
+        {
+            context.offerDetails.Add(offerItem);
+            context.SaveChanges();
+            return offerItem;
+        }
+        public OfferDetail GetOfferItem(int Id)
+        {
+            return context.offerDetails.Find(Id);
+        }
+        public OfferDetail UpdateOfferItem(OfferDetail offerItemChanges)
+        {
+            var Customer = context.offerDetails.Attach(offerItemChanges);
+            Customer.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return offerItemChanges;
+        }
+
+        public OfferDetail DeleteOfferItem(int id)
+        {
+            OfferDetail Details = context.offerDetails.Find(id);
+            //PurchaseOrderDetails purchaseOrderDetails = context.PurchaseOrdersDetails.Find(id);
+            if (Details != null)
+            {
+                context.offerDetails.Remove(Details);
+                context.SaveChanges();
+            }
+            return Details;
+        }
+
         //public MSIS.ViewModels.EditPurchaseOrderViewModel getEditPurchaseOrderDetails(int Id)
         //{
         //    var result = context.SQLPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders Where Id = " + Id.ToString()).ToList();
@@ -193,34 +269,10 @@ namespace MSIS.Models
         //    return Details[0];
         //}
 
-        //public PurchaseOrderDetails GetOfferItem(int Id)
-        //{
-        //    return context.PurchaseOrdersDetails.Find(Id);
-        //}
-        //public PurchaseOrderDetails UpdatePurchaseOrderItem(PurchaseOrderDetails purchaseOrderChanges)
-        //{
-        //    var Customer = context.PurchaseOrdersDetails.Attach(purchaseOrderChanges);
-        //    Customer.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-        //    context.SaveChanges();
-        //    return purchaseOrderChanges;
-        //}
-        //public PurchaseOrderDetails AddPurchaseOrderItem(PurchaseOrderDetails purchaseOrderItem)
-        //{
-        //    context.PurchaseOrdersDetails.Add(purchaseOrderItem);
-        //    context.SaveChanges();
-        //    return purchaseOrderItem;
-        //}
-        //public PurchaseOrderDetails DeletePurchaseOrderItem(int id)
-        //{
-        //    PurchaseOrderDetails Details = context.PurchaseOrdersDetails.Find(id);
-        //    //PurchaseOrderDetails purchaseOrderDetails = context.PurchaseOrdersDetails.Find(id);
-        //    if (Details != null)
-        //    {
-        //        context.PurchaseOrdersDetails.Remove(Details);
-        //        context.SaveChanges();
-        //    }
-        //    return Details;
-        //}
+
+
+
+
 
 
     }

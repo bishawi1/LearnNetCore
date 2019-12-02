@@ -12,6 +12,9 @@ namespace MSIS.Models
         [Column(TypeName ="nvarchar(50)")]        
         public string City { get; set; }
         public int EmployeeId { get; set; }
+        //public string AppRoleId { get; set; }
+        //public string AppRoleName { get; set; }
+
 
     }
 }

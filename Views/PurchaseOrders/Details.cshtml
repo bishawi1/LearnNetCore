@@ -3,9 +3,8 @@
     ViewData["Title"] = "Details";
 }
 
-
 <div>
-    <a class="btn btn-outline-secondary" asp-action="PrintTaskDetails" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+    <a class="btn btn-outline-secondary" asp-action="printPurchaseOrderForm" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
 </div>
 <div class="card mt-3">
     <div class="card-header">
@@ -22,7 +21,7 @@
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
                     <span id="PurchaseOrderDate-addon" class="col-sm-3 input-group-text">Date</span>
-                    <span class="form-control col-sm-6" aria-describedby="PurchaseOrderDate-addon"><h5>@Model.PurchaseOrderDate.ToString("dd/MM/yyyy")</h5></span>
+                    <span class="form-control col-sm-4" aria-describedby="PurchaseOrderDate-addon"><h5>@Model.PurchaseOrderDate.ToString("dd/MM/yyyy")</h5></span>
                 </div>
             </div>
         </div>
@@ -30,21 +29,50 @@
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
                     <span id="SupplierName-addon" class="col-sm-3 input-group-text">Supplier</span>
-                    <span class="form-control col-sm-6" aria-describedby="SupplierName-addon"><h5>@Model.SupplierName</h5></span>
+                    <span class="form-control col-sm-9" aria-describedby="SupplierName-addon"><h5>@Model.SupplierName</h5></span>
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
                     <span id="CurrencyName-addon" class="col-sm-3 input-group-text">Currency</span>
-                    <span class="form-control col-sm-6" aria-describedby="CurrencyName-addon"><h5>@Model.CurrencyName</h5></span>
+                    <span class="form-control col-sm-4" aria-describedby="CurrencyName-addon"><h5>@Model.CurrencyName</h5></span>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="EmployeeName-addon" class="col-sm-3 input-group-text">Employee</span>
+                    <span class="form-control col-sm-9" aria-describedby="EmployeeName-addon"><h5>@Model.EmployeeName</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="ProjectName-addon" class="col-sm-3 input-group-text">Project</span>
+                    <span class="form-control col-sm-9" aria-describedby="ProjectName-addon"><h5>@Model.ProjectName</h5></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="BranchName-addon" class="col-sm-3 input-group-text">Branch</span>
+                    <span class="form-control col-sm-9" aria-describedby="BranchName-addon"><h5>@Model.BranchName</h5></span>
+                </div>
+            </div>
+            @*<div class="col-sm-6">
+                    <div class="input-group mt-sm-3">
+                        <span id="ProjectName-addon" class="col-sm-3 input-group-text">Project</span>
+                        <span class="form-control col-sm-6" aria-describedby="ProjectName-addon"><h5>@Model.ProjectName</h5></span>
+                    </div>
+                </div>*@
         </div>
         <br />
         <div class="row">
             <div class="bg-light col-sm-12  ">
-            
-            <H3 class="card-title text-center">Purchase Order Items</H3></div>
+
+                <H3 class="card-title text-center">Purchase Order Items</H3>
+            </div>
             @if (Model.OrderItems.Any())
             {
                 <table class="table  border table-hover">
@@ -77,6 +105,13 @@
                             </td>
                         </tr>
                     }
+                    <tfoot>
+                        <tr>
+                            <th colspan="3"></th>
+                            <th style="text-align:right">Total</th>
+                            <th>@Model.TotalPrice</th>
+                        </tr>
+                    </tfoot>
                 </table>
             }
             else
@@ -86,10 +121,30 @@
         </div>
     </div>
     <div class="card-footer">
-        <div class="text-center mr-sm-2">
-            <a asp-action="Edit" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
-            <a asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" style="width:auto;" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i> Cancel</a>
+        <div class="flex-container">
+            <center>
+                @if (Model.Permission != null)
+                {
+                    if (Model.Permission.CanEdit == true)
+                    {
+                        <a asp-action="Edit" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary mr-3"><i class="fa fa-edit"></i> Edit</a>
+                    }
+                    else
+                    {
+
+                    };
+                }
+                <a asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" style="width:auto;" class="btn btn-outline-danger  ml-3"><i class="fa fa-times"></i> Cancel</a>
+            </center>
         </div>
     </div>
 </div>
-
+@section Scripts{
+<script>
+    $(window).ready(function () {
+    $('#mnuTMS').removeClass('collapse show');
+    $('#mnuPurchaseOrders').addClass('collapse show');
+    $('#mnuTMS').addClass('collapse hide');
+    });
+</Script>
+}

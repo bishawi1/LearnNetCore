@@ -1,6 +1,7 @@
-﻿@model ItemDetailsViewModels
+﻿@model ItemsDetailsViewModel
 @{
     ViewBag.Title = "Details";
+    var PhotoPath = "~/images/" + (Model.ItemDetails.PhotoPath ?? "noImage.png");
 }
 
 
@@ -10,20 +11,53 @@
         <h4 class="card-title"> Item Details</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-text">Id : @Model.Id</h5>
-        <h5 class="card-text">Name :@Model.MainItemName</h5>
-        <h5 class="card-text">Main Item :@Model.MainItemName</h5>
-        <h5 class="card-text">Unit :@Model.ItemUnitName</h5>
-        <h5 class="card-text">Price :@Model.UnitPrice</h5>
-        <h5 class="card-text">Currency :@Model.CurrencyName</h5>
+        <center><img class="card-img-top " src="@PhotoPath" asp-append-version="true" style="width:300px;height:300px;" /></center>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="Id-addon">Id</span>
+            <span class="form-control col-sm-8" placeholder="Id" aria-describedby="Id-addon"> @Model.ItemDetails.Id</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="ItemName-addon">Item Name</span>
+            <span class="form-control col-sm-8" placeholder="Item Name" aria-describedby="ItemName-addon"> @Model.ItemDetails.ItemName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="MainItemName-addon">Main Item</span>
+            <span class="form-control col-sm-8" placeholder="Main Item" aria-describedby="MainItemName-addon"> @Model.ItemDetails.MainItemName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="ItemUnitName-addon">Item Unit</span>
+            <span class="form-control col-sm-8" placeholder="Item Unit" aria-describedby="ItemUnitName-addon"> @Model.ItemDetails.ItemUnitName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="UnitPrice-addon">Unit Price</span>
+            <span class="form-control col-sm-8" placeholder="Unit Price" aria-describedby="UnitPrice-addon"> @Model.ItemDetails.UnitPrice</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="CurrencyName-addon">Currency</span>
+            <span class="form-control col-sm-8" placeholder="Currency" aria-describedby="CurrencyName-addon"> @Model.ItemDetails.CurrencyName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="OtherInformation-addon">Other Information</span>
+            <span class="form-control col-sm-8" placeholder="Other Information" aria-describedby="OtherInformation-addon"> @Model.ItemDetails.OtherInformation</span>
+        </div>
 
-        <h5 class="card-text">Other Information :@Model.OtherInformation</h5>
+
 
     </div>
     <div class="card-footer text-center">
         <a asp-action="ListItems" asp-controller="Settings" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-        <a asp-action="EditItem" asp-controller="Settings" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-
+        @if (Model.Permission.CanEdit) { 
+            <a asp-action="EditItem" asp-controller="Settings" asp-route-Id="@Model.ItemDetails.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+        }
     </div>
 </div>
 
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

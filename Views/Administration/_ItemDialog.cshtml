@@ -1,0 +1,54 @@
+﻿<!-- Button trigger modal -->
+
+<div class="modal fade" id="rolePageModal" tabindex="-1" role="dialog" aria-labelledby="rolePageModal"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rolePageModalLabel"><span id="modalTitle"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" hidden id="txtEditMode" value="false" />
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtId-addon">Id</span>
+                    <input id="txtId" class="form-control col-sm-3" disabled placeholder="ID" aria-describedby="txtId-addon" />
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtItemId-addon">Page</span>
+                    @Html.DropDownList("txtPageId", new SelectList(Model.Pages, "Id", "PageName"), new { @id = "txtPageId", @class = "form-control" })
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="chkCanView-addon">Allow View</span>
+                    <input id="chkCanView" type="checkbox" class="form-control col-sm-3" placeholder="chkCanView" aria-describedby="chkCanView-addon" />
+                    <span id="errQNT" class="text-danger"></span>
+
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="chkCanAdd-addon">Allow Add</span>
+                    <input id="chkCanAdd" type="checkbox" class="form-control col-sm-3" placeholder="chkCanAdd" aria-describedby="chkCanAdd-addon" />
+                    <span id="errCanAdd" class="text-danger"></span>
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="chkCanEdit-addon">Allow Edit</span>
+                    <input id="chkCanEdit" type="checkbox" class="form-control col-sm-3" placeholder="chkEdit" aria-describedby="chkCanEdit-addon" />
+                    <span id="errCanEdit" class="text-danger"></span>
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="chkCanDelete-addon">Allow Delete</span>
+                    <input id="chkCanDelete" type="checkbox" class="form-control col-sm-3" placeholder="chkCanDelete" aria-describedby="chkCanDelete-addon" />
+                    <span id="errCanDelete" class="text-danger"></span>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close</button>
+                <button id="btnSaveAjax"  type="button" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> save</button>
+            </div>
+
+        </div>
+        </div>
+    </div>
+</div>

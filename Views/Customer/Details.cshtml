@@ -1,4 +1,4 @@
-﻿@model Customer
+﻿@model CustomerDetailsViewModel
 @{
     ViewBag.Title = "Details";
 }
@@ -10,17 +10,47 @@
         <h4 class="card-title"> Customer Details</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-text">Id : @Model.Id</h5>
-        <h5 class="card-text">Name :@Model.CustomerName</h5>
-        <h5 class="card-text">Address: @Model.Address</h5>
-        <h5 class="card-text">Mobile: @Model.MobileNo</h5>
-        <h5 class="card-text">Email :@Model.Email</h5>
-        <h5 class="card-text">More Information :@Model.OtherInformation</h5>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Id-addon">Id</span>
+            <span class="form-control col-sm-8" placeholder="Id" aria-describedby="Code-addon"> @Model.Customer.Id</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="CustomerName-addon">Customer Name</span>
+            <span class="form-control col-sm-8" placeholder="Customer Name" aria-describedby="CustomerName-addon"> @Model.Customer.CustomerName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Address-addon">Address</span>
+            <span class="form-control col-sm-8" placeholder="Address" aria-describedby="Address-addon"> @Model.Customer.Address</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="MobileNo-addon">Mobile No</span>
+            <span class="form-control col-sm-8" placeholder="Mobile No" aria-describedby="MobileNo-addon"> @Model.Customer.MobileNo</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Email-addon">Mobile No</span>
+            <span class="form-control col-sm-8" placeholder="e-mail" aria-describedby="Email-addon"> @Model.Customer.Email</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="OtherInformation-addon">Other Information</span>
+            <span class="form-control col-sm-8" placeholder="Other Information" aria-describedby="OtherInformation-addon"> @Model.Customer.OtherInformation</span>
+        </div>
+
     </div>
     <div class="card-footer text-center">
         <a asp-action="ListCustomers" asp-controller="Customer" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-        <a asp-action="Edit" asp-controller="Customer" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-
+        @if (Model.Permission.CanEdit)
+        {
+            <a asp-action="Edit" asp-controller="Customer" asp-route-Id="@Model.Customer.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+        }
     </div>
 </div>
 
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}

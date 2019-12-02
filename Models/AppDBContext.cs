@@ -41,6 +41,9 @@ namespace MSIS.Models
         public DbSet<Offer> Offers { get; set; }
         public DbSet<OfferDetail> offerDetails { get; set; }
 
+        public DbSet<Page> Pages { get; set; }
+        public DbSet<RolePage> RolePages { get; set; }
+        public DbSet<UserPermissionDetailsViewModel> SQLUserAllowedParentMenuesViewModel { get; set; }
 
     }
 }

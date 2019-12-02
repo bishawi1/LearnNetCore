@@ -1,4 +1,4 @@
-﻿@model MainItemViewModel
+﻿@model MainItemsDetailViewModel
 @{
     ViewBag.Title = "Details";
 }
@@ -10,16 +10,39 @@
         <h4 class="card-title"> Main Item Details</h4>
     </div>
     <div class="card-body">
-        <h5 class="card-text">Id : @Model.Id</h5>
-        <h5 class="card-text">Name :@Model.MainItemName</h5>
-        <h5 class="card-text">Name :@Model.CategoryName</h5>
-        <h5 class="card-text">Other Information :@Model.OtherInformation</h5>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="Id-addon">Id</span>
+            <span class="form-control col-sm-8" placeholder="Id" aria-describedby="Id-addon"> @Model.MainItem.Id</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="MainItemName-addon">Name</span>
+            <span class="form-control col-sm-8" placeholder="Name" aria-describedby="MainItemName-addon"> @Model.MainItem.MainItemName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="CategoryName-addon">Category</span>
+            <span class="form-control col-sm-8" placeholder="Category" aria-describedby="CategoryName-addon"> @Model.MainItem.CategoryName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-2 " id="OtherInformation-addon">Other Information</span>
+            <span class="form-control col-sm-8" placeholder="Other Information" aria-describedby="OtherInformation-addon"> @Model.MainItem.OtherInformation</span>
+        </div>
+
 
     </div>
     <div class="card-footer text-center">
         <a asp-action="ListMainItems" asp-controller="Settings" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
-        <a asp-action="EditMainItem" asp-controller="Settings" asp-route-Id="@Model.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
-
+        @if (Model.Permission.CanEdit) { 
+            <a asp-action="EditMainItem" asp-controller="Settings" asp-route-Id="@Model.MainItem.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+        }
     </div>
 </div>
+@section Scripts{
+    <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuSettings').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
+    </script>
+}
 

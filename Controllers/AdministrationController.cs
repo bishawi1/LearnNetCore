@@ -18,14 +18,16 @@ namespace MSIS.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IEmployeeRepository employeeRepository;
+        private readonly SQLSettingsRepository settingsRepository;
 
         public AdministrationController(RoleManager<IdentityRole> roleManager,
                                  UserManager<ApplicationUser> userManager,
-                                 IEmployeeRepository employeeRepository)
+                                 IEmployeeRepository employeeRepository, SQLSettingsRepository settingsRepository)
         {
             this.roleManager = roleManager;
             this.userManager = userManager;
             this.employeeRepository = employeeRepository;
+            this.settingsRepository = settingsRepository;
         }
         [HttpGet]
         public IActionResult CreateRole()
@@ -100,7 +102,8 @@ namespace MSIS.Controllers
             EditRoleViewModel model = new EditRoleViewModel
             {
                 Id = role.Id,
-                RoleName = role.Name
+                RoleName = role.Name,
+                Pages= settingsRepository.getPages().ToList()
             };
             foreach(var user in userManager.Users)
             {
@@ -109,6 +112,7 @@ namespace MSIS.Controllers
                     model.Users.Add(user.UserName);
                 }
             };
+            
             return View(model);
         }
 
@@ -212,11 +216,53 @@ namespace MSIS.Controllers
                 return RedirectToAction("EditRole", "Administration", new { id = roleId });
             }
         }
+        private async Task<UserViewModel>  getUserRole(UserViewModel user)
+        {
+            bool Found = false;
+            foreach(var role in roleManager.Roles)
+            {
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    Found = true;
+                }
+                if (Found)
+                {
+                    user. AppRoleId = role.Id;
+                    user.AppRoleName = role.Name;
+                    break;
+                }
+
+            }
+
+            return user;
+        }
+        private async Task<UserViewModel> getUserRole(string UserId)
+        {
+            bool Found = false;
+            var user = await userManager.FindByIdAsync(UserId);
+            UserViewModel result = new UserViewModel();
+            foreach (var role in roleManager.Roles)
+            {
+                if (await userManager.IsInRoleAsync(user, role.Name))
+                {
+                    Found = true;
+                }
+                if (Found)
+                {
+                    result.AppRoleId = role.Id;
+                    result.AppRoleName = role.Name;
+                    break;
+                }
+
+            }
+
+            return result;
+        }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
      //[Authorize]
-        public IActionResult ListUsers()
+        public async Task<IActionResult> ListUsers()
         {
             var users =(from user in userManager.Users 
                         join employee in employeeRepository.GetAllEmployees()
@@ -226,9 +272,16 @@ namespace MSIS.Controllers
                         Email=user.Email,
                         EmployeeId=user.EmployeeId,
                         EmployeeName=employee.Name,
-                        Id=user.Id,
+                        Id=user.Id, 
                         UserName=user.UserName
                         } ).ToList();
+            foreach(UserViewModel user in users)
+            {
+                UserViewModel oUser;
+                oUser = await getUserRole(user);
+                user.AppRoleId = oUser.AppRoleId;
+                user.AppRoleName = oUser.AppRoleName;
+            };
             return View(users);
         }
         [HttpGet]
@@ -257,11 +310,16 @@ namespace MSIS.Controllers
             var result= await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (result.Succeeded)
             {
-                return RedirectToAction("Home", "Index");
+                return RedirectToAction( "Index","Home");
             }
             else
             {
-                ModelState.AddModelError("passwordError", result.Errors.ToList().ToString());
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
+                //ModelState.AddModelError("passwordError", result.Errors.ToList().ToString());
                 return View();
             }
         }
@@ -269,7 +327,16 @@ namespace MSIS.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> EditUser(string id)
         {
-            var user = await userManager.FindByIdAsync(id);
+            ApplicationUser user=null;
+
+            try
+            {
+            user = await userManager.FindByIdAsync(id);
+
+            }catch(Exception ex)
+            {
+                throw ex;
+            };
             if (user == null)
             {
                 ViewBag.ErrorMessage = $"User with Id = {id} cannot be found";
@@ -278,7 +345,8 @@ namespace MSIS.Controllers
             var userClaims = await userManager.GetClaimsAsync(user);
             var userRoles = await userManager.GetRolesAsync(user);
             var employees = employeeRepository.GetAllEmployees().ToList();
-
+            var roleList= roleManager.Roles.ToList();
+            UserViewModel ouser = await getUserRole(user.Id);
             var model = new EditUserViewModel
             {
                 Id = user.Id,
@@ -286,9 +354,12 @@ namespace MSIS.Controllers
                 Email = user.Email,
                 City = user.City,
                 Claims = userClaims.Select(c => c.Value).ToList(),
-                Employees=employees,
-                EmployeeId=user.EmployeeId,
+                Employees = employees,
+                EmployeeId = user.EmployeeId,
+                RoleList = roleList,
+                RoleId = ouser.AppRoleId,
                 Roles = userRoles
+                
             };
 
             return View(model);
@@ -297,9 +368,12 @@ namespace MSIS.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-       // [Authorize]
+        // [Authorize]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
         {
+            var boolSave = false;
+            IdentityResult Result;
+            
             var user = await userManager.FindByIdAsync(model.Id);
             if (user == null)
             {
@@ -308,26 +382,88 @@ namespace MSIS.Controllers
             }
             else
             {
+                var role = await roleManager.FindByIdAsync(model.RoleId);
+                var boolUserInRole = await userManager.IsInRoleAsync(user, role.Name);
+                if (boolUserInRole)
+                {
+                    boolSave = true;
+                }
+                else
+                {
+                    var CurrentUserRole = await getUserRole(user.Id);
+                    if (CurrentUserRole.AppRoleId != null)
+                    {
+                        Result = await userManager.RemoveFromRoleAsync(user, CurrentUserRole.AppRoleName);
+                        if (Result.Succeeded)
+                        {
+                            Result = await userManager.AddToRoleAsync(user, role.Name);
+                            if (Result.Succeeded)
+                            {
+                                boolSave = true;
+                            }
+                            else
+                            {
+                                foreach (var error in Result.Errors)
+                                {
+                                    ModelState.AddModelError("", error.Description);
+                                }
+                                return View(model);
+                            }
+                        }
+                        else
+                        {
+                            foreach (var error in Result.Errors)
+                            {
+                                ModelState.AddModelError("", error.Description);
+                            }
+                            return View(model);
+
+                        }
+                    }
+                    else
+                    {
+                        Result = await userManager.AddToRoleAsync(user, role.Name);
+                        if (Result.Succeeded)
+                        {
+                            boolSave = true;
+                        }
+                        else
+                        {
+                            foreach (var error in Result.Errors)
+                            {
+                                ModelState.AddModelError("", error.Description);
+                            }
+                            return View(model);
+                        }
+
+                    }
+
+                }
+            }
+            if (boolSave)
+            {
                 user.UserName = model.UserName;
                 user.City = model.City;
                 user.Email = model.Email;
                 user.EmployeeId = model.EmployeeId;
-                var result = await userManager.UpdateAsync(user);
-                if (result.Succeeded)
+                Result = await userManager.UpdateAsync(user);
+                if (Result.Succeeded)
                 {
                     return RedirectToAction("ListUsers", "Administration");
                 }
                 else
                 {
-                    foreach(var error in result.Errors)
+                    foreach (var error in Result.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
                     return View(model);
-                };
+                }
             }
-            
-
+            else
+            {
+                return View(model);
+            }
         }
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string id)
@@ -354,6 +490,80 @@ namespace MSIS.Controllers
                     return View("ListUsers");
                 }
             }
+        }
+
+
+        [HttpGet]
+        public IActionResult RolePages(string RoleId)
+        {
+            List<RolePagesViewModels> model = settingsRepository.getRolePages(RoleId).ToList();
+            return PartialView("_RolePages",model);
+        }
+
+        [HttpPost]
+        public IActionResult AddRolePage(string RoleId, int PageId,Boolean CanView, Boolean CanAdd, Boolean CanEdit, Boolean CanDelete )
+        {
+            RolePage rolePage = new RolePage();
+            rolePage.CanAdd = CanAdd;
+            rolePage.CanDelete = CanDelete;
+            rolePage.CanEdit = CanEdit;
+            rolePage.CanView = CanView;
+            rolePage.PageId = PageId;
+            rolePage.RoleId = RoleId;
+            settingsRepository.AddRolePage(rolePage);
+
+            List<RolePagesViewModels> model = settingsRepository.getRolePages(RoleId).ToList();
+            return PartialView("_RolePages", model);
+            //return PartialView("_PurchaseOrderItems", model);
+        }
+
+        [HttpPost]
+        public IActionResult verifyRolePages( string RoleId)
+        {
+            Boolean roleVerified = settingsRepository.verifyRolePages(RoleId);
+            if (!roleVerified )
+            {
+                ViewBag.ErrorMessage = $"RolePAge with Id = {RoleId} cannot be Verified";
+                return View("NotFound");
+            }
+            else
+            {
+                List<RolePagesViewModels> model = settingsRepository.getRolePages(RoleId).ToList();
+                return PartialView("_RolePages", model);
+            }
+
+            //return PartialView("_PurchaseOrderItems", model);
+        }
+        [HttpPost]
+        public IActionResult EditRolePage(int Id, string RoleId, int PageId,Boolean CanView, Boolean CanAdd, Boolean CanEdit, Boolean CanDelete )
+        {
+            RolePage rolePage = settingsRepository.GetRolePage(Id);
+            if (rolePage == null)
+            {
+                ViewBag.ErrorMessage = $"RolePAge with Id = {Id} cannot be found";
+                return View("NotFound");
+            }
+            else
+            {
+                rolePage.CanAdd = CanAdd;
+                rolePage.CanDelete = CanDelete;
+                rolePage.CanEdit = CanEdit;
+                rolePage.CanView = CanView;
+                rolePage.PageId = PageId;
+                rolePage.RoleId = RoleId;
+                settingsRepository.UpdateRolePage(rolePage);
+                List<RolePagesViewModels> model = settingsRepository.getRolePages(RoleId).ToList();
+                return PartialView("_RolePages", model);
+            }
+
+            //return PartialView("_PurchaseOrderItems", model);
+        }
+
+        [HttpGet]
+        public IActionResult getRolePage(int Id,string RoleId)
+        {
+            RolePagesViewModels model = settingsRepository.getRolePageViewModel(Id, RoleId);
+            return new JsonResult(model);
         }
 
     }

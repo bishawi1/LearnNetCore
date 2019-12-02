@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace MSIS.Models
 {
+    [NotMapped]
     public class PurchaseOrder
     {
         [Key]
@@ -18,8 +19,16 @@ namespace MSIS.Models
         public string PurchaseOrderCode { get; set; }
         [Required]
         public DateTime PurchaseOrderDate { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter a value From List")]
         [Required]
         public int SupplierId { get; set; }
+        [Required]
+        public int BranchId { get; set; }
+        [Required]
+        public int ProjectId { get; set; }
+        [Required]
+        public int EmployeeId { get; set; }
+        [Required]
         public int CurrencyId { get; set; }
         public float CurrencyRate { get; set; }
         public string Notes { get; set; }

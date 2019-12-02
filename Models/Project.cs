@@ -18,6 +18,8 @@ namespace MSIS.Models
         [Required]
         [Column(TypeName = "nvarchar(100)")]
         public string ProjectName { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Owner,Please enter a value From List")]
+        [Required]
         public int ProjectOwner { get; set; }
         [Column(TypeName = "varchar(50)")]
         public string Fax { get; set; }
