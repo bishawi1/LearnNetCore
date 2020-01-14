@@ -11,6 +11,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 
 namespace MSIS.wwwroot.Controllers
 {
@@ -19,20 +20,24 @@ namespace MSIS.wwwroot.Controllers
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IHostingEnvironment hostingEnvironment;
 
-        public HomeController(IEmployeeRepository EmployeeRepository, IHostingEnvironment hostingEnvironment)
+        public IConfiguration Config { get; }
+
+        public HomeController(IEmployeeRepository EmployeeRepository, IHostingEnvironment hostingEnvironment, IConfiguration _config)
         {
             _employeeRepository = EmployeeRepository;
             this.hostingEnvironment = hostingEnvironment;
+            Config = _config;
         }
 
 
         [AllowAnonymous]
         public ViewResult Index()
         {
-
+            //var str= Config.GetConnectionString("EmployeeDBConnectionString");
             //MockEmployeeRepository employeeRepository  = new MockEmployeeRepository();
             //return Json(new {IsSucceeded="true", ErrorText="",Employee= _employeeRepository.GetEmployee(1)});
             //return Json(new { id=1,Name="John"});
+            //ViewBag.connString = str;
             return View();
         }
         [AllowAnonymous]
@@ -63,6 +68,8 @@ namespace MSIS.wwwroot.Controllers
                 Address = employee.Address,
                 ExistingPhotoPath = employee.PhotoPath,
                 PhoneNo = employee.PhoneNo,
+                EmployeeNo=employee.EmployeeNo,
+                Active=employee.Active,
                 JobDescription = employee.JobDescription
             };
             return View(employeeEditViewModel);
@@ -75,6 +82,13 @@ namespace MSIS.wwwroot.Controllers
             Employee employee = _employeeRepository.GetEmployee(model.Id);
             if (ModelState.IsValid)
             {
+                if (_employeeRepository.IsEmployeeExists(model.Id, model.EmployeeNo))
+                {
+                    ModelState.AddModelError("EmployeeNo", "Employee No Already Used.");
+                    return View(model);
+                }
+
+
                 string uniqueFileName = null;
                 if (model.Photos != null)
                 {
@@ -98,6 +112,7 @@ namespace MSIS.wwwroot.Controllers
                 employee.WorkMobileNo = model.WorkMobileNo;
                 employee.JobDescription = model.JobDescription;
                 employee.PhoneNo = model.PhoneNo;
+                employee.EmployeeNo = model.EmployeeNo;
                 if (model.Photos != null)
                 {
                     employee.PhotoPath = uniqueFileName;
@@ -135,6 +150,13 @@ namespace MSIS.wwwroot.Controllers
 
                 }
 
+            }else if (errorMessage.ToLower() == "deactivate")
+            {
+                Employee employee = _employeeRepository.GetEmployee(Id);
+                employee.Active = false;
+                _employeeRepository.Update(employee);
+                return RedirectToAction("EmployeeList", "home");
+
             }
             else
             {
@@ -143,14 +165,38 @@ namespace MSIS.wwwroot.Controllers
         }
 
         [HttpPost]
+        public IActionResult Activate(int Id)
+        {
+            Employee employee = _employeeRepository.GetEmployee(Id);
+            employee.Active = true;
+            _employeeRepository.Update(employee);
+            return RedirectToAction("EmployeeList", "home");
+        }
+
+        [HttpPost]
         public IActionResult ValidateDelete(int Id)
         {
             string errorMessage = "";
             errorMessage = _employeeRepository.ValidateDeletEmployee(Id);
+            if (errorMessage.ToLower() == "deactivate")
+            {
+                errorMessage = "";
+            }
             //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
             return new JsonResult(errorMessage);
         }
-
+        [HttpPost]
+        public IActionResult ValidateActivate(int Id)
+        {
+            string errorMessage = "";
+            //errorMessage = _employeeRepository.ValidateDeletEmployee(Id);
+            //if (errorMessage.ToLower() == "deactivate")
+            //{
+            //    errorMessage = "";
+            //}
+            ////PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            return new JsonResult(errorMessage);
+        }
         [HttpGet]
         //[Route("Home/Details/{Id?}")]
         public ViewResult Details(int? Id) {
@@ -182,7 +228,21 @@ namespace MSIS.wwwroot.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             MSIS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
 
-            ListEmployeesViewModel model = _employeeRepository.ListEmployees();
+            ListEmployeesViewModel model = _employeeRepository.ListActiveEmployees();
+            model.userPermission = permission.UserPermissions[0];
+
+            return View(model);
+            //IEnumerable<Employee> model=_employeeRepository.GetAllEmployees();
+            ////return PartialView("EmployeeList", model);
+            //return View(model);
+        }
+        [HttpGet]
+        public IActionResult InActiveEmployeeList()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
+
+            ListEmployeesViewModel model = _employeeRepository.ListInActiveEmployees();
             model.userPermission = permission.UserPermissions[0];
 
             return View(model);
@@ -207,34 +267,46 @@ namespace MSIS.wwwroot.Controllers
         {
             if (ModelState.IsValid)
             {
-                string uniqueFileName = null;
-                if(model.Photos != null && model.Photos.Count > 0)
+                if (_employeeRepository.IsEmployeeExists(0, model.EmployeeNo))
                 {
-                    foreach(IFormFile photo in model.Photos){ 
-                    string UploadFolders= Path.Combine(hostingEnvironment.WebRootPath, "images");
-                    uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(photo.FileName);// model.Photo.Name;
-                    string filePath= Path.Combine( UploadFolders, uniqueFileName);
-                    photo.CopyTo(new FileStream(filePath,FileMode.Create));
-                    }
+                    ModelState.AddModelError("EmployeeNo", "Employee No Already Used.");
+                    return View(model);
                 }
+                else { 
+                    string uniqueFileName = null;
+                    if(model.Photos != null && model.Photos.Count > 0)
+                    {
+                        foreach(IFormFile photo in model.Photos){ 
+                        string UploadFolders= Path.Combine(hostingEnvironment.WebRootPath, "images");
+                        uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(photo.FileName);// model.Photo.Name;
+                        string filePath= Path.Combine( UploadFolders, uniqueFileName);
+                        photo.CopyTo(new FileStream(filePath,FileMode.Create));
+                        }
+                    }
 
-                Employee NewEmplyee = new Employee()
-                {
-                    Name = model.Name,
-                    Email=model.Email,
-                    Department=model.Department,
-                    EducationDegree=model.EducationDegree,
-                    IdentityNo=model.IdentityNo,
-                    MobileNo=model.MobileNo,
-                    Specialization=model.Specialization,
-                    OtherInformation=model.Specialization,
-                    WorkMobileNo=model.WorkMobileNo,
-                    Address=model.Address,
-                    PhotoPath=uniqueFileName
-                };            
+                    Employee NewEmplyee = new Employee()
+                    {
+                        Name = model.Name,
+                        Email=model.Email,
+                        Department=model.Department,
+                        EducationDegree=model.EducationDegree,
+                        IdentityNo=model.IdentityNo,
+                        MobileNo=model.MobileNo,
+                        Specialization=model.Specialization,
+                        OtherInformation=model.Specialization,
+                        WorkMobileNo=model.WorkMobileNo,
+                        Address=model.Address,
+                        Active=true,
+                        JobDescription=model.JobDescription,
+                        PhoneNo=model.PhoneNo,
+                        EmployeeNo=model.EmployeeNo,
+                        PhotoPath=uniqueFileName
+                    };            
                     _employeeRepository.Add(NewEmplyee);
                     return RedirectToAction("Details", new { Id = NewEmplyee.Id });
-            }
+  
+                }
+          }
             return View();
         }
     }

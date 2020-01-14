@@ -1,24 +1,26 @@
 ﻿@model PageTitleViewModel
-<div class="flex-container " style="border-bottom:3px solid black;">
-    <div class="col-sm-3">
-        <img src="~/images/msisLogo.jpg" style="width:80px;height:80px;" />
-    </div>
-    <div class="col-sm-6 ">
-        <h1 style="text-align:center;font-size:24px;"><b>@Model.PageTitle </b></h1>
-    </div>
-    <div class="col-sm-3">
-        <h1 style="text-align:center;font-size:16px;">
-            <b>شركة ملتي سوليوشنز(حلول متعددة)</b>
-            <br />
-            <b>للاستثمار والتوريدات</b>
-            <br />
-            <b>
-                Multi Solutions for Investment
-            </b>
-            <br />
-            <b>
-                & Supplies
-            </b>
-        </h1>
-    </div>
+    <table style="width:100%;">
+        <tr>
+            <td style="width:250px;"><img src="~/images/msisLogo.jpg" style="width:80px;height:80px;" /></td>
+            <td ><h1 style="text-align:center;font-size:24px;"><b>@Model.PageTitle </b></h1></td>
+            <td style="width:250px;">
+                <h1 style="text-align:center;font-size:16px;">
+                    <b>شركة ملتي سوليوشنز(حلول متعددة)</b>
+                    <br />
+                    <b>للاستثمار والتوريدات</b>
+                    <br />
+                    <b>
+                        Multi Solutions for Investment
+                    </b>
+                    <br />
+                    <b>
+                        & Supplies
+                    </b>
+                </h1>
+            </td>
+        </tr>
+    </table>
+
+<div >
+    <span> print date: @DateTime.Now</span>
 </div>

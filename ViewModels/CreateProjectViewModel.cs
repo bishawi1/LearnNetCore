@@ -8,6 +8,8 @@ namespace MSIS.ViewModels
 {
     public class CreateProjectViewModel:Project
     {
-            public List<Customer> Customers { get; set; }
+        public List<Customer> Customers { get; set; }
+        public Boolean AddProjectNoManually { get; set; }
+
     }
 }

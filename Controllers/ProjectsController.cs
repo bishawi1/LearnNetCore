@@ -117,6 +117,7 @@ namespace MSIS.Controllers
             CustomerName="Select ..."
             });
             project.ProjectYear = DateTime.Today.Year;
+            project.AddProjectNoManually = true;
             return View(project);
         }
         [HttpPost]
@@ -124,9 +125,19 @@ namespace MSIS.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.ProjectYear = DateTime.Today.Year;
-                projectsRepository.Add(model);
-                return RedirectToAction("ListProjects", "Projects");
+                //model.ProjectYear = DateTime.Today.Year;
+                if (projectsRepository.IsProjectExists(model.Id, model.ProjectYear, model.ProjectSerial))
+                {
+                    projectsRepository.Add(model);
+                    return RedirectToAction("ListProjects", "Projects");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Project No Already Used.");
+                    model.Customers = customersRepository.GetAllCustomers().ToList();
+                    model.AddProjectNoManually = true;
+                    return View(model);
+                }
             }
             return View();
         }
@@ -162,11 +173,26 @@ namespace MSIS.Controllers
                 }
                 else
                 {
-                    project.ProjectOwner = model.ProjectOwner;
-                    project.Address = model.Address;
-                    project.OtheInformation = model.OtheInformation;
-                    projectsRepository.Update(project);
-                    return RedirectToAction("ListProjects", "Projects");
+                    //model.ProjectYear = DateTime.Today.Year;
+                    if (projectsRepository.IsProjectExists(model.Id, model.ProjectYear, model.ProjectSerial))
+                    {
+                        project.ProjectSerial = model.ProjectSerial;
+                        project.ProjectYear = model.ProjectYear;
+                        project.ProjectOwner = model.ProjectOwner;
+                        project.ProjectName = model.ProjectName;
+                        project.Address = model.Address;
+                        project.OtheInformation = model.OtheInformation;
+                        projectsRepository.Update(project);
+                        return RedirectToAction("ListProjects", "Projects");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Project No Already Used.");
+                        model.Customers = customersRepository.GetAllCustomers().ToList();
+                        model.AddProjectNoManually = true;
+                        return View(model);
+                    }
+
                 }
             }
             return View(model);

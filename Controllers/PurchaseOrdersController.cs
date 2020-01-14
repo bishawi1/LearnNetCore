@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MSIS.Models;
@@ -19,7 +21,56 @@ namespace MSIS.Controllers
             this.purchaseOrderRepository = suppliersRepository;
             this.hostingEnvironment = hostingEnvironment;
         }
+        [HttpPost]
+        public IActionResult ConfirmPurchaseOrder(int Id)
+        {
+            PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            purchaseOrderRepository.ConfirmPurchaseOrder(purchaseOrderChanges);
+            return RedirectToAction("ListPurchaseOrders", "PurchaseOrders");
+        }
+        [HttpPost]
+        public IActionResult waitPurchaseOrderForDelivery(int Id)
+        {
+            PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            purchaseOrderRepository.waitPurchaseOrderForDelivery(purchaseOrderChanges);
+            return RedirectToAction("ListPurchaseOrders", "PurchaseOrders");
+        }
+        [HttpPost]
+        public IActionResult DeliverPurchaseOrder(int Id, int StateId,double Subtraction, string Description)
+        {
+            PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            if (StateId == 0)
+            {
+                purchaseOrderRepository.DeleverPurchaseOrder(purchaseOrderChanges);
+            }
+            else if (StateId == 1)
+            {
+                purchaseOrderChanges.Description = Description;
+                purchaseOrderRepository.DeleverPartialPurchaseOrder(purchaseOrderChanges);
+            }
+            else if (StateId == 2)
+            {
+                purchaseOrderChanges.Description = Description;
+                purchaseOrderRepository.DeleverCancelPurchaseOrder(purchaseOrderChanges);
+            }
+            return RedirectToAction("ListPurchaseOrders", "PurchaseOrders");
+        }
 
+        [HttpPost]
+        public IActionResult VerifyOrderExecution(int Id, int StateId, string Description)
+        {
+            PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            if (StateId == 0)
+            {
+                purchaseOrderRepository.ApprovePurchaseOrder(purchaseOrderChanges);
+            }
+            else if (StateId == 1)
+            {
+                purchaseOrderChanges.Description = Description;
+                purchaseOrderRepository.RejectPurchaseOrder(purchaseOrderChanges);
+            }
+            return RedirectToAction("ListPurchaseOrders", "PurchaseOrders");
+        }
         [HttpGet]
         public IActionResult PurchaseOrderSearchAsync(string strGroupBy)
         {
@@ -60,7 +111,12 @@ namespace MSIS.Controllers
                 CurrencyName = "Select ..."
             });
 
-
+            model.PurchaseOrderStates = context.PurchaseOrderStates.ToList();
+            model.PurchaseOrderStates.Insert(0, new PurchaseOrderState()
+            {
+                Id = -1,
+                StateName = "Select ..."
+            });
             model.FromDate = new DateTime(2019, 1, 1);
             model.ToDate = DateTime.Today;
             if (strGroupBy == null)
@@ -76,13 +132,13 @@ namespace MSIS.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> PurchaseOrderSearchAsync(int CurrencyId, int BranchId, int ProjectId, int SupplierId,int OrderNo,int OrderYear, DateTime FromDate, DateTime ToDate, string strGroupBy)
+        public async Task<IActionResult> PurchaseOrderSearchAsync(int CurrencyId,int StateId, int BranchId, int ProjectId, int SupplierId,int OrderNo,int OrderYear, DateTime FromDate, DateTime ToDate, string strGroupBy)
         {
             List<PurchaseOrderDetailsViewModel> model=new List<PurchaseOrderDetailsViewModel>();
             try
             {
                 MSIS.ViewModels.PurchaseOrderSearchViewModel criteria = new PurchaseOrderSearchViewModel();
-                                
+                criteria.StateId = StateId;                
                 criteria.ProjectId = ProjectId;
                 criteria.BranchId = BranchId;
                 criteria.CurrencyId = CurrencyId;
@@ -114,10 +170,138 @@ namespace MSIS.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
-
-            ListPurchaseOrdersViewModel model= purchaseOrderRepository.getPurchaseOrderList();
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(0,BranchId);
             model.userPermission = permission.UserPermissions[0];
             return View(model);
+        }
+        [HttpGet]
+        public IActionResult ListNewPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(1,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+
+        [HttpGet]
+        public IActionResult ListConfirmedPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(2,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+
+        [HttpGet]
+        public IActionResult ListRejectedPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(3,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+        [HttpGet]
+        public IActionResult ListApprovedPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(4,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+        [HttpGet]
+        public IActionResult ListDeliveredPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(6,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+        [HttpGet]
+        public IActionResult ListDeliveredPartialyPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(7,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+        [HttpGet]
+        public IActionResult ListWaitingForDeliveryPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(5,BranchId);
+
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+        [HttpGet]
+        public IActionResult ListAllPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(0,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
         }
         [HttpPost]
         public IActionResult Delete(int Id)
@@ -131,8 +315,13 @@ namespace MSIS.Controllers
                 purchaseOrderRepository.DeletePurchaseOrder(Id);
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
-
-                model = purchaseOrderRepository.getPurchaseOrderList();
+                var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+                var BranchId = 0;
+                if (purchaseOrderPermission != null)
+                {
+                    BranchId = purchaseOrderPermission.BranchId;
+                }
+                model = purchaseOrderRepository.getPurchaseOrderList(0,BranchId);
                 model.userPermission = permission.UserPermissions[0];
             }
 
@@ -149,12 +338,19 @@ namespace MSIS.Controllers
             {
                 model.Permission = permission.UserPermissions[0];
             }
+            var context = purchaseOrderRepository.context;
+            PurchaseOrderPermission purchaseOrderPermission = context.PurchaseOrderPermissions.Where(x => x.UserId == userId).FirstOrDefault();
+            model.purchaseOrderPermission = purchaseOrderPermission;
+            model.Attachments = context.PurchaseOrderAttachments.Where(x => x.PurchaseOrderId == Id).ToList();
             return View(model);
         }
         [HttpGet]
         public IActionResult printPurchaseOrderForm(int Id)
         {
-
+            PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            if (purchaseOrderChanges.StateId == 4) { 
+                purchaseOrderRepository.waitPurchaseOrderForDelivery(purchaseOrderChanges);
+            }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
             var model = purchaseOrderRepository.getPurchaseOrderDetails(Id);
@@ -169,8 +365,14 @@ namespace MSIS.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
 
-            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList();
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(0,BranchId);
             model.userPermission = permission.UserPermissions[0];
             return View(model);
         }
@@ -200,11 +402,13 @@ namespace MSIS.Controllers
                 model.CurrencyRate = purchaseOrder.PurchaseOrderDetails.CurrencyRate;
                 model.PurchaseOrderNo = purchaseOrderRepository.retPurchaseOrderNo();
                 model.PurchaseOrderDate = purchaseOrder.PurchaseOrderDetails.PurchaseOrderDate;
+                model.StateId = 1;
                 model.PurchaseOrderYear = DateTime.Today.Year;
                 model.PurchaseOrderCode = model.PurchaseOrderYear + "/" + model.PurchaseOrderNo;
                 model.SupplierId = purchaseOrder.PurchaseOrderDetails.SupplierId;
                 model.Notes = purchaseOrder.PurchaseOrderDetails.Notes;
                 model.User_Name = User.Identity.Name;
+                model.DeliveryDate = purchaseOrder.PurchaseOrderDetails.DeliveryDate;
                 var newModel= purchaseOrderRepository.Add(model);
                 return RedirectToAction("Edit", "PurchaseOrders",new { Id=newModel.Id});
             }
@@ -221,6 +425,11 @@ namespace MSIS.Controllers
             }
             else
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var context = purchaseOrderRepository.context;
+                PurchaseOrderPermission purchaseOrderPermission = context.PurchaseOrderPermissions.Where(x => x.UserId == userId).FirstOrDefault();
+                purchaseOrder.purchaseOrderPermission = purchaseOrderPermission;
+
                 return View(purchaseOrder);
             }
         }
@@ -424,6 +633,46 @@ namespace MSIS.Controllers
             PurchaseOrderItemsViewModel model;
             model= purchaseOrderRepository.getPurchaseOrderItemDetails(Id);
             return new JsonResult(model);
+        }
+
+
+        //--------------------------  Attachments
+        [HttpGet]
+        public IActionResult AddAttachment(int Id)
+        {
+            PurchaseOrderAddAttachmentViewModel model = new PurchaseOrderAddAttachmentViewModel();
+            model.PurchaseOrderId = Id;
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult AddAttachment(PurchaseOrderAddAttachmentViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                    string uniqueFileName = null;
+                    if (model.Photos != null && model.Photos.Count > 0)
+                    {
+                        foreach (IFormFile photo in model.Photos)
+                        {
+                            string UploadFolders = Path.Combine(hostingEnvironment.WebRootPath, "images/PurchaeOrders");
+                            uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(photo.FileName);// model.Photo.Name;
+                            string filePath = Path.Combine(UploadFolders, uniqueFileName);
+                            photo.CopyTo(new FileStream(filePath, FileMode.Create));
+                        }
+                    }
+
+                    PurchaseOrderAttachment NewAttachment = new PurchaseOrderAttachment()
+                    {
+                        Caption = model.Caption,
+                        Description = model.Description,
+                        PurchaseOrderId = model.PurchaseOrderId,
+                        URL = uniqueFileName
+                    };
+                    purchaseOrderRepository.AddAttachment(NewAttachment);
+                    return RedirectToAction("Details", new { Id = NewAttachment.PurchaseOrderId });
+
+            }
+            return View();
         }
 
     }

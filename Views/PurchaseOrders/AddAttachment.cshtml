@@ -1,0 +1,65 @@
+﻿@model PurchaseOrderAddAttachmentViewModel
+@{
+    ViewData["Title"] = "AddAttachment";
+}
+    <form enctype="multipart/form-data" asp-controller="PurchaseOrders" asp-action="AddAttachment" class="mt-3" method="post">
+        <div class="card">
+            <div class="card-header">
+
+            </div>
+            <div class="card-body">
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="Id-addon">Id</span>
+                    <input asp-for="Id" class="form-control col-sm-9" placeholder="Id" aria-describedby="Id-addon" />
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="PurchaseOrderId-addon">PurchaseOrderId</span>
+                    <input asp-for="PurchaseOrderId" class="form-control col-sm-9" placeholder="PurchaseOrderId" aria-describedby="PurchaseOrderId-addon" />
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="Caption-addon">Caption</span>
+                    <input asp-for="Caption" class="form-control col-sm-9" placeholder="Caption" aria-describedby="Caption-addon" />
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-2 " id="Photos-addon">Photo</span>
+                        <div class="custom-file">
+                            @*<input multiple asp-for="@Photos" class="form-control custom-file-input" aria-describedby="Photos-addon" />*@
+                            <input multiple asp-for="Photos" class="form-control custom-file-input" aria-describedby="Photos-addon" />
+                            <label class="custom-file-label">Choose File ...</label>
+                        </div>
+                    </div>
+                    <div class="input-group col-sm-12 row">
+                        <span class="input-group-text col-sm-3 " id="Description-addon">Description</span>
+                        <textarea asp-for="Description" class="form-control col-sm-9" placeholder="Description" aria-describedby="Description-addon"></textarea>
+                    </div>
+
+
+                </div>
+                <div class="card-footer">
+
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-outline-primary" style="width:auto"><i class="fa fa-save"></i> Save</button>
+                <a asp-controller="home" asp-action="EmployeeList" class="btn btn-outline-danger" style="width:auto"><i class="fa fa-times"></i> Cancel</a>
+            </div>
+        </div>
+    </form>
+        @section Scripts
+        {
+            <script>
+                $(document).ready(function () {
+                    $('.custom-file-input').on('change', function () {
+                        //console.log($(this));
+                        var fileLable = $(this).next('.custom-file-label');
+                        var files = $(this)[0].files;
+                        if (files.length > 1) {
+                            fileLable.html(files.length + ' files selected');
+                        } else if (files.length == 1) {
+                            fileLable.html(files[0].name);
+                        }
+                        //                    var fileName = $(this).val().split('\\').pop();
+                        //                    $(this).next('.custom-file-label').html(fileName);
+                    });
+                });
+            </script>
+        }

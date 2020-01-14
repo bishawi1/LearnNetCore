@@ -19,8 +19,28 @@
             </div>
             <div class="input-group  col-sm-5 mt-2">
                 <span class="input-group-text col-sm-4 col-form-label">Team Leader</span>
-                @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control " })
                 <span asp-validation-for="TaskResponsibleId" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row col-sm-12">
+            <div class="input-group  col-sm-5 mt-2">
+                <span class="input-group-text col-sm-4 col-form-label">Project</span>
+                @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @class = "form-control" })
+                <span asp-validation-for="ProjectId" class="text-danger"></span>
+            </div>
+            <div class="input-group  col-sm-5 mt-2">
+                <span class="input-group-text col-sm-4 col-form-label">Branch</span>
+                @Html.DropDownListFor(x => Model.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @class = "form-control" })
+                <span asp-validation-for="BranchId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row col-sm-12">
+            <div class="input-group col-sm-5 mt-2">
+                <span id="ContinuousTask-addon" asp-for="ContinuousTask" class="input-group-text col-sm-4 col-form-label">Continuous</span>
+                <input type="checkbox" asp-for="ContinuousTask" class="form-control col-sm-1" placeholder="OtherInformation" aria-describedby="ContinuousTask-addon" />
+                <span asp-validation-for="ContinuousTask" class="text-danger"></span>
             </div>
         </div>
     </div>
@@ -34,14 +54,19 @@
         <script>
 
             InitDatepicker();
+            $(document).ready(function () {
+                $('.chosen').chosen();
+            });
             function btnTaskSearch_Click() {
                 $.post("/Tasks/TaskSearchAsync",
                     {
                         TaskOwnerId: $('#TaskOwnerId').val(),
                         TaskResponsibleId: $('#TaskResponsibleId').val(),
-                        ProjectId: "-1",
+                        ProjectId: $('#ProjectId').val(),
                         FromTaskDate: $('#FromTaskDate').val(),
                         ToTaskDate: $('#ToTaskDate').val(),
+                        BranchId: $('#BranchId').val(),
+                        ContinuousTask: $('#ContinuousTask').is(":checked"),
                         strGroupBy: "@Model.strGroupBy"
                     },
                     function (data, status) {

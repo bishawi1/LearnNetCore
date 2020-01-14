@@ -1,10 +1,49 @@
-﻿@model List<MSIS.ViewModels.TaskDetailsViewModel>
+﻿@model TaskDetailsListViewModel
+@{
+    var WaitingCount = 0;
+    var InProgressCount = 0;
+    var DoneCount = 0;
+    var ApprovedCount = 0;
+    var RejectedCount = 0;
+    WaitingCount = Model.CountByStatus.WaitingCount;
+    InProgressCount = Model.CountByStatus.InProgressCount;
+    DoneCount = Model.CountByStatus.DoneCount;
+    ApprovedCount = Model.CountByStatus.ApprovedCount;
+    RejectedCount = Model.CountByStatus.RejectedCount;
+}
+<div class="flex-container">
+    <div class="column">
+        @*<form asp-action="ListWaitingTasks" asp-controller="Tasks" method="get" )>*@
+        <button id="Waiting" class="numberCircle btn btn-secondary text-center m-1 " style="width:50px;border-radius:20;">@WaitingCount</button>
+        @*</form>*@
+
+        @*<a id="Waiting" asp-action="ListWaitingTasks" asp-controller="Tasks" class="numberCircle btn btn-secondary text-center m-1" style="width:50px;border-radius:20;">0</a>*@
+    </div>
+    <div class="column">
+        <button id="InProgress" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">@InProgressCount</button>
+        @*<a id="InProgress" asp-action="ListInProgressTasks" asp-controller="Tasks" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">0</a>*@
+    </div>
+    <div class="column">
+        <button id="Done" class="numberCircle btn btn-warning text-center m-1" style="width:50px;border-radius:20;">@DoneCount</button>
+    </div>
+    <div class="column">
+        <button id="Approved" class="numberCircle btn btn-success text-center m-1" style="width:50px;border-radius:20;">@ApprovedCount</button>
+    </div>
+    <div class="column">
+        <button id="Rejected" class="numberCircle btn btn-danger text-center m-1" style="width:50px;border-radius:20;">@RejectedCount</button>
+    </div>
+    <div class="column">
+        <button id="showAll" class="numberCircle btn btn-outline-primary text-center m-1" style="width:50px;border-radius:20;">All</button>
+    </div>
+</div>
+
 <div style=" border:solid 1px black; padding:3px;">
     <table class="table table-hover" id="myTable">
 
         <thead class="thead-dark">
             <tr>
                 <th>Task Date</th>
+                <th>Task Time</th>
                 <th>Task Subject</th>
                 <th>Task Owner</th>
                 <th>Responsible for Task</th>
@@ -18,7 +57,7 @@
 
 
         @{ string strProjectName = ""; }
-        @foreach (var task in Model)
+        @foreach (var task in Model.TaskDetails)
         {
             @if (task.strGroupBy == "ProjectName")
             {
@@ -78,7 +117,8 @@
             }
 
             <tr>
-                <td>@task.TaskStartDate</td>
+                <td>@task.TaskStartDate.ToString("dd-MM-yyyy")</td>
+                <td>@task.TaskStartTime</td>
                 <td>@task.TaskSubject</td>
                 <td>@task.TaskOwnerName</td>
                 <td>@task.TaskResponsibleName</td>
@@ -136,3 +176,74 @@
     </table>
 </div>
 
+
+    <script>
+        //////////////////////////////// Status filter
+        $('#Waiting').click(function () {
+            $.ajax({
+                url: '/Tasks/ListWaitingTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+        $('#InProgress').click(function () {
+            $.ajax({
+                url: '/Tasks/ListInProgressTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+        $('#Done').click(function () {
+            $.ajax({
+                url: '/Tasks/ListDoneTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+        $('#Approved').click(function () {
+            $.ajax({
+                url: '/Tasks/ListApprovedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#Rejected').click(function () {
+            $.ajax({
+                url: '/Tasks/ListRejectedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+        $('#showAll').click(function () {
+            $.ajax({
+                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showWaiting').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+                                                      //data:$('form').serialize(),// JSON.stringify(formData),
+
+    </script>

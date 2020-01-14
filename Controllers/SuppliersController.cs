@@ -117,9 +117,15 @@ namespace MSIS.Controllers
                 }
                 else
                 {
+                    if (suppliersRepository.IsSupplierExists(supplierChanges.Id, supplierChanges.SupplierCode))
+                    {
+                        ModelState.AddModelError("SupplierCode", "Supplier Code Already Used.");
+                        return View(supplier);
+                    }
                     supplier.OtherInformation = supplierChanges.OtherInformation;
                     supplier.Address = supplierChanges.Address;
                     supplier.MobileNo = supplierChanges.MobileNo;
+                    supplier.SupplierCode = supplierChanges.SupplierCode;
                     supplier.SupplierName = supplierChanges.SupplierName;
                     supplier.Email = supplierChanges.Email;
                     supplier.Fax = supplierChanges.Fax;
@@ -140,6 +146,11 @@ namespace MSIS.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (suppliersRepository.IsSupplierExists(supplier.Id, supplier.SupplierCode))
+                {
+                    ModelState.AddModelError("SupplierCode", "Supplier Code Already Used.");
+                    return View(supplier);
+                }
                 suppliersRepository.Add(supplier);
                 return RedirectToAction("ListSuppliers", "Suppliers");
             }

@@ -21,42 +21,58 @@
 
                 <div class="input-group row col-sm-6">
                     <span class="input-group-text col-sm-3 " id="taskDate-addon">Date</span>
-                    <input type="text" asp-for="TaskDate" class="form-control datepicker" placeholder="TaskDate" aria-describedby="taskDate-addon" />
+                    <input type="text" asp-for="TaskDate" class="form-control col-sm-3 datepicker" placeholder="TaskDate" aria-describedby="taskDate-addon" />
                     <span asp-validation-for="TaskDate" class="text-danger"></span>
                 </div>
 
 
                 <div class="input-group row col-sm-6">
                     <span class="input-group-text col-sm-3 col-form-label">Project Name</span>
-                    @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @class = "form-control" })
+                    @Html.DropDownListFor(x => Model.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @class = "form-control col-sm-8" })
                     <span asp-validation-for="ProjectId" class="text-danger"></span>
+
                 </div>
                 <div class="input-group row col-sm-6">
                     <span class="input-group-text col-sm-3 col-form-label">Branch Name</span>
-                    @Html.DropDownListFor(x => Model.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @class = "form-control" })
+                    @Html.DropDownListFor(x => Model.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @class = "form-control col-sm-8" })
                     <span asp-validation-for="BranchId" class="text-danger"></span>
                 </div>
                 <div class="input-group row col-sm-6">
                     <span class="input-group-text col-sm-3 col-form-label">Task Owner</span>
-                    @Html.DropDownListFor(x => Model.TaskOwnerId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                    @Html.DropDownListFor(x => Model.TaskOwnerId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control ", @disabled = "disabled" })
                     <span asp-validation-for="TaskOwnerId" class="text-danger"></span>
                 </div>
 
                 <div class="input-group row col-sm-6">
                     <span class="input-group-text col-sm-3 col-form-label">Team Leader</span>
-                    @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                    @Html.DropDownListFor(x => Model.TaskResponsibleId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control  col-sm-8", })
                     <span asp-validation-for="TaskResponsibleId" class="text-danger"></span>
                 </div>
-                <div class="input-group row col-sm-6">
-                    <span id="startDate-addon" class="input-group-text col-sm-3 col-form-label">Start Date</span>
-                    <input type="text" asp-for="TaskStartDate" class="form-control col-sm-9 datepicker" placeholder="TaskStartDate" aria-describedby="description-addon" />
-                    <span asp-validation-for="TaskStartDate" class="text-danger"></span>
+                <div class="row col-sm-6">
+                    <div class="input-group row col-sm-6">
+                        <span id="startDate-addon" class="input-group-text col-sm-6 col-form-label">Start Date</span>
+                        <input type="text" asp-for="TaskStartDate" class="form-control col-sm-5 datepicker" placeholder="TaskStartDate" aria-describedby="description-addon" />
+                        <span asp-validation-for="TaskStartDate" class="text-danger"></span>
+                    </div>
+                    <div class="input-group row col-sm-6">
+                        <span id="TaskStartTime-addon" class="input-group-text col-sm-5 col-form-label">Start Time</span>
+                        <input type="text" asp-for="TaskStartTime" class="form-control col-sm-6 timepicker" placeholder="Start Time" aria-describedby="TaskStartTime-addon" />
+                        <span asp-validation-for="TaskStartTime" class="text-danger"></span>
+                    </div>
                 </div>
-                <div class="input-group row col-sm-6">
-                    <span id="taskEndDate-addon" class="input-group-text col-sm-3 col-form-label">End Date</span>
-                    <input type="text" asp-for="TaskEndDate" class="form-control datepicker " aria-describedby="taskEndDate-addon" />
-                    <span asp-validation-for="TaskEndDate" class="text-danger"></span>
+                <div class="row col-sm-6">
+                    <div class="input-group row col-sm-6">
+                        <span id="taskEndDate-addon" class="input-group-text col-sm-6 col-form-label">End Date</span>
+                        <input type="text" asp-for="TaskEndDate" class="form-control col-sm-5 datepicker " aria-describedby="taskEndDate-addon" />
+                        <span asp-validation-for="TaskEndDate" class="text-danger"></span>
+                    </div>
+                    <div class="input-group row col-sm-6">
+                        <span id="TaskEndTime-addon" class="input-group-text col-sm-5 col-form-label">End Time</span>
+                        <input type="text" asp-for="TaskEndTime" class="form-control col-sm-6 timepicker" placeholder="End Time" aria-describedby="TaskEndTime-addon" />
+                        <span asp-validation-for="TaskEndTime" class="text-danger"></span>
+                    </div>
                 </div>
+
                 <div class="input-group row col-sm-12">
                     <span asp-for="Description" class="input-group-text col-sm-2 col-form-label" id="description-addon">Description</span>
                     <input type="text" asp-for="Description" class="form-control" placeholder="Description" aria-describedby="description-addon" />
@@ -68,6 +84,33 @@
                     <span asp-validation-for="OtherInformation" class="text-danger"></span>
                 </div>
 
+                <hr />
+                <div class="row col-sm-12 mt-4">
+                    <div class="input-group row col-sm-6">
+                        <span id="ContinuousTask-addon" asp-for="ContinuousTask" class="input-group-text col-sm-2 col-form-label">Continuous</span>
+                        <input type="checkbox" asp-for="ContinuousTask" class="form-control col-sm-1" placeholder="OtherInformation" aria-describedby="ContinuousTask-addon" />
+                        <span asp-validation-for="ContinuousTask" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="input-group row col-sm-4">
+                        <span class="input-group-text col-sm-4 col-form-label">Period</span>
+                        @Html.DropDownListFor(x => Model.PeriodId, new SelectList(Model.PeriodTypes, "PeriodId", "PeriodType"), new { @class = "form-control  col-sm-8", })
+                        <span asp-validation-for="PeriodId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row col-sm-6">
+                    <div class="input-group row col-sm-6">
+                        <span id="ContinueFromDate-addon" class="input-group-text col-sm-4 col-form-label">From Date</span>
+                        <input type="text" asp-for="ContinueFromDate" class="form-control col-sm-5 datepicker" placeholder="ContinueFromDate" aria-describedby="ContinueFromDate-addon" />
+                        <span asp-validation-for="ContinueFromDate" class="text-danger"></span>
+                    </div>
+                    <div class="input-group row col-sm-6">
+                        <span id="ContinueToDate-addon" class="input-group-text col-sm-4 col-form-label">End Date</span>
+                        <input type="text" asp-for="ContinueToDate" class="form-control col-sm-5 datepicker " aria-describedby="ContinueToDate-addon" />
+                        <span asp-validation-for="ContinueToDate" class="text-danger"></span>
+                    </div>
+                </div>
 
                 <div class="form-group row">
                     <div asp-validation-summary="All" class="text-danger"></div>
@@ -90,7 +133,12 @@
 
     <script>
         InitDatepicker();
-                    //$(function () {
+        $('.timepicker').timepicker();
+        $(".chosen").chosen();
+        $('#TaskResponsibleId').select2();
+        $('#ProjectId').select2();
+        $('#BranchId').select2();
+        //$(function () {
                     //    $(".datepicker").datepicker();
                     //});
 

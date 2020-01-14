@@ -1,0 +1,159 @@
+﻿@model ListPurchaseOrdersViewModel
+@{
+    ViewData["Title"] = "ListPurchaseOrders";
+
+}
+
+
+
+
+
+    <div id="showOrders">
+
+            <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
+                <table class="table table-hover" id="myTable">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Order No</th>
+                            <th>Date</th>
+                            <th>Supplier</th>
+                            <th>Currency</th>
+                            <th>Total Price</th>
+                            <th style="width:50px;">State</th>
+                            <th style="width:30px;"></th>
+                            @if (Model.userPermission.CanDelete)
+                            {
+                                <th style="width:30px;"></th>
+                            }
+                        </tr>
+                    </thead>
+
+
+
+                    @foreach (var order in Model.ListPurchaseOrders)
+                    {
+
+                <tr>
+                    <td>@order.PurchaseOrderCode</td>
+                    <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
+                    <td>@order.SupplierName</td>
+                    <td>@order.CurrencyName</td>
+                    <td>@order.TotalPrice</td>
+                    @if (order.StateId == 1)
+                    {
+                        <td class="bg-secondary text-center">@order.StateName </td>
+                    }
+                    else if (order.StateId == 2)
+                    {
+                        <td class="bg-primary text-center">@order.StateName </td>
+                    }
+                    else if (order.StateId == 3)
+                    {
+                        <td class="bg-danger text-center">@order.StateName </td>
+                    }
+                    else if (order.StateId == 4)
+                    {
+                        <td class="bg-info text-center">@order.StateName </td>
+                    }
+                    else if (order.StateId == 5)
+                    {
+                        <td class="bg-warning text-center">@order.StateName </td>
+                    }
+                    else if (order.StateId == 6)
+                    {
+                        <td class="bg-success text-center">@order.StateName </td>
+                    }
+                    else if (order.StateId == 7)
+                    {
+                        <td style="background-color:lightgreen" class="text-center">@order.StateName </td>
+                    }
+
+
+                    <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>
+                    @if (Model.userPermission.CanDelete)
+                    {
+                        @if (order.StateId == 1)// New
+                        {
+                            <td>
+                                <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                                   onclick="contDelete('@order.Id',true)"><i class="fa fa-trash"></i></a>
+                            </td>
+                        }
+                    }
+
+                </tr>
+
+                    }
+                    @if (Model.ListPurchaseOrders.Any())
+                    {
+                        <tfoot>
+                            <tr>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                            @foreach (var total in Model.PurchaseOrderTotals)
+                            {
+                                <tr>
+                                    <td colspan=4></td>
+                                    <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
+                                </tr>
+                            }
+                        </tfoot>
+                    }
+                </table>
+            </div>
+
+    </div>
+
+
+@section Scripts{
+
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+
+    <script>
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuPurchaseOrders').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+
+        //---------------Confirm Item Delete
+        function contDelete(ItemId) {
+            $('#txtDeleteItemID').val(ItemId);
+            $('#dlgConfirmDelete').modal('show');
+        };
+
+        //-------------- Delete Item Button
+        function DeleteItem() {
+            $.post('/PurchaseOrders/Delete',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    location.reload(true);
+
+                }
+            );
+        };
+
+        //----------------------------- filter By State
+        $('#NewOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListNewPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+
+
+    </script>
+}

@@ -36,12 +36,14 @@ namespace MSIS
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
-            }).AddEntityFrameworkStores<AppDBContext>();
+            }).AddEntityFrameworkStores<AppDBContext>()
+            .AddDefaultTokenProviders();
             //services.Configure<IdentityOptions>(options => {
             //    options.Password.RequiredLength = 10;
             //    options.Password.RequiredUniqueChars = 3;
             //    options.Password.RequireNonAlphanumeric = false;
             //});
+            services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(5));
             services.AddMvc(options=> {
                 var policy = new AuthorizationPolicyBuilder()
                                .RequireAuthenticatedUser()

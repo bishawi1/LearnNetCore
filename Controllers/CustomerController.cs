@@ -114,11 +114,17 @@ namespace MSIS.Controllers
                 }
                 else
                 {
+                    if (customersRepository.IsCustomerExists(customer.Id, customerChanges.CustomerCode))
+                    {
+                        ModelState.AddModelError("CustomerCode", "Customer No Already Used.");
+                        return View(customer);
+                    }
                     customer.OtherInformation = customerChanges.OtherInformation;
                     customer.Address = customerChanges.Address;
                     customer.MobileNo = customerChanges.MobileNo;
                     customer.CustomerName = customerChanges.CustomerName;
                     customer.Email = customerChanges.Email;
+                    customer.CustomerCode = customerChanges.CustomerCode;
                     customersRepository.Update(customer);
                     return RedirectToAction("ListCustomers", "Customer");
                 }
@@ -135,7 +141,12 @@ namespace MSIS.Controllers
         {
             if (ModelState.IsValid)
             {
-                customersRepository.Add(customer);
+                if (customersRepository.IsCustomerExists(customer.Id, customer.CustomerCode))
+                {
+                    ModelState.AddModelError("CustomerCode", "Customer No Already Used.");
+                    return View(customer);
+                }
+                customersRepository.Add(customer);                
                 return RedirectToAction("ListCustomers","Customer");
             }
             return View();

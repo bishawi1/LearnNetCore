@@ -1,0 +1,49 @@
+﻿@model PurchaseOrderPermissionDetailsViewModels
+@{
+    ViewData["Title"] = "PurchaseOrderPermissionDetails";
+}
+<div class="card">
+    <div class="card-header card-title text-center">
+        <h5> Purchase Order Permission</h5>
+    </div>
+    <div class="card-body">
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Id-addon">Id</span>
+            <span class="form-control col-sm-8" placeholder=" Id" aria-describedby="Id-addon"> @Model.purchaseOrderPermission.Id</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Name-addon">User </span>
+            <span class="form-control col-sm-8" placeholder="Name" aria-describedby="Name-addon"> @Model.UserName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="BranchName-addon">Branch </span>
+            <span class="form-control col-sm-8" placeholder="BranchName" aria-describedby="BranchName-addon"> @Model.BranchName</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="AllowConfirm-addon">Allow Confirm</span>
+            <span class="form-control col-sm-8" placeholder="Allow Confirm" aria-describedby="AllowConfirm-addon"> @Model.purchaseOrderPermission.AllowConfirm</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="AllowDelivery-addon">Allow Delivery</span>
+            <span class="form-control col-sm-8" placeholder="Allow Delivery" aria-describedby="AllowDelivery-addon"> @Model.purchaseOrderPermission.AllowDelivery</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="AllowPrint-addon">Allow Print</span>
+            <span class="form-control col-sm-8" placeholder="AllowPrint" aria-describedby="AllowPrint-addon"> @Model.purchaseOrderPermission.AllowPrint</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="AllowVerify-addon">Allow Verify</span>
+            <span class="form-control col-sm-8" placeholder="AllowVerify" aria-describedby="AllowVerify-addon"> @Model.purchaseOrderPermission.AllowVerify</span>
+        </div>
+        <div class="input-group col-sm-12 mt-1 row">
+            <span class="input-group-text col-sm-4 " id="Notes-addon">Phone</span>
+            <span class="form-control col-sm-8" placeholder="Notes" aria-describedby="Notes-addon"> @Model.purchaseOrderPermission.Notes</span>
+        </div>
+    </div>
+    <div class="card-footer text-center">
+        <a asp-action="ListPurchaseOrderPermission" asp-controller="Settings" class="btn btn-outline-danger ml-2" style="width:auto;"><i class="fa fa-backward"></i> Back</a>
+            <a asp-action="EditPurchaseOrderPermission" asp-controller="Settings" asp-route-Id="@Model.purchaseOrderPermission.Id" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-edit"></i> Edit</a>
+
+    </div>
+</div>
+

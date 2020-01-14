@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MSIS.Models;
 
 namespace MSIS.ViewModels
 {
+    [NotMapped]
     public class TaskDetailsViewModel
     {
         public int Id { get; set; }
@@ -34,6 +36,9 @@ namespace MSIS.ViewModels
         public string UserName { get; set; }
         public DateTime Time_Stamp { get; set; }
         public string Description { get; set; }
+        public string TaskStartTime { get; set; }
+        public string TaskEndTime { get; set; }
+        public bool ContinuousTask { get; set; }
 
         public string TaskActionDetails { get; set; }
         public string TaskOperation { get; set; }
@@ -43,6 +48,11 @@ namespace MSIS.ViewModels
 
         public List<EmployeesInTaskViewModel> TaskTeam { get; set; }
         public List<ViewModels.TaskActionDetailsViewModel> TaskActions { get; set; }
+        [NotMapped]
+        public Models.ContinuousTask  ContinousTaskDetails { get; set; }
+
+        [NotMapped]
+        public List<PeriodTypeModel> PeriodTypes { get; set; }
 
     }
 }

@@ -14,6 +14,7 @@ namespace MSIS.Models
         [Column(TypeName ="varchar(4)")]
         public int ProjectYear { get; set; }
         [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Project No is Required and Must be Greater than 0")]
         public int ProjectSerial { get; set; }
         [Required]
         [Column(TypeName = "nvarchar(100)")]

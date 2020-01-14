@@ -19,7 +19,30 @@ namespace MSIS.Controllers
             this.HostingEnvironment = hostingEnvironment;
         }
 
-
+        [HttpGet]
+        public IActionResult GetMainItems(int ItemCategoryId)
+        {
+            List<MainItem> model= OffersRepository.getMainItems(ItemCategoryId);
+            return new JsonResult(model);
+        }
+        [HttpGet]
+        public IActionResult GetItemCategories()
+        {
+            List<ItemCategory> model= OffersRepository.getItemCategoriess();
+            return new JsonResult(model);
+        }
+        [HttpGet]
+        public IActionResult GetItems(int MainItemId)
+        {
+            List<Item> model= OffersRepository.getItems(MainItemId);
+            return new JsonResult(model);
+        }
+        [HttpGet]
+        public IActionResult getItemDetails(int ItemId)
+        {
+            List<Item> model= OffersRepository.getItemDetails(ItemId);
+            return new JsonResult(model[0]);
+        }
         [HttpGet]
         public IActionResult ListOffers()
         {
@@ -32,7 +55,31 @@ namespace MSIS.Controllers
 
             return View(model);
         }
+        [HttpGet]
+        public IActionResult printOfferForm(int Id)
+        {
 
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
+            var model = OffersRepository.getOffersDetails(Id);
+            if (permission.UserPermissions.Count > 0)
+            {
+                model.Permission = permission.UserPermissions[0];
+            }
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult PrintOffersList()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
+
+            OfferListViewModels model = OffersRepository.getOfferList();
+
+            model.userPermission = permission.UserPermissions[0];
+
+            return View(model);
+        }
         [HttpGet]
         public IActionResult Create()
         {
@@ -54,6 +101,66 @@ namespace MSIS.Controllers
                 return RedirectToAction("Edit", "Offers", new { Id = newModel.Id });
             }
             return View();
+        }
+        [HttpGet]
+        public IActionResult OfferSearchAsync(string strGroupBy)
+        {
+            AppDBContext context = OffersRepository.getContext();
+            MSIS.ViewModels.OfferSearchViewModel model = new ViewModels.OfferSearchViewModel();
+            SQLSettingsRepository settingRepository = new SQLSettingsRepository(context);
+            SQLSupplierRepository supplierRepository = new SQLSupplierRepository(context);
+            model.CurrencyList = settingRepository.GetCurrencyList().ToList();
+            model.CurrencyList.Insert(0, new Currency
+            {
+                Id = -1,
+                CurrencyName = "Select ..."
+            });
+            model.Customers = context.Customers.ToList();
+            model.Customers.Insert(0, new Customer
+            {
+                Id = -1,
+                CustomerName = "Select ..."
+            });
+            model.FromDate = new DateTime(2019, 1, 1);
+            model.ToDate = DateTime.Today;
+            if (strGroupBy == null)
+            {
+                model.strGroupBy = "";
+            }
+            else
+            {
+                model.strGroupBy = strGroupBy;
+            }
+
+            return PartialView("_OfferSearch", model);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> OfferSearchAsync(int CurrencyId, int CustomerId, DateTime FromDate, DateTime ToDate, string strGroupBy)
+        {
+            List<SQLOffersViewModel> model = new List<SQLOffersViewModel>();
+            try
+            {
+                MSIS.ViewModels.OfferSearchViewModel criteria = new OfferSearchViewModel();
+                criteria.CustomerId = CustomerId;
+                criteria.CurrencyId = CurrencyId;
+                criteria.FromDate = FromDate;
+                criteria.ToDate = ToDate;
+                criteria.strGroupBy = strGroupBy;
+
+                model = OffersRepository.getAllOfferDetails(criteria).ToList();
+                //return new JsonResult( model);
+                return PartialView("_PrintOfferList", model);
+
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("OfferSearchAsync", ex.Message.ToString());
+
+            }
+
+            return View(model);
         }
 
         [HttpGet]

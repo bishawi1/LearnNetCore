@@ -15,6 +15,16 @@ namespace MSIS.Models
         {
             context = Context;
         }
+        public Boolean IsCustomerExists(int CustomerId, string CustomerCode)
+        {
+            var result = context.Customers.FromSql("Select * from dbo.Customers Where Id <> " + CustomerId.ToString() + " And CustomerCode = '" + CustomerCode + "'").ToList();
+            Boolean value = false;
+            if (result.Count > 0)
+            {
+                value = true;
+            }
+            return value;
+        }
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();

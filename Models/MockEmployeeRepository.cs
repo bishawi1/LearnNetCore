@@ -73,5 +73,30 @@ namespace MSIS.Models
         {
             throw new NotImplementedException();
         }
+
+        public bool IsEmployeeHasUser(string UserName, int EmployeeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ListEmployeesViewModel ListActiveEmployees()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsEmployeeExists(int EmployeeId, string EmployeeNo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ListEmployeesViewModel ListInActiveEmployees()
+        {
+            throw new NotImplementedException();
+        }
+
+        public AppDBContext getContext()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

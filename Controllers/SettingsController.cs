@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MSIS.Models;
 using MSIS.ViewModels;
@@ -16,11 +17,20 @@ namespace MultiSolution.Controllers
     {
         public SQLSettingsRepository SettingsRepository { get; }
         public IHostingEnvironment HostingEnvironment { get; }
-       public SettingsController(SQLSettingsRepository settingsRepository, IHostingEnvironment hostingEnvironment)
+        public UserManager<ApplicationUser> userManager { get; }
+
+        public SettingsController(SQLSettingsRepository settingsRepository, IHostingEnvironment hostingEnvironment, UserManager<ApplicationUser> userManager)
         {
             SettingsRepository = settingsRepository;
             HostingEnvironment = hostingEnvironment;
+            this.userManager = userManager;
         }
+        public IActionResult SendMail(List<int> Employees, string Message)
+        {
+            SettingsRepository.SendEmail(Employees, Message);
+            return new JsonResult(true);
+        }
+
         //--------------------------- Currency
         [HttpPost]
         public IActionResult Delete(int Id)
@@ -143,6 +153,163 @@ namespace MultiSolution.Controllers
             return View();
         }
         //--------------------------  end Currency
+        //--------------------------- PurchaseOrderPermission
+        [HttpPost]
+        public IActionResult DeletePurchaseOrderPermission(int Id)
+        {
+            PurchaseOrderPermission purchaseOrderPermission = SettingsRepository.DeletePurchaseOrderPermission(Id);
+                if (purchaseOrderPermission == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                    //return new JsonResult("{Deleted:true,ErrorText:''}");
+                    List<PurchaseOrderPermission> model = SettingsRepository.GetPurchaseOrderPermissionList().ToList();
+                    return new JsonResult(model);
+
+                    //return PartialView("_PurchaseOrderItems", model);
+
+                }
+
+        }
+
+
+        [HttpGet]
+        public IActionResult ListPurchaseOrderPermission()
+        {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "PurchaseOrderPermission");
+
+            ListPurchaseOrderPermissionViewModel model = SettingsRepository.ListPurchaseOrderPermissions();
+            if (permission.UserPermissions.Count() > 0)
+            {
+                model.userPermission = permission.UserPermissions[0];
+            }
+            else
+            {
+                model.userPermission = new UserPermissionDetailsViewModel();
+            }
+            return View(model);
+
+            //List<Currency> model = new List<Currency>();
+            //model = SettingsRepository.GetCurrencyList().ToList();
+            //return View(model);
+        }
+        [HttpGet]
+        public IActionResult PurchaseOrderPermissionDetails(int Id)
+        {
+            PurchaseOrderPermissionDetailsViewModels model = new PurchaseOrderPermissionDetailsViewModels();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
+            if (permission.UserPermissions.Count > 0)
+            {
+                model.Permission = permission.UserPermissions[0];
+            }
+
+
+            var purchaseOrderPermission = SettingsRepository.GetPurchaseOrderPermission(Id);
+            var user = userManager.Users.Where(x=>x.Id == purchaseOrderPermission.UserId).FirstOrDefault();
+            if (user!= null)
+            {
+                model.UserName = user.UserName;
+            }
+            if (purchaseOrderPermission.BranchId == 0)
+            {
+                model.BranchName = "All";
+            }
+            else
+            {
+                var branch = SettingsRepository.context.Branches.ToList().Where(x => x.Id == purchaseOrderPermission.BranchId).FirstOrDefault();
+                if (branch != null)
+                {
+                    model.BranchName = branch.Name;
+                }
+
+            }
+            model.purchaseOrderPermission = purchaseOrderPermission;
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult EditPurchaseOrderPermission(int Id)
+        {
+            CreatePurchaseOrderPermissionViewModel model = new CreatePurchaseOrderPermissionViewModel();
+            model.Users = userManager.Users.ToList();
+
+            PurchaseOrderPermission purchaseOrderPermission = SettingsRepository.GetPurchaseOrderPermission(Id);
+            if (purchaseOrderPermission == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+                model.AllowConfirm = purchaseOrderPermission.AllowConfirm;
+                model.AllowDelivery = purchaseOrderPermission.AllowDelivery;
+                model.AllowPrint = purchaseOrderPermission.AllowPrint;
+                model.AllowVerify = purchaseOrderPermission.AllowVerify;
+                model.Id = purchaseOrderPermission.Id;
+                model.Notes = purchaseOrderPermission.Notes;
+                model.UserId = purchaseOrderPermission.UserId;
+                model.BranchId = purchaseOrderPermission.BranchId;
+                model.Branches = SettingsRepository.context.Branches.ToList();
+                model.Branches.Insert(0,new Branch() { 
+                        Id=0,
+                        Name="All"
+                });
+                return View(model);
+            }
+        }
+        [HttpPost]
+        public IActionResult EditPurchaseOrderPermission(PurchaseOrderPermission purchaseOrderPermissionChanges)
+        {
+            if (ModelState.IsValid)
+            {
+                PurchaseOrderPermission purchaseOrderPermission = SettingsRepository.GetPurchaseOrderPermission(purchaseOrderPermissionChanges.Id);
+                if (purchaseOrderPermission == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                    purchaseOrderPermission.AllowConfirm = purchaseOrderPermissionChanges.AllowConfirm;
+                    purchaseOrderPermission.AllowDelivery = purchaseOrderPermissionChanges.AllowDelivery;
+                    purchaseOrderPermission.AllowPrint= purchaseOrderPermissionChanges.AllowDelivery;
+                    purchaseOrderPermission.AllowVerify= purchaseOrderPermissionChanges.AllowVerify;
+                    purchaseOrderPermission.Notes= purchaseOrderPermissionChanges.Notes;
+                    purchaseOrderPermission.UserId= purchaseOrderPermissionChanges.UserId;
+                    purchaseOrderPermission.BranchId = purchaseOrderPermissionChanges.BranchId;
+                    SettingsRepository.UpdatePurchaseOrderPermission(purchaseOrderPermission);
+                    return RedirectToAction("ListPurchaseOrderPermission", "Settings");
+                }
+            }
+            return View(purchaseOrderPermissionChanges);
+        }
+        [HttpGet]
+        public IActionResult CreatePurchaseOrderPermission()
+        {
+            CreatePurchaseOrderPermissionViewModel model = new CreatePurchaseOrderPermissionViewModel();
+            model.Users = userManager.Users.ToList();
+            model.Branches = SettingsRepository.context.Branches.ToList();
+            model.Branches.Insert(0, new Branch()
+            {
+                Id = 0,
+                Name = "All"
+            });
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult CreatePurchaseOrderPermission(CreatePurchaseOrderPermissionViewModel purchaseOrderPermission)
+        {
+            if (ModelState.IsValid)
+            {
+                SettingsRepository.AddPurchaseOrderPermission(purchaseOrderPermission);
+                return RedirectToAction("ListPurchaseOrderPermissions", "Settings");
+            }
+            return View();
+        }
+        //--------------------------  end Currency
+
         //--------------------------  Item Unit
 
         [HttpPost]

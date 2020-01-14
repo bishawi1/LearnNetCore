@@ -13,7 +13,7 @@ namespace MSIS.ViewModels
         [Required]
         [MaxLength(50, ErrorMessage = "Name cannot Exceed 50 characters")]
         public string Name { get; set; }
-
+        [Required]
         public string IdentityNo { get; set; }
         public string MobileNo { get; set; }
         public string WorkMobileNo { get; set; }
@@ -24,6 +24,8 @@ namespace MSIS.ViewModels
         public string PhoneNo { get; set; }
         public string JobDescription { get; set; }
         public Boolean Active { get; set; }
+        [Required]
+        public string EmployeeNo { get; set; }
 
 
         [Required]

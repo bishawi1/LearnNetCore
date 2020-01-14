@@ -9,6 +9,32 @@ namespace MSIS.Models
     public class SQLEmployeeRepository : IEmployeeRepository
     {
         private readonly AppDBContext context;
+        public Boolean IsEmployeeExists(int EmployeeId, string EmployeeNo)
+        {
+            var result = context.Employees.FromSql("Select * from dbo.Employees Where Id <> " + EmployeeId.ToString() + " And EmployeeNo = '" + EmployeeNo + "'").ToList();
+            Boolean value = false;
+            if (result.Count > 0)
+            {
+                value = true;
+            }
+            return value;
+        }
+        public AppDBContext getContext()
+        {
+            return context;
+        }
+
+
+        public Boolean IsEmployeeHasUser(string UserName, int EmployeeId)
+        {
+            var result = context.Users.FromSql("Select * from dbo.AspNetUsers Where UserName <> '" + UserName + "' And EmployeeId = " + EmployeeId).ToList();
+            Boolean value = true;
+            if (result.Count > 0)
+            {
+                value = false;
+            }
+            return value;
+        }
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
@@ -21,18 +47,30 @@ namespace MSIS.Models
         public string ValidateDeletEmployee(int Id)
         {
             string ErrorMessage = "";
+            var PhysicalDelete = true;
             var result = context.Tasks.Where(x => x.TaskOwnerId == Id || x.TaskResponsibleId == Id).ToList();
             if (result.Count > 0)
             {
-                ErrorMessage = "cannot delete employee, employee has Tasks";
+                result = result.Where(x => x.TaskStatusId != 3 && x.TaskStatusId != 5).ToList();
+                if (result.Count > 0) { 
+                    ErrorMessage = "cannot delete employee, employee has Tasks";
+                }
+                else
+                {
+                    PhysicalDelete = false;
+                }
             }
-            else
+            if(PhysicalDelete==false && ErrorMessage=="")
             {
                 var purchaseOrder = context.PurchaseOrders.Where(x => x.EmployeeId == Id).ToList();
                 if (purchaseOrder.Count > 0)
                 {
                     ErrorMessage = "cannot delete employee, employee has Purchase Order";
                 }
+            }
+            if(!PhysicalDelete && ErrorMessage == "")
+            {
+                ErrorMessage = "Deactivate";
             }
             return ErrorMessage;
         }
@@ -64,6 +102,19 @@ namespace MSIS.Models
             model.Employees = context.Employees.ToList();
             return model;
         }
+        public ListEmployeesViewModel ListActiveEmployees()
+        {
+            ListEmployeesViewModel model = new ListEmployeesViewModel();
+            model.Employees = context.Employees.Where(x=>x.Active==true).ToList();
+            return model;
+        }
+        public ListEmployeesViewModel ListInActiveEmployees()
+        {
+            ListEmployeesViewModel model = new ListEmployeesViewModel();
+            model.Employees = context.Employees.Where(x => x.Active == false).ToList();
+            return model;
+        }
+
         public IEnumerable<Employee> GetAllEmployees()
         {
             return context.Employees;
@@ -81,5 +132,7 @@ namespace MSIS.Models
             context.SaveChanges();
             return employeeChanges;
         }
+
+
     }
 }

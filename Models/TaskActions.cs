@@ -21,6 +21,8 @@ namespace MSIS.Models
         [Column(TypeName ="varchar(20)")]
         public string UserName { get; set; }
         public DateTime TimeStamp { get; set; }
+        public bool IsNote { get; set; }
+
 
     }
 }

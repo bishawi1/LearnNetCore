@@ -1,0 +1,119 @@
+﻿@model OfferListViewModels
+@{
+    ViewData["Title"] = "List Offers";
+}
+<!-- Search -->
+<div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+        <i class="fa fa-search"></i>
+        Search
+    </button>
+    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+    <br />
+
+    <div class="collapse" id="divCriteria">
+
+
+    </div>
+</div>
+
+<div id="printArea">
+    @await Html.PartialAsync("~/Views/Shared/_ReportHeader.cshtml", new PageTitleViewModel() { PageTitle = "Offers List" })
+
+    <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
+        <table class="table table-hover" id="myTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Offer Date</th>
+                    <th>Customer</th>
+                    <th>Currency</th>
+                    <th>Total</th>
+                    @*<th style="width:30px;"></th>
+                @if (Model.userPermission.CanDelete)
+                {
+                    <th style="width:30px;"></th>
+                }*@
+
+                </tr>
+            </thead>
+
+
+
+            @foreach (var offer in Model.OfferList)
+            {
+
+                <tr>
+                    <td>@offer.Id</td>
+                    <td>@offer.OfferDate.ToString("dd/MM/yyyy")</td>
+                    <td>@offer.CustomerName</td>
+                    <td>@offer.CurrencyName</td>
+                    <td>@offer.TotalPrice</td>
+                    @*<td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Offers" asp-route-Id="@offer.Id"><i class="fa fa-eye"></i></a></td>
+                @if (Model.userPermission.CanDelete)
+                {
+                    <td>
+                        <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                           onclick="contDelete('@offer.Id',true)"><i class="fa fa-trash"></i></a>
+                    </td>
+                }*@
+                </tr>
+
+            }
+            @if (Model.OffersTotals.Any())
+            {
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    @foreach (var total in Model.OffersTotals)
+                    {
+                        <tr>
+                            <td colspan=4></td>
+                            <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
+                        </tr>
+                    }
+                </tfoot>
+            }
+
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
+    <script>
+        $(document).ready(function () {
+            //----------- ajax
+            $.ajax({
+                url: '/Offers/OfferSearchAsync?strGroupBy=ALL',
+                type: 'Get',
+                success: function (response) {
+                    $('#divCriteria').html(response);
+
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+            //------------- end ajax
+        });
+        $('#printReport').on('click', function () {
+            $('#printArea').printThis();
+        });
+
+
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuOffers').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+    </script>
+}

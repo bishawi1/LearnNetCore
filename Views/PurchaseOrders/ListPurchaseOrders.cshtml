@@ -1,6 +1,13 @@
 ﻿@model ListPurchaseOrdersViewModel
 @{
     ViewData["Title"] = "ListPurchaseOrders";
+    var NewOrderCount = 0;
+    var ConfirmedCount = 0;
+    var RejectedOrderCount = 0;
+    var ApprovedOrderCount = 0;
+    var WaitingForDeliveryCount = 0;
+    var DeliveredCount = 0;
+    var DeliveredPartialyCount = 0;
 }
 @*<a asp-action="printPurchaseOrderList" asp-controller="PurchaseOrders" class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</a>*@
 <!----------------------Confirm Delete -->
@@ -26,10 +33,21 @@
         </div>
     </div>
 </div>
-<div class="card">
-    <div class="card-header">
-        <div class="flex-container text-center">
-            <span class="col-11"><h5> Purchase Orders List</h5></span>
+@{
+    NewOrderCount = Model.CountByStatus.NewOrdersCount;
+    ConfirmedCount = Model.CountByStatus.ConfirmedOrdersCount;
+    RejectedOrderCount = Model.CountByStatus.RejectedOrdersCount;
+    ApprovedOrderCount = Model.CountByStatus.ApprovedOrdersCount;
+    WaitingForDeliveryCount = Model.CountByStatus.WaitForDeliveryCount;
+    DeliveredCount = Model.CountByStatus.DeliveredCount;
+    DeliveredPartialyCount = Model.CountByStatus.DeliveredPartialyCount;
+
+}
+
+    <div class="card">
+        <div class="card-header">
+            <div class="flex-container text-center">
+                <span class="col-11"><h5> Purchase Orders List</h5></span>
                 @if (Model.userPermission != null)
                 {
                     if (Model.userPermission.CanAdd == true)
@@ -37,102 +55,259 @@
                         <a class="nav-link btn btn-outline-secondary  btn-sm" asp-action="Create" asp-controller="PurchaseOrders" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
                     }
                 }
+            </div>
+        </div>
+        <div class="card-body">
+            
+            <div class="flex-container">
+                <div class="column">
+                    <button id="NewOrder" class="numberCircle btn btn-secondary text-center m-1 " style="width:50px;border-radius:20;">@NewOrderCount</button>
+                </div>
+                <div class="column">
+                    <button id="ConfirmedOrder" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">@ConfirmedCount</button>
+                </div>
+                <div class="column">
+                    <button id="RejectedOrder" class="numberCircle btn btn-danger text-center m-1" style="width:50px;border-radius:20;">@RejectedOrderCount</button>
+                </div>
+                <div class="column">
+                    <button id="ApprovedOrder" class="numberCircle btn btn-info text-center m-1" style="width:50px;border-radius:20;">@ApprovedOrderCount</button>
+                </div>
+                <div class="column">
+                    <button id="WaitingForDelivery" class="numberCircle btn btn-warning text-center m-1" style="width:50px;border-radius:20;">@WaitingForDeliveryCount</button>
+                </div>
+                <div class="column">
+                    <button id="Delivered" class="numberCircle btn btn-success text-center m-1" style="width:50px;border-radius:20;">@DeliveredCount</button>
+                </div>
+                <div class="column">
+                    <button id="DeliveredPartialy" class="numberCircle btn text-center m-1" style="width:50px;background-color:lightgreen; border-radius:20;">@DeliveredPartialyCount</button>
+                </div> 
+                <div class="column">
+                    <button id="showAll" class="numberCircle btn btn-outline-primary text-center m-1" style="width:50px;border-radius:20;">All</button>
+                </div>
+
+            </div>
+
+            <div id="showOrders">
+                @if (Model.ListPurchaseOrders.Any())
+                {
+                    <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
+                        <table class="table table-hover" id="myTable">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Order No</th>
+                                    <th>Date</th>
+                                    <th>Supplier</th>
+                                    <th>Currency</th>
+                                    <th>Total Price</th>
+                                    <th style="width:50px;">State</th>
+                                    <th style="width:30px;"></th>
+                                    @if (Model.userPermission.CanDelete)
+                                    {
+                                        <th style="width:30px;"></th>
+                                    }
+                                </tr>
+                            </thead>
+
+
+
+                            @foreach (var order in Model.ListPurchaseOrders)
+                            {
+
+                        <tr>
+                            <td>@order.PurchaseOrderCode</td>
+                            <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
+                            <td>@order.SupplierName</td>
+                            <td>@order.CurrencyName</td>
+                            <td>@order.TotalPrice</td>
+                            @if (order.StateId == 1)
+                            {
+                                <td class="bg-secondary text-center">@order.StateName </td>
+                            }
+                            else if (order.StateId == 2)
+                            {
+                                <td class="bg-primary text-center">@order.StateName </td>
+                            }
+                            else if (order.StateId == 3)
+                            {
+                                <td class="bg-danger text-center">@order.StateName </td>
+                            }
+                            else if (order.StateId == 4)
+                            {
+                                <td class="bg-info text-center">@order.StateName </td>
+                            }
+                            else if (order.StateId == 5)
+                            {
+                                <td class="bg-warning text-center">@order.StateName </td>
+                            }
+                            else if (order.StateId == 6)
+                            {
+                                <td class="bg-success text-center">@order.StateName </td>
+                            }
+                            else if (order.StateId == 7)
+                            {
+                                <td style="background-color:lightgreen" class="text-center">@order.StateName </td>
+                            }
+                            <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>
+                            @if (Model.userPermission.CanDelete)
+                            {
+                                @if (order.StateId == 1)// New
+                                {
+                                    <td>
+                                        <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                                           onclick="contDelete('@order.Id',true)"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>
+                                    </td>
+                                }
+                            }
+
+                        </tr>
+
+                            }
+                            @if (Model.ListPurchaseOrders.Any())
+                            {
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    @foreach (var total in Model.PurchaseOrderTotals)
+                                    {
+                                        <tr>
+                                            <td colspan=4></td>
+                                            <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
+                                        </tr>
+                                    }
+                                </tfoot>
+                            }
+                        </table>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-    @if (Model.ListPurchaseOrders.Any()) { 
-        <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
-            <table class="table table-hover" id="myTable">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>Order No</th>
-                        <th>Date</th>
-                        <th>Supplier</th>
-                        <th>Currency</th>
-                        <th>Total Price</th>
-                        <th style="width:30px;"></th>
-                        @if (Model.userPermission.CanDelete)
-                        {
-                            <th style="width:30px;"></th>
-                        }
-                    </tr>
-                </thead>
 
+    @section Scripts{
 
+        <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+        <script src="~/js/CustomScript.js"></script>
+        <script src="~/lib/printthis/printThis.js"></script>
 
-                @foreach (var order in Model.ListPurchaseOrders)
-                {
+        <script>
+            $(window).ready(function () {
+                $('#mnuTMS').removeClass('collapse show');
+                $('#mnuPurchaseOrders').addClass('collapse show');
+                $('#mnuTMS').addClass('collapse hide');
+            });
 
-                    <tr>
-                        <td>@order.PurchaseOrderCode</td>
-                        <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
-                        <td>@order.SupplierName</td>
-                        <td>@order.CurrencyName</td>
-                        <td>@order.TotalPrice</td>
-                        <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>
-                        @if (Model.userPermission.CanDelete)
-                        {
-                            <td>
+            //---------------Confirm Item Delete
+            function contDelete(ItemId) {
+                $('#txtDeleteItemID').val(ItemId);
+                $('#dlgConfirmDelete').modal('show');
+            };
 
-                                @*<form asp-action="DeleteCustomer" asp-route-Id="@order.Id" method="post">
-                                    <span id="confirmDeleteSpan_@order.Id" style="display:none">
-                                        <span>Are you sure you want to delete?</span>
-                                        <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
-                                        <a href="#" class="btn btn-primary"
-                                           onclick="confirmDelete('@order.Id',false)"><i class="fa fa-times-circle"></i> No</a>
-                                    </span>
-                                    <span id="deleteSpan_@order.Id">*@
-                                <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
-                                   onclick="contDelete('@order.Id',true)"><i class="fa fa-trash"></i></a>
-                                @*</span>
+            //-------------- Delete Item Button
+            function DeleteItem() {
+                $.post('/PurchaseOrders/Delete',
+                    {
+                        Id: $('#txtDeleteItemID').val()
+                    },
+                    function (response, status) {
+                        location.reload(true);
 
-                                    </form>*@
-                            </td>
-                        }
+                    }
+                );
+            };
 
-                    </tr>
-
+//----------------------------- filter By State
+        $('#NewOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListNewPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
                 }
-
-            </table>
-        </div>
-    }
-</div>
-
-@section Scripts{
-
-    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-    <script src="~/js/CustomScript.js"></script>
-    <script src="~/lib/printthis/printThis.js"></script>
-
-    <script>
-        $(window).ready(function () {
-            $('#mnuTMS').removeClass('collapse show');
-            $('#mnuPurchaseOrders').addClass('collapse show');
-            $('#mnuTMS').addClass('collapse hide');
+            });
         });
 
-        //---------------Confirm Item Delete
-        function contDelete(ItemId) {
-            $('#txtDeleteItemID').val(ItemId);
-            $('#dlgConfirmDelete').modal('show');
-        };
-
-        //-------------- Delete Item Button
-        function DeleteItem() {
-            $.post('/PurchaseOrders/Delete',
-                {
-                    Id: $('#txtDeleteItemID').val()
-                },
-                function (response, status) {
-                    location.reload(true);
-
+        $('#ConfirmedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListConfirmedPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
                 }
-            );
-        };
+            });
+        });
 
+        $('#RejectedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListRejectedPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
 
-
-
-
-    </script>
-}
+        $('#ApprovedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListApprovedPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#WaitingForDelivery').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListWaitingForDeliveryPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#Delivered').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListDeliveredPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#DeliveredPartialy').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListDeliveredPartialyPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#showAll').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListAllPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        </script>
+    }

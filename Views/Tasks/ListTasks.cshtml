@@ -1,191 +1,229 @@
 ﻿@inject SignInManager<ApplicationUser> signInManager;
-@model List<MSIS.ViewModels.TaskDetailsViewModel>
+@model TaskDetailsListViewModel
 @{
     ViewBag.Title = "List Tasks";
+    var WaitingCount = 0;
+    var InProgressCount = 0;
+    var DoneCount = 0;
+    var ApprovedCount = 0;
+    var RejectedCount = 0;
 }
+    <div class="card">
+        <div class="card-header text-center">
+            <div class="flex-container text-center">
+                <span class="col-11"><h5> List of Tasks</h5></span>
+                <a asp-action="Create" asp-controller="Tasks" class="btn btn-outline-secondary mt-2 mb-2" style="width:auto"><i class="fa fa-plus-circle"></i></a>
+            </div>
+        </div>
+        <!-- Search -->
+        <div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+            <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+                <i class="fa fa-search"></i>
+                Search
+            </button>
+            <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+            <br />
 
-<!-- Search -->
-<div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
-    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
-        <i class="fa fa-search"></i>
-        Search
-    </button>
-    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
-    <br />
-
-    <div class="collapse" id="divCriteria">
-
-
-    </div>
-</div>
-
-
-<div class="flex-container">
-    <div class="column">
-        <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="Tasks" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
-    </div>
-    <div class="column">
-        @*<form asp-action="ListWaitingTasks" asp-controller="Tasks" method="get" )>*@
-        <button id="Waiting" class="numberCircle btn btn-secondary text-center m-1 " style="width:50px;border-radius:20;">0</button>
-        @*</form>*@
-
-        @*<a id="Waiting" asp-action="ListWaitingTasks" asp-controller="Tasks" class="numberCircle btn btn-secondary text-center m-1" style="width:50px;border-radius:20;">0</a>*@
-    </div>
-    <div class="column">
-        <button id="InProgress" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">0</button>
-        @*<a id="InProgress" asp-action="ListInProgressTasks" asp-controller="Tasks" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">0</a>*@
-    </div>
-    <div class="column">
-        <button id="Done" class="numberCircle btn btn-warning text-center m-1" style="width:50px;border-radius:20;">0</button>
-    </div>
-    <div class="column">
-        <button id="Approved" class="numberCircle btn btn-success text-center m-1" style="width:50px;border-radius:20;">0</button>
-    </div>
-    <div class="column">
-        <button id="Rejected" class="numberCircle btn btn-danger text-center m-1" style="width:50px;border-radius:20;">0</button>
-    </div>
-    <div class="column">
-        <button id="showAll" class="numberCircle btn btn-outline-primary text-center m-1" style="width:50px;border-radius:20;">All</button>
-    </div>
-</div>
+            <div class="collapse" id="divCriteria">
 
 
-@*<a class="btn  btn-outline-dark m-3 table-responsive-sm"  style="width:auto" asp-action="Create" asp-controller="Tasks"><i class="fa fa-plus-circle">Add New Task</i></a>*@
-
-<div id="showWaiting" class="column">
-
-
-    <div style=" border:solid 1px black; padding:3px;">
-        <table class="table table-hover" id="myTable">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Task Date</th>
-                    <th>Task Subject</th>
-                    <th>Task Owner</th>
-                    <th>Responsible for Task</th>
-                    <th style="width:100px;">Task Status</th>
-                    <th style="width:30px;"></th>
-                    <th style="width:30px;"></th>
-
-                </tr>
-            </thead>
+            </div>
+        </div>
 
 
 
-            @foreach (var task in Model)
-            {
 
-                <tr>
-                    <td>@task.TaskStartDate.ToString("dd/MM/yyyy")</td>
-                    <td>@task.TaskSubject</td>
-                    <td>@task.TaskOwnerName</td>
-                    <td>@task.TaskResponsibleName</td>
+        @*<a class="btn  btn-outline-dark m-3 table-responsive-sm"  style="width:auto" asp-action="Create" asp-controller="Tasks"><i class="fa fa-plus-circle">Add New Task</i></a>*@
 
-                    @if (task.TaskStatusId == 1)
-                    {
-                        <td class="bg-secondary text-center">@task.StatusName </td>
-                    }
-                    else if (task.TaskStatusId == 2)
-                    {
-                        <td class="bg-primary text-center">@task.StatusName </td>
-                    }
-                    else if (task.TaskStatusId == 3)
-                    {
-                        <td class="bg-danger text-center">@task.StatusName </td>
-                    }
-                    else if (task.TaskStatusId == 4)
-                    {
-                        <td class="bg-warning text-center">@task.StatusName </td>
-                    }
-                    else if (task.TaskStatusId == 5)
-                    {
-                        <td class="badge-success text-center">@task.StatusName </td>
-                    }
-                    else
-                    {
-                        <td>@task.StatusName </td>
-
-                    }
-                    @*@if (User.Identity.)*@
-                    @*{// && (User.IsInRole("Admin")))// || User.IsInRole("PowerUsers")) )
-                    }*@
-                    
-                    <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Tasks" asp-route-Id="@task.Id"><i class="fa fa-eye"></i></a></td>
-                    <td>
-                        @{ 
-                        if (User.IsInRole("Admin") || (User.Identity.Name == @task.TaskOwnerUserName))
-                        {
-                        <form asp-action="DeleteTaskAsync" asp-route-Id="@task.Id" method="post">
-                            <span id="confirmDeleteSpan_@task.Id" style="display:none">
-                                <span>Are you sure you want to delete?</span>
-                                <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
-                                <a href="#" class="btn btn-primary"
-                                   onclick="confirmDelete('@task.Id',false)"><i class="fa fa-times-circle"></i> No</a>
-                            </span>
-                            <span id="deleteSpan_@task.Id">
-                                <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
-                                   onclick="confirmDelete('@task.Id',true)"><i class="fa fa-trash"></i></a>
-                            </span>
-
-                        </form>
-                            }
-                        }
-                    </td>
-                </tr>
-
+    <div id="showWaiting" class="column">
+        <div class="flex-container">
+            @*<div class="column">
+            <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="Tasks" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
+        </div>*@
+            @{
+                if (Model.TaskDetails.Any())
+                {
+                    WaitingCount = Model.CountByStatus.WaitingCount;
+                    InProgressCount = Model.CountByStatus.InProgressCount;
+                    DoneCount = Model.CountByStatus.DoneCount;
+                    ApprovedCount = Model.CountByStatus.ApprovedCount;
+                    RejectedCount = Model.CountByStatus.RejectedCount;
+                }
             }
+            <div class="column">
+                @*<form asp-action="ListWaitingTasks" asp-controller="Tasks" method="get" )>*@
+                <button id="Waiting" class="numberCircle btn btn-secondary text-center m-1 " style="width:50px;border-radius:20;">@WaitingCount</button>
+                @*</form>*@
+
+                @*<a id="Waiting" asp-action="ListWaitingTasks" asp-controller="Tasks" class="numberCircle btn btn-secondary text-center m-1" style="width:50px;border-radius:20;">0</a>*@
+            </div>
+            <div class="column">
+                <button id="InProgress" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">@InProgressCount</button>
+                @*<a id="InProgress" asp-action="ListInProgressTasks" asp-controller="Tasks" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">0</a>*@
+            </div>
+            <div class="column">
+                <button id="Done" class="numberCircle btn btn-warning text-center m-1" style="width:50px;border-radius:20;">@DoneCount</button>
+            </div>
+            <div class="column">
+                <button id="Approved" class="numberCircle btn btn-success text-center m-1" style="width:50px;border-radius:20;">@ApprovedCount</button>
+            </div>
+            <div class="column">
+                <button id="Rejected" class="numberCircle btn btn-danger text-center m-1" style="width:50px;border-radius:20;">@RejectedCount</button>
+            </div>
+            <div class="column">
+                <button id="showAll" class="numberCircle btn btn-outline-primary text-center m-1" style="width:50px;border-radius:20;">All</button>
+            </div>
+        </div>
+
+        <div style=" border:solid 1px black; padding:3px;">
+            <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Start Date</th>
+                        <th>Start Time</th>
+                        <th>Task Subject</th>
+                        <th>Task Owner</th>
+                        <th>Responsible for Task</th>
+                        <th style="width:100px;">Task Status</th>
+                        <th style="width:30px;"></th>
+                        <th style="width:30px;"></th>
+
+                    </tr>
+                </thead>
 
 
-        </table>
+
+                @foreach (var task in Model.TaskDetails)
+                {
+
+                    <tr>
+                        <td>@task.TaskStartDate.ToString("dd/MM/yyyy")</td>
+                        <td>@task.TaskStartTime</td>
+                        <td>@task.TaskSubject</td>
+                        <td>@task.TaskOwnerName</td>
+                        <td>@task.TaskResponsibleName</td>
+
+                        @if (task.TaskStatusId == 1)
+                        {
+                            <td class="bg-secondary text-center">@task.StatusName </td>
+                        }
+                        else if (task.TaskStatusId == 2)
+                        {
+                            <td class="bg-primary text-center">@task.StatusName </td>
+                        }
+                        else if (task.TaskStatusId == 3)
+                        {
+                            <td class="bg-danger text-center">@task.StatusName </td>
+                        }
+                        else if (task.TaskStatusId == 4)
+                        {
+                            <td class="bg-warning text-center">@task.StatusName </td>
+                        }
+                        else if (task.TaskStatusId == 5)
+                        {
+                            <td class="badge-success text-center">@task.StatusName </td>
+                        }
+                        else
+                        {
+                            <td>@task.StatusName </td>
+
+                        }
+                        @*@if (User.Identity.)*@
+                        @*{// && (User.IsInRole("Admin")))// || User.IsInRole("PowerUsers")) )
+                        }*@
+
+                        <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Tasks" asp-route-Id="@task.Id"><i class="fa fa-eye"></i></a></td>
+                        <td>
+                            @{
+                                if (User.IsInRole("Admin") || (User.Identity.Name == @task.TaskOwnerUserName))
+                                {
+                                    @if (task.TaskStatusId != 3 && task.TaskStatusId != 5)
+                                    {
+
+                                        <form asp-action="DeleteTaskAsync" asp-route-Id="@task.Id" method="post">
+                                            <span id="confirmDeleteSpan_@task.Id" style="display:none">
+                                                <span>Are you sure you want to delete?</span>
+                                                <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                                                <a href="#" class="btn btn-primary"
+                                                   onclick="confirmDelete('@task.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                                            </span>
+                                            <span id="deleteSpan_@task.Id">
+                                                <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                                                   onclick="confirmDelete('@task.Id',true)"><i class="fa fa-trash"></i></a>
+                                            </span>
+
+                                        </form>
+                                    }
+                                }
+                            }
+                        </td>
+                    </tr>
+
+                }
+
+
+            </table>
+        </div>
     </div>
-</div>
-<div id="error">
+        <div id="error">
 
-</div>
+        </div>
+    </div>
 @section Scripts{
 
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/js/CustomScript.js"></script>
     <script src="~/lib/printthis/printThis.js"></script>
     <script>
+        $(document).ready(function () {
+            InitDatepicker();
+            $('.chosen').chosen();
 
-        InitDatepicker();
+        $.validator.setDefaults({ 
+            ignore: []
+          });
+            $('#printReport').on('click', function () {
+                $('#showWaiting').printThis();
+            });
+            //------------------------ start Task Search ajax
+            $.ajax({
+                url: '/Tasks/TaskSearch?strGroupBy=ALL',
+                type: 'Get',
+                success: function (response) {
+                    $('#divCriteria').html(response);
+                }
+            });
+            //------------------------ end Task search ajax
+            //------------------------ start Task Count ajax
+            //$.ajax({
+            //    type: 'GET',
+            //    url: '/Tasks/TaskCountByStatus',
+            //    headers: { Accept: "application/json;charset=utf-8", "Content-Type": "application/json;charset=utf-8" },
+            //    success: function (result) {
 
-        $('#printReport').on('click', function () {
-            $('#showWaiting').printThis();
+            //        $.each(result, function (i, item) {
+            //            //var ID = item.Id;
+            //            document.getElementById("Approved").innerHTML = result.ApprovedCount;
+            //            document.getElementById("Rejected").innerHTML = result.RejectedCount;
+            //            document.getElementById("Waiting").innerHTML = result.WaitingCount;
+            //            document.getElementById("InProgress").innerHTML = result.InProgressCount;
+            //            document.getElementById("Done").innerHTML = result.DoneCount;
+
+            //        });
+
+            //    }
+            //});
+            //------------------------ end Task Count ajax
         });
-        $.ajax({
-            url: '/Tasks/TaskSearch?strGroupBy=ALL',
-            type: 'Get',
-            success: function (response) {
-                $('#divCriteria').html(response);
-            }
-        });
 
-        $.ajax({
-            type: 'GET',
-            url: '/Tasks/TaskCountByStatus',
-            headers: { Accept: "application/json;charset=utf-8", "Content-Type": "application/json;charset=utf-8" },
-            success: function (result) {
 
-                $.each(result, function (i, item) {
-                    //var ID = item.Id;
-                    document.getElementById("Approved").innerHTML = result.ApprovedCount;
-                    document.getElementById("Rejected").innerHTML = result.RejectedCount;
-                    document.getElementById("Waiting").innerHTML = result.WaitingCount;
-                    document.getElementById("InProgress").innerHTML = result.InProgressCount;
-                    document.getElementById("Done").innerHTML = result.DoneCount;
 
-                });
-
-            }
-        });
 
 
         //////////////////////////////// Status filter
         $('#Waiting').click(function () {
             $.ajax({
-                url: '/Tasks/ListWaitingTasks',
+                url: '/Tasks/ListWaitingTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -193,10 +231,9 @@
                 }
             });
         });
-
         $('#InProgress').click(function () {
             $.ajax({
-                url: '/Tasks/ListInProgressTasks',
+                url: '/Tasks/ListInProgressTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -207,7 +244,7 @@
 
         $('#Done').click(function () {
             $.ajax({
-                url: '/Tasks/ListDoneTasks',
+                url: '/Tasks/ListDoneTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -218,7 +255,7 @@
 
         $('#Approved').click(function () {
             $.ajax({
-                url: '/Tasks/ListApprovedTasks',
+                url: '/Tasks/ListApprovedTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -228,7 +265,7 @@
         });
         $('#Rejected').click(function () {
             $.ajax({
-                url: '/Tasks/ListRejectedTasks',
+                url: '/Tasks/ListRejectedTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -239,7 +276,7 @@
 
         $('#showAll').click(function () {
             $.ajax({
-                url: '/Tasks/ListTasksPartial',
+                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -248,7 +285,7 @@
             });
         });
 
-                              //data:$('form').serialize(),// JSON.stringify(formData),
+                                                  //data:$('form').serialize(),// JSON.stringify(formData),
 
     </script>
 }

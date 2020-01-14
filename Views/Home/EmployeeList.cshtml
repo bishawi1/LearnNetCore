@@ -52,7 +52,8 @@
 <div class="card">
     <div class="card-header">
         <div class="flex-container text-center">
-            <span class="col-11"><h5> Employees List</h5></span>
+            <a asp-action="InActiveEmployeeList" asp-controller="Home" class="btn btn-danger col-2" style="width:auto;">InActive Employees</a>
+            <span class="col-9"><h5> Employees List</h5></span>
             @if (Model.userPermission.CanAdd)
             {
                 <a class="btn btn-outline-secondary mb-3 fa fa-plus-circle" style="width:auto" asp-action="create" asp-controller="home"></a>
@@ -70,6 +71,7 @@
                 <thead class="thead-dark">
                     <tr>
                         <th>Id</th>
+                        <th>No</th>
                         <th>Name</th>
                         <th>Mobile No</th>
                         <th>Education</th>
@@ -90,6 +92,7 @@
 
                     <tr>
                         <td>@employee.Id</td>
+                        <td>@employee.EmployeeNo</td>
                         <td>@employee.Name</td>
                         <td>@employee.MobileNo</td>
                         <td>@employee.EducationDegree</td>

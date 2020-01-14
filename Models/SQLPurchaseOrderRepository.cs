@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MSIS.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+
 namespace MSIS.Models
 {
     public class SQLPurchaseOrderRepository
@@ -15,9 +17,16 @@ namespace MSIS.Models
         }
         public PurchaseOrder Add(PurchaseOrder purchaseOrder)
         {
+            try
+            {
             context.PurchaseOrders.Add(purchaseOrder);
             context.SaveChanges();
             return purchaseOrder;
+            }catch (Exception ex)
+            {
+                return null;
+            }
+
         }
 
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
@@ -29,11 +38,85 @@ namespace MSIS.Models
             model.UserPermissions = result;
             return model;
         }
-        public MSIS.ViewModels.ListPurchaseOrdersViewModel getPurchaseOrderList()
+        public MSIS.ViewModels.ListPurchaseOrdersViewModel getPurchaseOrderList(int StateId,int BranchId)
         {
-            var result =context.SQLListPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders ").ToList();
+            var strWhere = "";
+            if (StateId!=0)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = " StateId = " + StateId.ToString();
+            }
+            if (BranchId != 0)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " BranchId = " + BranchId.ToString();
+            }
+            if (strWhere != "")
+            {
+                strWhere = " Where " + strWhere;
+            }
+            var result =context.SQLListPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders " + strWhere).ToList();
             ListPurchaseOrdersViewModel model = new ListPurchaseOrdersViewModel();
+            model.CountByStatus = new PurchaseOrdersCountByStatusViewModel();
+            var Totals = context.PurchaseOrdersTotals.FromSql("SELECT CurrencyId, CurrencyCode, CurrencyName, SUM(TotalPrice) AS TotalAmount FROM dbo.vPurchaseOrders " + strWhere + " GROUP BY CurrencyId, CurrencyCode, CurrencyName").ToList();
+            
+            var CountByStatus = result.Where(x => x.StateId == 1)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if(CountByStatus != null)
+            {
+                model.CountByStatus.NewOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 2)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.CountByStatus.ConfirmedOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 3)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.CountByStatus.RejectedOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 4)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.CountByStatus.ApprovedOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 5)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.CountByStatus.WaitForDeliveryCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 6)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.CountByStatus.DeliveredCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 7)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.CountByStatus.DeliveredPartialyCount = CountByStatus.OrderCount;
+            }
             model.ListPurchaseOrders = result;
+            model.PurchaseOrderTotals = Totals;
             return model;// projectDetailViewModel;
 
         }
@@ -43,12 +126,103 @@ namespace MSIS.Models
             OrderNo = OrderNo + 1;
             return OrderNo;
         }
+        public PurchaseOrder ConfirmPurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+                purchaseOrderChanges.StateId = 2;
+                var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+                purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.SaveChanges();
+                return purchaseOrderChanges;
+        }
+        public PurchaseOrder waitPurchaseOrderForDelivery(PurchaseOrder purchaseOrderChanges)
+        {
+            try
+            {
+                purchaseOrderChanges.StateId = 5;
+                var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+                purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.SaveChanges();
+                return purchaseOrderChanges;
+            }
+            catch(Exception ex) {
+                return null;
+            }
+        }
+        public PurchaseOrder DeleverPurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+            try
+            {
+                purchaseOrderChanges.StateId = 6;
+                var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+                purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.SaveChanges();
+                return purchaseOrderChanges;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public PurchaseOrder DeleverPartialPurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+            try
+            {
+                purchaseOrderChanges.StateId = 7;
+                var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+                purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.SaveChanges();
+                return purchaseOrderChanges;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public PurchaseOrder DeleverCancelPurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+            try
+            {
+                purchaseOrderChanges.StateId = 8;
+                var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+                purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.SaveChanges();
+                return purchaseOrderChanges;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public PurchaseOrder ApprovePurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+            purchaseOrderChanges.StateId = 4;
+            var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+            purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return purchaseOrderChanges;
+        }
+        public PurchaseOrder RejectPurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+            purchaseOrderChanges.StateId = 3;
+            var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+            purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return purchaseOrderChanges;
+        }
         public MSIS.ViewModels.PurchaseOrderDetailsViewModel getPurchaseOrderDetails(int Id)
         {
+            try
+            {
             var result = context.SQLPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders Where Id = " + Id.ToString()).ToList();
             var Details = context.SQLPurchaseOrderItemsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrdersDetails Where PuchaseOrderId = " + Id.ToString()).ToList();
+
             result[0].OrderItems = Details;
             return result[0];// projectDetailViewModel;
+            }catch(Exception ex)
+            {
+                return null;
+            }
+
         }
         public MSIS.ViewModels.EditPurchaseOrderViewModel getEditPurchaseOrderDetails(int Id)
         {
@@ -61,7 +235,7 @@ namespace MSIS.Models
             model.CurrencyList = context.Currency.ToList();
             model.Units = context.ItemUnits.ToList();
             model.Projects = context.Projects.ToList();
-            model.Employees = context.Employees.ToList();
+            model.Employees = context.Employees.Where(x=>x.Active==true).ToList();
             model.Branches = context.Branches.ToList();
 
             return model;// projectDetailViewModel;
@@ -78,6 +252,10 @@ namespace MSIS.Models
                 if (Criteria.BranchId > 0)
                 {
                     strWhere = strWhere + " BranchId = " + Criteria.BranchId.ToString();
+                }
+                if (Criteria.StateId > 0)
+                {
+                    strWhere = strWhere + " StateId = " + Criteria.StateId.ToString();
                 }
                 if (Criteria.CurrencyId > 0)
                 {
@@ -164,12 +342,17 @@ namespace MSIS.Models
                 throw ex;
             };
         }
+        public List<PurchaseOrderState> getPurchaseOrderStates()
+        {
+            return context.PurchaseOrderStates.ToList();
+        }
         public MSIS.ViewModels.CreatePurchaseOrderViewModel getCreatePurchaseOrderDetails()
         {
             PurchaseOrderDetailsViewModel result = new PurchaseOrderDetailsViewModel();
 
             CreatePurchaseOrderViewModel model = new CreatePurchaseOrderViewModel();
             result.PurchaseOrderDate = DateTime.Today;
+            result.DeliveryDate = DateTime.Today;
             model.PurchaseOrderDetails = result;
             model.suppliers = context.Suppliers.ToList();
             model.suppliers.Insert(0,new Models.Supplier()
@@ -185,7 +368,7 @@ namespace MSIS.Models
                 ProjectName = "Select Project ..."
             });
 
-            model.Employees = context.Employees.ToList();
+            model.Employees = context.Employees.Where(x=>x.Active==true).ToList();
             model.Employees.Insert(0, new Models.Employee()
             {
                 Id = -1,
@@ -198,7 +381,11 @@ namespace MSIS.Models
                 Id = -1,
                 Name = "Select Branch ..."
             });
-
+            model.PurchaseOrderStates = context.PurchaseOrderStates.ToList();
+            model.PurchaseOrderStates.Insert(0, new Models.PurchaseOrderState() { 
+            Id=-1,
+            StateName="Select ..."
+            });
             return model;// projectDetailViewModel;
         }
         public List<MSIS.ViewModels.PurchaseOrderItemsViewModel> getPurchaseOrderItems(int Id)
@@ -278,6 +465,14 @@ namespace MSIS.Models
             Customer.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
             context.SaveChanges();
             return purchaseOrderChanges;
+        }
+
+        //-------------------------   Purchase Order Attachments
+        public PurchaseOrderAttachment AddAttachment(PurchaseOrderAttachment attachment)
+        {
+            context.PurchaseOrderAttachments.Add(attachment);
+            context.SaveChanges();
+            return attachment;
         }
     }
 }

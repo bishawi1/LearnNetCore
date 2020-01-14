@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MSIS.Models;
+
 namespace MSIS.ViewModels
 {
     [NotMapped]
@@ -22,6 +24,9 @@ namespace MSIS.ViewModels
 
         [NotMapped]
         public List<Models.ItemUnit> Units { get; set; }
+        [NotMapped]
+        public PurchaseOrderPermission purchaseOrderPermission { get; set; }
+
     }
 
 }

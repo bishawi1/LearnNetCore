@@ -44,20 +44,30 @@ namespace MSIS.Models
             return ErrorMessage;
         }
 
-
+        public Boolean IsProjectExists(int ProjectId, int ProjectYear, int ProjectSerial)
+        {
+            var result = context.Projects.FromSql("Select * from dbo.Projects Where Id <> " + ProjectId.ToString() + " And ProjectYear = " + ProjectYear + " And ProjectSerial = " + ProjectSerial).ToList();
+            Boolean value = true;
+            if (result.Count > 0)
+            {
+                value = false;
+            }
+            return value;
+        }
         public Project Add(Project project)
         {
-            var intSerial=0;
-            if (context.Projects.Count() == 0)
-            {
-                intSerial = 0;
-            }
-            else
-            {
-                intSerial = context.Projects.Where(o => o.ProjectYear == DateTime.Today.Year).Max(x => x.ProjectSerial);
-            }
-            project.ProjectYear = DateTime.Today.Year;
-            project.ProjectSerial = intSerial+1;            
+// for auto Project no
+            //var intSerial=0;
+            //if (context.Projects.Count() == 0)
+            //{
+            //    intSerial = 0;
+            //}
+            //else
+            //{
+            //    intSerial = context.Projects.Where(o => o.ProjectYear == DateTime.Today.Year).Max(x => x.ProjectSerial);
+            //}
+            //project.ProjectYear = DateTime.Today.Year;
+            //project.ProjectSerial = intSerial+1;            
             context.Projects.Add(project);
             context.SaveChanges();
             return project;

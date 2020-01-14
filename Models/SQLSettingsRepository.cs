@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using MSIS.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using System.Net.Mail;
 
 namespace MSIS.Models
 {
@@ -15,6 +17,73 @@ namespace MSIS.Models
         {
             this.context = context;
         }
+        public Boolean SendMailOnCreateTask()
+        {
+            Setting settings= context.Settings.Find(1);
+            bool sendMail = settings.SendMailOnCreateTask;
+            
+            return sendMail;
+        }
+        public AppDBContext getContext()
+        {
+            return context;
+        }
+        public string SendEmail(List<int> Employees, string Message)
+        {
+
+            try
+            {
+                Setting settings = context.Settings.Find(1);
+                if (settings != null)
+                {
+                    // Credentials
+                    var credentials = new NetworkCredential(settings.SenderEmail, settings.SenderMailPassword);
+                    // Mail message
+                    var mail = new MailMessage();
+             
+                    mail.From = new MailAddress(settings.SenderEmail);
+                    mail.Subject = "Email Sender App";
+                    mail.Body = Message;
+                    mail.IsBodyHtml = true;
+                    mail.BodyEncoding = System.Text.Encoding.UTF8;
+                    mail.SubjectEncoding = System.Text.Encoding.UTF8;
+                    foreach (int employeeId in Employees)
+                    {
+                        Employee employee = context.Employees.Find(employeeId);
+                        if (employee != null)
+                        {
+                            mail.To.Add(new MailAddress(employee.Email));
+                        }
+                    }
+
+                    // Smtp client
+                    var client = new SmtpClient()
+                    {
+                        Port = settings.Port,// 587,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = false,
+                        Host = settings.SMTPServer,
+                        EnableSsl = true,
+                        Credentials = credentials
+                    };
+
+                    client.Send(mail);
+                    
+                    return "Email Sent Successfully!";
+                }
+                else
+                {
+                    return "employee not Found!";
+                }
+            }
+            catch (System.Exception e)
+            {
+                return e.Message;
+            }
+
+        }
+
+
         public UserPermissionsViewModel GetSettingsUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
@@ -393,7 +462,135 @@ namespace MSIS.Models
             return itemChanges;
         }
 
-        //--------------End Main Item
+        //--------------End Item
+        //-----------------------  Period Type 
+        public string ValidateDeletPeriodType(int Id)
+        {
+            string ErrorMessage = "";
+            var result = context.PeriodTypes.Where(x => x.PeriodId == Id).ToList();
+            if (result.Count > 0)
+            {
+                ErrorMessage = "cannot delete Period Type, there is Tasks Used this Period Type";
+            }
+            return ErrorMessage;
+        }
+
+
+        public PeriodTypeModel AddPeriodType(PeriodTypeModel periodType)
+        {
+            context.PeriodTypes.Add(periodType);
+            context.SaveChanges();
+            return periodType;
+        }
+
+        public PeriodTypeModel DeletePeriodType(int id)
+        {
+            PeriodTypeModel periodType = context.PeriodTypes.Find(id);
+            if (periodType != null)
+            {
+                context.PeriodTypes.Remove(periodType);
+                context.SaveChanges();
+            }
+            return periodType;
+        }
+        public List<PeriodTypeModel> PeriodTypeList()
+        {
+            List<PeriodTypeModel> model = new List<PeriodTypeModel>();
+            model = context.PeriodTypes.ToList();
+            return model;
+        }
+
+        public PeriodTypeModel GetPeriodType(int Id)
+        {
+            return context.PeriodTypes.Find(Id);
+        }
+        public PeriodTypeModel UpdatePeriodType(PeriodTypeModel periodTypeChanges)
+        {
+            var periodType = context.PeriodTypes.Attach(periodTypeChanges);
+            periodType.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return periodTypeChanges;
+        }
+
+        //--------------End Period Type
+        //----------------------- PurchaseOrderPermission
+
+
+        public PurchaseOrderPermission AddPurchaseOrderPermission(PurchaseOrderPermission purchaseOrderPermission)
+        {
+            try
+            {
+                context.PurchaseOrderPermissions.Add(purchaseOrderPermission);
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                var x = 0;
+            }
+            return purchaseOrderPermission;
+        }
+
+        public PurchaseOrderPermission DeletePurchaseOrderPermission(int id)
+        {
+            PurchaseOrderPermission purchaseOrderPermission = context.PurchaseOrderPermissions.Find(id);
+            if (purchaseOrderPermission != null)
+            {
+                context.PurchaseOrderPermissions.Remove(purchaseOrderPermission);
+                context.SaveChanges();
+            }
+            return purchaseOrderPermission;
+        }
+        public ListPurchaseOrderPermissionViewModel ListPurchaseOrderPermissions()
+        {
+            
+            ListPurchaseOrderPermissionViewModel model = new ListPurchaseOrderPermissionViewModel();
+            var result = (from permission in context.PurchaseOrderPermissions
+                          join user in context.Users 
+                          on permission.UserId equals user.Id
+                          select new PurchaseOrderPermissionListViewModel
+                          {
+                              AllowConfirm = permission.AllowConfirm,
+                              AllowDelivery = permission.AllowDelivery,
+                              AllowPrint = permission.AllowPrint,
+                              AllowVerify =permission.AllowVerify,
+                              Id =permission.Id,
+                              UserId = permission.UserId,
+                              UserName=user.UserName
+                          }).ToList();
+            model.purchaseOrderPermissions =result.ToList();
+            return model;
+        }
+        public IEnumerable<PurchaseOrderPermission> GetPurchaseOrderPermissionList()
+        {
+            return context.PurchaseOrderPermissions;
+        }
+
+        public PurchaseOrderPermission GetPurchaseOrderPermission(int Id)
+        {
+            PurchaseOrderPermission purchaseOrderPermission = null;
+            try
+            {
+                purchaseOrderPermission= context.PurchaseOrderPermissions.Find(Id);
+            }catch (Exception ex)
+            {
+                var xx = 0;
+            }
+            return purchaseOrderPermission;
+        }
+        public PurchaseOrderPermission GetPurchaseOrderPermissionByUser(string userId)
+        {
+            return context.PurchaseOrderPermissions.Where(x => x.UserId == userId).FirstOrDefault();
+        }  
+
+        public PurchaseOrderPermission UpdatePurchaseOrderPermission(PurchaseOrderPermission purchaseOrderPermissionChanges)
+        {
+            var purchaseOrderPermission = context.PurchaseOrderPermissions.Attach(purchaseOrderPermissionChanges);
+            purchaseOrderPermission.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return purchaseOrderPermissionChanges;
+        }
+        //--------------End Currency
+
         //--------------Roles
         public Boolean verifyRolePages(string RoleId)
         {

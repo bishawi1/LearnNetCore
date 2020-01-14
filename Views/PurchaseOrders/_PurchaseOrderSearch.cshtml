@@ -14,12 +14,12 @@
         <div class="row col-sm-12">
             <div class="input-group col-sm-5  mt-2">
                 <span class="input-group-text col-sm-4 " id="OrderNo-addon">Order No</span>
-                <input  asp-for="OrderNo" class="form-control col-sm-6 " placeholder="Order No" aria-describedby="OrderNo-addon" />
+                <input asp-for="OrderNo" class="form-control col-sm-6 " placeholder="Order No" aria-describedby="OrderNo-addon" />
             </div>
 
             <div class="input-group col-sm-5  mt-2">
                 <span class="input-group-text col-sm-4 " id="OrderYear-addon">Order Year</span>
-                <input  asp-for="OrderYear" class="form-control col-sm-6 " placeholder="Order Year" aria-describedby="OrderYear-addon" />
+                <input asp-for="OrderYear" class="form-control col-sm-6 " placeholder="Order Year" aria-describedby="OrderYear-addon" />
             </div>
         </div>
         <div class="row col-sm-12">
@@ -52,6 +52,13 @@
                 @Html.DropDownListFor(x => Model.CurrencyId, new SelectList(Model.CurrencyList, "Id", "CurrencyName"), new { @class = "form-control" })
                 <span asp-validation-for="CurrencyId" class="text-danger"></span>
             </div>
+            <div class="input-group  col-sm-5 mt-2">
+                <span class="input-group-text col-sm-4 col-form-label">Status</span>
+                @Html.DropDownListFor(x => Model.StateId, new SelectList(Model.PurchaseOrderStates, "Id", "StateName"), new { @class = "form-control" })
+                <span asp-validation-for="StateId" class="text-danger"></span>
+            </div>
+
+
         </div>
     </div>
 <div class=" mt-3 mb-3">
@@ -68,6 +75,7 @@
                 $.post("/PurchaseOrders/PurchaseOrderSearchAsync",
                     {
                         CurrencyId : $('#CurrencyId').val(),
+                        StateId : $('#StateId').val(),
                         BranchId: $('#BranchId').val(),
                         ProjectId: $('#ProjectId').val(),
                         SupplierId: $('#SupplierId').val(),

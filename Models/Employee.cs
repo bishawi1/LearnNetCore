@@ -32,7 +32,8 @@ namespace MSIS.Models
         public string PhoneNo { get; set; }
         public string JobDescription { get; set; }
         public Boolean Active { get; set; }
-
+        [Required]
+        public string EmployeeNo { get; set; }
 
     }
 }

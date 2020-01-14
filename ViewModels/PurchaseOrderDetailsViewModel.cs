@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MSIS.Models;
+using Microsoft.AspNetCore.Http;
+
 namespace MSIS.ViewModels
 {
     [NotMapped]
@@ -51,12 +54,27 @@ namespace MSIS.ViewModels
         public string CurrencyCode { get; set; }
         public string CurrencyName { get; set; }
         public Double TotalPrice { get; set; }
+        public int StateId { get; set; }
+        public string StateName { get; set; }
+        [NotMapped]
+        public string Description { get; set; }
+
+        [NotMapped]
+        public Double SubtractionAmount { get; set; }
+        [NotMapped]
+        public string SubtractNotes { get; set; }
+        public DateTime DeliveryDate { get; set; }
+
         [NotMapped]
         public List<PurchaseOrderItemsViewModel> OrderItems { get; set; }
         [NotMapped]
         public List<Models.Supplier> suppliers { get; set; }
         [NotMapped]
         public UserPermissionDetailsViewModel Permission { get; set; }
+        [NotMapped]
+        public PurchaseOrderPermission purchaseOrderPermission { get; set; }
+        [NotMapped]
+        public List<PurchaseOrderAttachment> Attachments { get; set; }
 
     }
 }

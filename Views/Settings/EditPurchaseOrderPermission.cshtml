@@ -1,0 +1,62 @@
+﻿@model CreatePurchaseOrderPermissionViewModel
+@{
+    ViewData["Title"] = "Edit Purchase Order Permission";
+}
+
+<h1></h1>
+<form method="post" class="mt-3">
+    <div class="card">
+        <div class="card-header card-title text-center">
+            <h5> Edit Purchase Order Permission</h5>
+        </div>
+        <div class="card-body">
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="Code-addon">Id</span>
+                <input asp-for="Id" class="form-control col-sm-10" readonly placeholder="Id" aria-describedby="Id-addon" />
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+
+
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="UserId-addon">User</span>
+                @Html.DropDownListFor(x => Model.UserId, new SelectList(Model.Users, "Id", "UserName"), new { @class = "form-control" })
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="UserId-addon">Branch</span>
+                @Html.DropDownListFor(x => Model.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @class = "form-control" })
+                <span asp-validation-for="BranchId" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="AllowConfirm-addon">Allow Confirm</span>
+                <input asp-for="AllowConfirm" class="form-control col-sm-1" placeholder="Allow Confirm" aria-describedby="AllowConfirm-addon" />
+                <span asp-validation-for="AllowConfirm" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="AllowDelivery-addon">Allow Delivery</span>
+                <input asp-for="AllowDelivery" class="form-control col-sm-1" placeholder="Allow Delivery" aria-describedby="AllowDelivery-addon" />
+                <span asp-validation-for="AllowDelivery" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="AllowPrint-addon">Allow Print</span>
+                <input asp-for="AllowPrint" class="form-control col-sm-1" placeholder="Allow Print" aria-describedby="AllowPrint-addon" />
+                <span asp-validation-for="AllowPrint" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="AllowVerify-addon">Allow Verify</span>
+                <input asp-for="AllowVerify" class="form-control col-sm-1" placeholder="Allow Verify" aria-describedby="AllowVerify-addon" />
+                <span asp-validation-for="AllowVerify" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="Notes-addon">Notes</span>
+                <input asp-for="Notes" class="form-control col-sm-10" placeholder="Notes" aria-describedby="Notes-addon" />
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+        </div>
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> Save</button>
+            <a asp-controller="Settings" asp-action="ListPurchaseOrderPermission" style="width:auto" class="btn btn-outline-danger"><i class="fa fa-times "></i> Cancel</a>
+        </div>
+    </div>
+</form>

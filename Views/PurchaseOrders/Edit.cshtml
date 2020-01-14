@@ -28,7 +28,9 @@
 </div>
 
 <div>
-    <a class="btn btn-outline-secondary" asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" asp-route-Id="@Model.PurchaseOrderDetails.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+    @if(Model.PurchaseOrderDetails.StateId==4){// Approved
+        <a class="btn btn-outline-secondary" asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" asp-route-Id="@Model.PurchaseOrderDetails.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+    }
 </div>
 <!----------------------Confirmation-->
 <div class="modal fade" id="dlgConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -66,6 +68,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+
             </div>
             <div class="modal-body">
                 <div class="input-group col-sm-12 row">
@@ -103,6 +106,9 @@
 
             </div>
             <div class="modal-footer">
+                <div>
+                    Total:  <input type="text" id="lblTotal" />
+                </div>
                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close</button>
                 <button id="btnSaveAjax" type="button" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> save</button>
 
@@ -120,58 +126,77 @@
         </div>
         <div class="card-body">
             <!--------------------- Main Data -->
-            <div class="flex-container">
-                <div class="input-group col-sm-6 row">
-                    <span class="input-group-text col-sm-3 " id="txtId-addon">Id</span>
-                    <input asp-for="PurchaseOrderDetails.Id" id="txtOrderId" class="form-control col-sm-4 " disabled placeholder="txtOrderId" aria-describedby="txtId-addon" />
-                    <input asp-for="PurchaseOrderDetails.PurchaseOrderCode" id="txtPurchaseOrderCode" class="form-control col-sm-4 " disabled placeholder="PurchaseOrderCode" aria-describedby="txtPurchaseOrderCode-addon" />
-                    <span asp-validation-for="PurchaseOrderDetails.Id" class="text-danger"></span>
-                </div>
-                <div class="input-group col-sm-6 row">
-                    <span class="input-group-text col-sm-3 " id="PurchaseOrderDate-addon">Date</span>
-                    <input type="text" asp-for="PurchaseOrderDetails.PurchaseOrderDate" id="txtPurchaseOrderDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="PurchaseOrderDate-addon" />
-                    <span asp-validation-for="PurchaseOrderDetails.PurchaseOrderDate" class="text-danger"></span>
-                </div>
+            @if (Model.PurchaseOrderDetails.StateId == 1)//New
+            {
+                if (Model.purchaseOrderPermission.AllowConfirm)
+                {
+                    @*<textarea id="Description"></textarea><br />*@
+                    <button type="button" class="btn btn-outline-secondary ml-3" onclick="confirmPuchaseOrder()" style="width:auto;">Confirm!</button>
+                }
+            }
 
-                <div class="input-group row col-sm-6">
-                    <span class="input-group-text col-sm-3 col-form-label">Currency</span>
-                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.CurrencyId, new SelectList(Model.CurrencyList, "Id", "CurrencyName"), new { @id = "txtCurrencyId", @class = "form-control" })
-                    <span asp-validation-for="PurchaseOrderDetails.CurrencyId" class="text-danger"></span>
-                </div>
-
-
-                <div class="input-group row col-sm-6">
-                    <span class="input-group-text col-sm-3 col-form-label">Supllier</span>
-                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.SupplierId, new SelectList(Model.suppliers, "Id", "SupplierName"), new { @id = "txtSupplierId", @class = "form-control" })
-                    <span asp-validation-for="PurchaseOrderDetails.SupplierId" class="text-danger"></span>
-                </div>
-                <div class="input-group row col-sm-6">
-                    <span class="input-group-text col-sm-3 col-form-label">Employee</span>
-                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.EmployeeId, new SelectList(Model.Employees, "Id", "Name"), new { @id = "txtEmployeeId", @class = "form-control" })
-                    <span asp-validation-for="PurchaseOrderDetails.EmployeeId" class="text-danger"></span>
-                </div>
-
-                <div class="input-group row col-sm-6">
-                    <span class="input-group-text col-sm-3 col-form-label">Project</span>
-                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @id = "txtProjectId", @class = "form-control" })
-                    <span asp-validation-for="PurchaseOrderDetails.ProjectId" class="text-danger"></span>
-                </div>
-
-                <div class="input-group row col-sm-6">
-                    <span class="input-group-text col-sm-3 col-form-label">Branch</span>
-                    @Html.DropDownListFor(x => Model.PurchaseOrderDetails.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @id = "txtBranchId", @class = "form-control" })
-                    <span asp-validation-for="PurchaseOrderDetails.BranchId" class="text-danger"></span>
-                </div>
-                <div class="input-group row col-sm-12">
-                    <span asp-for="PurchaseOrderDetails.Notes" class="input-group-text col-sm-2 col-form-label" id="Notes-addon">Description</span>
-                    <input id="txtOrderNotes" type="text" asp-for="PurchaseOrderDetails.Notes" class="form-control" placeholder="Notes" aria-describedby="Notes-addon" />
-                    <span asp-validation-for="PurchaseOrderDetails.Notes" class="text-danger"></span>
-                </div>
-
-                <div class="form-group row">
-                    <div asp-validation-summary="All" class="text-danger"></div>
-                </div>
+        <div class="flex-container">
+            <div class="input-group col-sm-6 row">
+                <span class="input-group-text col-sm-3 " id="txtId-addon">Id</span>
+                <input asp-for="PurchaseOrderDetails.Id" id="txtOrderId" class="form-control col-sm-4 " disabled placeholder="txtOrderId" aria-describedby="txtId-addon" />
+                <input asp-for="PurchaseOrderDetails.PurchaseOrderCode" id="txtPurchaseOrderCode" class="form-control col-sm-4 " disabled placeholder="PurchaseOrderCode" aria-describedby="txtPurchaseOrderCode-addon" />
+                <span asp-validation-for="PurchaseOrderDetails.Id" class="text-danger"></span>
             </div>
+            <div class="input-group col-sm-6 row">
+                <span class="input-group-text col-sm-3 " id="PurchaseOrderDate-addon">Date</span>
+                <input type="text" asp-for="PurchaseOrderDetails.PurchaseOrderDate" id="txtPurchaseOrderDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="PurchaseOrderDate-addon" />
+                <span asp-validation-for="PurchaseOrderDetails.PurchaseOrderDate" class="text-danger"></span>
+            </div>
+
+            <div class="input-group row col-sm-6">
+                <span class="input-group-text col-sm-3 col-form-label">Currency</span>
+                @Html.DropDownListFor(x => Model.PurchaseOrderDetails.CurrencyId, new SelectList(Model.CurrencyList, "Id", "CurrencyName"), new { @id = "txtCurrencyId", @class = "form-control" })
+                <span asp-validation-for="PurchaseOrderDetails.CurrencyId" class="text-danger"></span>
+            </div>
+
+
+            <div class="input-group row col-sm-6">
+                <span class="input-group-text col-sm-3 col-form-label">Supllier</span>
+                @Html.DropDownListFor(x => Model.PurchaseOrderDetails.SupplierId, new SelectList(Model.suppliers, "Id", "SupplierName"), new { @id = "txtSupplierId", @class = "form-control" })
+                <span asp-validation-for="PurchaseOrderDetails.SupplierId" class="text-danger"></span>
+            </div>
+            <div class="input-group row col-sm-6">
+                <span class="input-group-text col-sm-3 col-form-label">Employee</span>
+                @Html.DropDownListFor(x => Model.PurchaseOrderDetails.EmployeeId, new SelectList(Model.Employees, "Id", "Name"), new { @id = "txtEmployeeId", @class = "form-control" })
+                <span asp-validation-for="PurchaseOrderDetails.EmployeeId" class="text-danger"></span>
+            </div>
+
+            <div class="input-group row col-sm-6">
+                <span class="input-group-text col-sm-3 col-form-label">Project</span>
+                @Html.DropDownListFor(x => Model.PurchaseOrderDetails.ProjectId, new SelectList(Model.Projects, "Id", "ProjectName"), new { @id = "txtProjectId", @class = "form-control" })
+                <span asp-validation-for="PurchaseOrderDetails.ProjectId" class="text-danger"></span>
+            </div>
+
+            <div class="input-group row col-sm-6">
+                <span class="input-group-text col-sm-3 col-form-label">Branch</span>
+                @Html.DropDownListFor(x => Model.PurchaseOrderDetails.BranchId, new SelectList(Model.Branches, "Id", "Name"), new { @id = "txtBranchId", @class = "form-control" })
+                <span asp-validation-for="PurchaseOrderDetails.BranchId" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-6 row">
+                <span class="input-group-text col-sm-3 " id="DeliveryDate-addon">Delivery Date</span>
+                <input type="text" asp-for="PurchaseOrderDetails.DeliveryDate" id="txtDeliveryDate" class="form-control col-sm-9 datepicker" placeholder="Date" aria-describedby="DeliveryDate-addon" />
+                <span asp-validation-for="PurchaseOrderDetails.DeliveryDate" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-6 row">
+                <span class="input-group-text col-sm-3 " id="OrderTotalPrice-addon">Total Price</span>
+                <input asp-for="PurchaseOrderDetails.TotalPrice" id="OrderTotalPrice" class="form-control col-sm-4 " disabled placeholder="TotalPrice" aria-describedby="OrderTotalPrice-addon" />
+                <span asp-validation-for="PurchaseOrderDetails.TotalPrice" class="text-danger"></span>
+            </div>
+            <div class="input-group row col-sm-12">
+                <span asp-for="PurchaseOrderDetails.Notes" class="input-group-text col-sm-2 col-form-label" id="Notes-addon">Description</span>
+                <input id="txtOrderNotes" type="text" asp-for="PurchaseOrderDetails.Notes" class="form-control" placeholder="Notes" aria-describedby="Notes-addon" />
+                <span asp-validation-for="PurchaseOrderDetails.Notes" class="text-danger"></span>
+            </div>
+
+            <div class="form-group row">
+                <div asp-validation-summary="All" class="text-danger"></div>
+            </div>
+        </div>
         </div>
         <div class="card-footer">
             <div class="text-center mr-sm-2">
@@ -185,8 +210,11 @@
             <div class="card-header">
                 <div class="flex-container">
                     <div class="col-11"><h5 class="card-title"> Purchase Order Items</h5></div>
-                    <div class="col-1 "> <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
-                </div>
+                    @if (Model.PurchaseOrderDetails.StateId == 1)
+                    {
+                        <div class="col-1 "> <button id="btnAddItem" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
+                    }
+                    </div>
                 @*<button id="btnEditItem" type="button" class="btn btn-primary"  style="width:auto;">
                     <i class="fa fa-edit"></i>
                 </button>
@@ -206,22 +234,27 @@
                                 <th>Unit Price</th>
                                 <th>Total Price</th>
                                 <th>Description</th>
-                                <th style="width:30px;"></th>
-                                <th style="width:30px;"></th>
+                                @if (Model.PurchaseOrderDetails.StateId == 1) { 
+                                    <th style="width:30px;"></th>
+                                    <th style="width:30px;"></th>
+                                }
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.PurchaseOrderDetails.OrderItems)
                             {
-                                <tr>
-                                    <td>@item.Id</td>
-                                    <td>@item.ItemName</td>
-                                    <td style="visibility:hidden;width:1px;">@item.ItemUnitId</td>
-                                    <td>@item.ItemUnitName</td>
-                                    <td>@item.QNT</td>
-                                    <td>@item.UnitPrice</td>
-                                    <td>@item.TotalPrice</td>
-                                    <td>@item.Description</td>
+                                
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.ItemName</td>
+                                <td style="visibility:hidden;width:1px;">@item.ItemUnitId</td>
+                                <td>@item.ItemUnitName</td>
+                                <td>@item.QNT</td>
+                                <td>@item.UnitPrice</td>
+                                <td>@item.TotalPrice</td>
+                                <td>@item.Description</td>
+                                @if (Model.PurchaseOrderDetails.StateId == 1)
+                                {
                                     <td>
                                         <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@item.Id) style='width:auto'><i class='fa fa-edit'></i></button>
                                     </td>
@@ -229,6 +262,7 @@
                                         <button type='button' id='btnconfirmDel' class='btn btn-outline-danger btn-sm rounded-circle' onclick=contDelete(@item.Id) style='width:auto'><i class='fa fa-trash'></i></button>
 
                                     </td>
+                                }
                                 </tr>
                             }
                         </tbody>
@@ -270,6 +304,7 @@
                 $('#txtPrice').val(0);
                 $('#txtTotal').val(0);
                 $('#Notes').val(0);
+                $('#lblTotal').val( $('#OrderTotalPrice').val());
                 $('#basicExampleModal').modal('show')
             });
 
@@ -329,6 +364,7 @@
         //----------------- Render Table
         function BuildItemsTable(response) {
             var i;
+            var TotalPrice=0
             var strResult = "";
             strResult = '<table id="tblItemDetails" class="table table-hover">';
             strResult = strResult + '<thead class="thead-dark">';
@@ -351,6 +387,7 @@
 
             var text = "";
             for (i = 0; i < response.length; i++) {
+                TotalPrice = TotalPrice + response[i].TotalPrice;
                 strResult += "<tr>";
                 strResult += "<td>" + response[i].Id + "</td>";
                 strResult += "<td>" + response[i].ItemName + "</td>";
@@ -381,13 +418,14 @@
             };
             strResult += "</tbody>";
             strResult += "</table>";
-            console.log(strResult);
             $('#OrderItems').html(strResult);
             var table = $('#tblItemDetails').DataTable({
                 columnDefs: [
                     { "name": "ItemUnitId", "targets": 2, visible: false }
                 ]
             });
+            $('#OrderTotalPrice').val(TotalPrice);
+            $('#lblTotal').val(TotalPrice);
             return strResult;
         };
 
@@ -404,7 +442,7 @@
                     $('#txtPrice').val(data.UnitPrice);
                     $('#txtTotal').val(data.TotalPrice);
                     $('#txtNotes').val(data.Description);
-
+                    $('#lblTotal').val( $('#OrderTotalPrice').val());
                     $('#basicExampleModal').modal('show')
                 }
             );
@@ -430,6 +468,18 @@
 
             return isValid;
         }
+
+       //-------------- Confirm Purchase Order Button
+        function confirmPuchaseOrder() {
+            $.post('/PurchaseOrders/ConfirmPurchaseOrder',
+                {
+                    Id: $('#txtOrderId').val()
+                },
+                function (response, status) {
+                   location.reload();
+                }
+            );
+        };
 
         //---------------Confirm Item Delete
         function contDelete(ItemId) {

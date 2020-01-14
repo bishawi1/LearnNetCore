@@ -19,6 +19,9 @@ namespace MSIS.ViewModels
 
         [NotMapped]
         public List<Models.Currency> CurrencyList { get; set; }
+        [NotMapped]
+        public List<Models.PurchaseOrderState> PurchaseOrderStates { get; set; }
+
 
     }
 }

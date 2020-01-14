@@ -70,28 +70,47 @@
                     <td>@offer.OfferDate.ToString("dd/MM/yyyy")</td>
                     <td>@offer.CustomerName</td>
                     <td>@offer.CurrencyName</td>
-                    <td>0</td>
+                    <td>@offer.TotalPrice</td>
                     <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Offers" asp-route-Id="@offer.Id"><i class="fa fa-eye"></i></a></td>
                     @if (Model.userPermission.CanDelete)
                     {
                         <td>
                             @*<form asp-action="DeleteCustomer" asp-route-Id="@offer.Id" method="post">
-                                <span id="confirmDeleteSpan_@offer.Id" style="display:none">
-                                    <span>Are you sure you want to delete?</span>
-                                    <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
-                                    <a href="#" class="btn btn-primary"
-                                       onclick="confirmDelete('@offer.Id',false)"><i class="fa fa-times-circle"></i> No</a>
-                                </span>
-                                <span id="deleteSpan_@offer.Id">*@
+                        <span id="confirmDeleteSpan_@offer.Id" style="display:none">
+                            <span>Are you sure you want to delete?</span>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-check-circle"></i>Yes</button>
+                            <a href="#" class="btn btn-primary"
+                               onclick="confirmDelete('@offer.Id',false)"><i class="fa fa-times-circle"></i> No</a>
+                        </span>
+                        <span id="deleteSpan_@offer.Id">*@
                             <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
                                onclick="contDelete('@offer.Id',true)"><i class="fa fa-trash"></i></a>
                             @*</span>
 
-                                </form>*@
+                        </form>*@
                         </td>
                     }
                 </tr>
 
+            }
+            @if (Model.OffersTotals.Any())
+            {
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    @foreach (var total in Model.OffersTotals)
+                    {
+                        <tr>
+                            <td colspan=4></td>
+                            <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
+                        </tr>
+                    }
+                </tfoot>
             }
 
 

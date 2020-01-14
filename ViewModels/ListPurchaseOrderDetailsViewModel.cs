@@ -25,6 +25,9 @@ namespace MSIS.ViewModels
         public int CurrencyId { get; set; }
         public float CurrencyRate { get; set; }
         public string Notes { get; set; }
+        public int StateId { get; set; }
+        public string StateName { get; set; }
+
         public DateTime Time_Stamp { get; set; }
         public string User_Name { get; set; }
         public string CurrencyCode { get; set; }

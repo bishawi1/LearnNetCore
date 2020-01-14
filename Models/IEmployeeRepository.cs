@@ -16,6 +16,10 @@ namespace MSIS.Models
         string ValidateDeletEmployee(int Id);
         UserPermissionsViewModel GetUserParentMenuPermission(string userId, string PageName);
         ListEmployeesViewModel ListEmployees();
-
+        ListEmployeesViewModel ListActiveEmployees();
+        ListEmployeesViewModel ListInActiveEmployees();
+        Boolean IsEmployeeHasUser(string UserName, int EmployeeId);
+        Boolean IsEmployeeExists(int EmployeeId, string EmployeeNo);
+        AppDBContext getContext();
     }
 }

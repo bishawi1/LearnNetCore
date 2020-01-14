@@ -2,39 +2,52 @@
 @{ 
     ViewBag.Title = "User Registration";
 }
-<h1>User Registration</h1>
+
 <div class="row">
     <div class="col-md-12">
         <form method="post" action="Register">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <div class="form-group row">
-                <label asp-for="EmployeeId" class="col-sm-2 col-form-label"></label>
-                <div class="col-sm-10">
+            <div class="card mt-3">
+                <div class="card-header"><span class="card-title text-center"><h5>User Registration</h5></span></div>
+                <div class="card-body">
+                    <div asp-validation-summary="All" class="text-danger"></div>
 
-                    @Html.DropDownListFor(x => Model.EmployeeId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
-                    <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-2 " id="Email-addon">Email</span>
+                        <input asp-for="Email" class="form-control col-sm-10" placeholder="Email" aria-describedby="Email-addon" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-2 " id="Password-addon">Password</span>
+                        <input asp-for="Password" class="form-control col-sm-10" placeholder="Password" aria-describedby="Password-addon" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-2 " id="ConfirmPassword-addon">Confirm Password</span>
+                        <input asp-for="ConfirmPassword" class="form-control col-sm-10" placeholder="ConfirmPassword" aria-describedby="ConfirmPassword-addon" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-2 " id="EmployeeId-addon">Employee</span>
+                        @Html.DropDownListFor(x => Model.EmployeeId, new SelectList(Model.Employees, "Id", "Name"), new { @class = "form-control" })
+                        <span asp-validation-for="EmployeeId" class="text-danger"></span>
+                    </div>
+
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-2 " id="RoleId-addon">Role</span>
+                        @Html.DropDownListFor(x => Model.RoleId, new SelectList(Model.RoleList, "Id", "Name"), new { @class = "form-control" })
+                        <span asp-validation-for="RoleId" class="text-danger"></span>
+                    </div>
+
+                    @*<div class="form-group">
+                        <label asp-for="City"></label>
+                        <input asp-for="City" class="form-control" />
+                    </div>*@
+                    <button type="submit" class="btn btn-primary mt-3 mb-3" style="width:auto;">Register</button>
                 </div>
             </div>
-            <div class="form-group">
-                <label asp-for="City"></label>
-                <input asp-for="City" class="form-control" />
-            </div>
-            <button type="submit" class="btn btn-primary">Register</button>
         </form>
 
     </div>

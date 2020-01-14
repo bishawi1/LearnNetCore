@@ -22,13 +22,21 @@ namespace MSIS.ViewModels
         public int TaskOwnerId { get; set; }
         public int TaskResponsibleId { get; set; }
         public int ProjectId { get; set; }
+        public int BranchId { get; set; }
         public int TaskStatusId { get; set; }
         public string strGroupBy { get; set; }
+        public bool ContinuousTask { get; set; }
 
         public List<Project> Projects { get; set; }
         public List<Employee> Employees { get; set; }
+        public List<Branch> Branches { get; set; }
 
         public List<MSIS.Models.TaskStatus> TaskStatsus { get; set; }
+
+
+
+
+
 
     }
 }

@@ -28,6 +28,7 @@ namespace MSIS.Controllers
             this.userManager = userManager;
             this.employeeRepository = employeeRepository;
             this.settingsRepository = settingsRepository;
+            
         }
         [HttpGet]
         public IActionResult CreateRole()
@@ -344,7 +345,7 @@ namespace MSIS.Controllers
             }
             var userClaims = await userManager.GetClaimsAsync(user);
             var userRoles = await userManager.GetRolesAsync(user);
-            var employees = employeeRepository.GetAllEmployees().ToList();
+            var employees = employeeRepository.GetAllEmployees().Where(x=>x.Active==true).ToList();
             var roleList= roleManager.Roles.ToList();
             UserViewModel ouser = await getUserRole(user.Id);
             var model = new EditUserViewModel
@@ -446,19 +447,40 @@ namespace MSIS.Controllers
                 user.City = model.City;
                 user.Email = model.Email;
                 user.EmployeeId = model.EmployeeId;
-                Result = await userManager.UpdateAsync(user);
-                if (Result.Succeeded)
+                var isValid= employeeRepository.IsEmployeeHasUser(user.UserName, user.EmployeeId);
+                if (!isValid)
                 {
-                    return RedirectToAction("ListUsers", "Administration");
-                }
-                else
-                {
-                    foreach (var error in Result.Errors)
-                    {
-                        ModelState.AddModelError("", error.Description);
-                    }
+                    var userClaims = await userManager.GetClaimsAsync(user);
+                    var userRoles = await userManager.GetRolesAsync(user);
+                    var employees = employeeRepository.GetAllEmployees().ToList();
+                    var roleList = roleManager.Roles.ToList();
+
+                    ModelState.AddModelError("", "Employee already has User!");
+                    model.Roles = userRoles;
+                    model.RoleList = roleList;
+                    model.Employees = employees;
                     return View(model);
+                };
+                try{
+                    Result = await userManager.UpdateAsync(user);
+                    if (Result.Succeeded)
+                    {
+                        return RedirectToAction("ListUsers", "Administration");
+                    }
+                    else
+                    {
+                        foreach (var error in Result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                        return View(model);
+                    }
+
+                }catch (Exception ex)
+                {
+                            ModelState.AddModelError("", ex.Message.ToString());
                 }
+                return View(model);
             }
             else
             {

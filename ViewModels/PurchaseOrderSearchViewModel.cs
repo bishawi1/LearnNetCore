@@ -29,12 +29,15 @@ namespace MSIS.ViewModels
         public DateTime ToDate { get; set; }
         [NotMapped]
         public string strGroupBy { get; set; }
+        [NotMapped]
+        public int StateId { get; set; }
 
         [NotMapped]
         public List<Models.Supplier> suppliers { get; set; }
         public List<Models.Project> Projects { get; set; }
         public List<Models.Branch> Branches { get; set; }
         public List<Models.Employee> Employees { get; set; }
+        public List<Models.PurchaseOrderState> PurchaseOrderStates { get; set; }
 
         [NotMapped]
         public List<Models.Currency> CurrencyList { get; set; }

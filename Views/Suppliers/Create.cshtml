@@ -11,11 +11,16 @@
         <div class="card-body ">
 
             <div class="input-group col-sm-12 mt-1 row">
-                <span class="input-group-text col-sm-2 " id="SupplierName-addon">Customer Name</span>
+                <span class="input-group-text col-sm-2 " id="SupplierCode-addon">Supplier Code</span>
+                <input asp-for="SupplierCode" class="form-control col-sm-10" placeholder="Supplier Code" aria-describedby="SupplierCode-addon" />
+                <span asp-validation-for="SupplierCode" class="text-danger"></span>
+            </div>
+
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="SupplierName-addon">Supplier Name</span>
                 <input asp-for="SupplierName" class="form-control col-sm-10" placeholder="Supplier Name" aria-describedby="SupplierName-addon" />
                 <span asp-validation-for="SupplierName" class="text-danger"></span>
             </div>
-
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="MobileNo-addon">Mobile No</span>
                 <input asp-for="MobileNo" class="form-control col-sm-10" placeholder="Mobile No" aria-describedby="MobileNo-addon" />

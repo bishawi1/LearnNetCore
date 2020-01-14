@@ -12,6 +12,10 @@ namespace MSIS.ViewModels
     {
         public string ItemName { get; set; }
         public string ItemUnitName { get; set; }
+        public string MainItemName { get; set; }
+        public string MyProperty { get; set; }
+        public string CategoryName { get; set; }
+
         public Double TotalPrice { get; set; }
 
     }

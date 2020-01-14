@@ -8,9 +8,11 @@ namespace MSIS.ViewModels
 {
     public class OfferListViewModels
     {
-        public List<OfferViewModel> OfferList { get; set; }
+        public List<MSIS.ViewModels.SQLOffersViewModel> OfferList { get; set; }
+        //public List<OfferViewModel> OfferList { get; set; }
         [NotMapped]
         public UserPermissionDetailsViewModel userPermission { get; set; }
+        public List<OffersTotalsViewModel> OffersTotals { get; set; }
 
     }
 }

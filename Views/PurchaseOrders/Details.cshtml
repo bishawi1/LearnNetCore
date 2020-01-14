@@ -3,14 +3,110 @@
     ViewData["Title"] = "Details";
 }
 
+
 <div>
-    <a class="btn btn-outline-secondary" asp-action="printPurchaseOrderForm" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+    @if (Model.StateId >= 4)
+    {
+        if (Model.purchaseOrderPermission.AllowPrint)
+        {
+            <a class="btn btn-outline-secondary" asp-action="printPurchaseOrderForm" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+        }
+    }
 </div>
 <div class="card mt-3">
     <div class="card-header">
         <h3 class="text-center">Purchase Order Details</h3>
     </div>
     <div class="card-body">
+        <div class="row">
+            @if (Model.StateId == 1)//New
+            {
+                if (Model.purchaseOrderPermission.AllowConfirm)
+                {
+                    @*<textarea id="Description"></textarea><br />*@
+                    <form asp-action="ConfirmPurchaseOrder">
+                        <div class="form-group rounded row">
+                            @*<span>Description</span>*@
+                            <input asp-for="Id" hidden />
+                            @*<input asp-for="Description" class="form-control" />*@
+
+                            <button type="submit" class="btn btn-outline-secondary ml-3" style="width:auto;">Confirm!</button>
+
+                        </div>
+                    </form>
+                }
+            }
+            else if (Model.StateId == 2)//Confirmed
+            {
+                if (Model.purchaseOrderPermission.AllowVerify)
+                {
+                    <div class="col-md-12">
+                        <form id="verifyPurchaseOrder" asp-action="VerifyOrderExecution">
+                            <div class="form-group rounded row">
+                                <input asp-for="Id" hidden />
+                                <div class="form-group row">
+                                    <div class="col-sm-10 ml-3">
+                                        <select asp-for="StateId" asp-items="Html.GetEnumSelectList<TaskOperation>()" class="form-control" style="width:auto;">
+                                            <option value="">Verify Order</option>
+                                        </select>
+                                        <span id="errOperation" asp-validation-for="StateId" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <span>Description</span>
+                                <input asp-for="Description" class="form-control" />
+                            </div>
+                            @*<textarea id="Description"></textarea><br />*@
+                            <button type="submit" class="btn btn-outline-secondary ml-3">Verify!</button>
+                        </form>
+                    </div>
+                }
+            }
+            else if (Model.StateId == 5)//Delivered
+            {
+                if (Model.purchaseOrderPermission.AllowDelivery)
+                {
+                    <div class="col-md-12">
+                        <form id="verifyPurchaseOrder" asp-action="DeliverPurchaseOrder">
+                            <div class="form-group rounded row">
+                                <input asp-for="Id" hidden />
+                                <div class="form-group row">
+                                    <div class="col-sm-10 ml-3">
+                                        <select asp-for="StateId" asp-items="Html.GetEnumSelectList<PurchaseOrderDeleveryOptions>()" class="form-control" style="width:auto;">
+                                            <option value="">Delivery Type</option>
+                                        </select>
+                                        <span id="errOperation" asp-validation-for="StateId" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group col-sm-12 row">
+                                <span class="input-group-text col-sm-1 " id="txtSubtraction-addon">Subtraction</span>
+                                <input name="Subtraction" id="txtSubtraction" type="number" class="form-control col-sm-1" placeholder="Subtraction" aria-describedby="txtSubtraction-addon" />
+                                <span id="errSubtraction" class="text-danger"></span>
+                            </div>
+                            <div class="input-group col-sm-12 row">
+                                <span class="input-group-text col-sm-1 " id="txtDescription-addon">Description</span>
+                                <textarea asp-for="Description" id="txtDescription" class="form-control col-sm-10" placeholder="Description" aria-describedby="txtDescription-addon"></textarea>
+                                <span id="errDescription" class="text-danger"></span>
+                            </div>
+
+                            @*<textarea id="Description"></textarea><br />*@
+                            <button type="submit" class="btn btn-outline-secondary ml-3 mt-3" style="width:auto;">Delever!</button>
+                        </form>
+                    </div>
+                }
+            }
+        </div>
+        <div class="row">
+            <input asp-for="Id" hidden />
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="PurchaseOrderCode-addon" class="col-sm-3 input-group-text">Status</span>
+                    <span class="form-control col-sm-4" aria-describedby="StateName-addon"><h5>@Model.StateName</h5></span>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
@@ -58,6 +154,12 @@
                 <div class="input-group mt-sm-3">
                     <span id="BranchName-addon" class="col-sm-3 input-group-text">Branch</span>
                     <span class="form-control col-sm-9" aria-describedby="BranchName-addon"><h5>@Model.BranchName</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="DeliveryDate-addon" class="col-sm-3 input-group-text">Delivery Date</span>
+                    <span class="form-control col-sm-9" aria-describedby="DeliveryDate-addon"><h5>@Model.DeliveryDate.ToString("dd/MM/yyyy")</h5></span>
                 </div>
             </div>
             @*<div class="col-sm-6">
@@ -120,31 +222,121 @@
             }
         </div>
     </div>
-    <div class="card-footer">
-        <div class="flex-container">
-            <center>
-                @if (Model.Permission != null)
+    <div class="card-footer text-center">
+        @if (Model.Permission != null)
+        {
+            if (Model.Permission.CanEdit == true)
+            {
+                if (Model.StateId == 1)// New
                 {
-                    if (Model.Permission.CanEdit == true)
-                    {
-                        <a asp-action="Edit" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary mr-3"><i class="fa fa-edit"></i> Edit</a>
-                    }
-                    else
-                    {
-
-                    };
+                    <a asp-action="Edit" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary mr-3"><i class="fa fa-edit"></i> Edit</a>
                 }
-                <a asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" style="width:auto;" class="btn btn-outline-danger  ml-3"><i class="fa fa-times"></i> Cancel</a>
-            </center>
-        </div>
+            }
+        }
+
+        <a asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" style="width:auto;" class="btn btn-outline-danger  ml-3"><i class="fa fa-times"></i> Cancel</a>
     </div>
 </div>
+<a asp-action="AddAttachment" asp-controller="PurchaseOrders" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary m-3"><i class="fa icon-paper-clip"></i> Add Attachment</a>
+<div class="flex-container">
+    @foreach (var Attachment in Model.Attachments)
+    {
+        var PhotoPath = "~/images/PurchaeOrders/" + (Attachment.URL ?? "noImage.png");
+        <div class="col-sm-3">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top border-1" style="height:200px;" src="@PhotoPath" asp-append-version="true" />
+                <div class="card-body">
+                    <h5 class="card-title">@Attachment.Caption</h5>
+                    @*<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>*@
+                    <a href="#" class="btn btn-primary" style="width:auto;">Go somewhere</a>
+                </div>
+            </div>
+            <div class="col-sm-3 m-2">
+            </div>
+        </div>
+    }
+</div>
 @section Scripts{
-<script>
-    $(window).ready(function () {
-    $('#mnuTMS').removeClass('collapse show');
-    $('#mnuPurchaseOrders').addClass('collapse show');
-    $('#mnuTMS').addClass('collapse hide');
-    });
-</Script>
+
+    <script src="~/lib/jquery.form/jquery.form.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#verifyPurchaseOrder').ajaxForm({
+                beforeSubmit: validate,
+                success: function () {
+                    window.location.href = "/PurchaseOrders/ListPurchaseOrders";
+                }
+            });
+
+
+
+            $('.custom-file-input').on('change', function () {
+                //console.log($(this));
+                var fileLable = $(this).next('.custom-file-label');
+                var files = $(this)[0].files;
+                if (files.length > 1) {
+                    fileLable.html(files.length + ' files selected');
+                } else if (files.length == 1) {
+                    fileLable.html(files[0].name);
+                }
+                //                    var fileName = $(this).val().split('\\').pop();
+                //                    $(this).next('.custom-file-label').html(fileName);
+            });
+
+
+            $('#btnSaveAjax').click(function () {
+                if (validateItem()) {
+                    $.post('/PurchaseOrders/AddAttachment',
+                        {
+                            PurchaseOrderId: $('#Id').val(),
+                            Description: $('#txtNotes').val(),
+                            Photos: $('#Photos').val(),
+                            Caption: "aaa"
+                        },
+                        function (response, status) {
+                            $('#OrderItems').html('');
+                            BuildItemsTable(response);
+                            ClearItems();
+                        }
+                    );
+                }
+
+                );
+
+        });
+
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuPurchaseOrders').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+        function validate(formData, jqForm, options) {
+
+            var selectedOperation = $('#StateId').val();
+            if (selectedOperation == "") {
+                $('#errOperation').text('Select Task Action');
+                return false;
+            } else {
+                $('#errOperation').text('');
+                return true;
+            }
+
+        }
+
+
+
+        //-------------- Wait Purchase Order for Delivery Button
+        function waitPuchaseOrderForDeliver() {
+            $.post('/PurchaseOrders/waitPurchaseOrderForDelivery',
+                {
+
+                    Id: $('#Id').val()
+                },
+                function (response, status) {
+                    location.reload();
+                }
+            );
+        };
+
+    </script>
 }

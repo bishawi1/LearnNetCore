@@ -61,7 +61,7 @@
             <div>
                 <input type="text" id="txtEditMode" value="false" />
             </div>
-            <div class="modal-header">
+            <div class="modal-header mt-1">
                 <h5 class="modal-title" id="exampleModalLabel">Offer Item</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -69,54 +69,84 @@
             </div>
             <div class="modal-body">
                 <div class="input-group col-sm-12 row">
-                    <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 mt-1 row">
                         <span class="input-group-text col-sm-3 " id="txtId-addon">Id</span>
                         <input id="txtId" class="form-control col-sm-9" disabled placeholder="ID" aria-describedby="txtId-addon" />
                     </div>
-                    <span class="input-group-text col-sm-3 " id="txtItemId-addon">Item</span>
-                    @Html.DropDownList("txtItemId", new SelectList(Model.Items, "Id", "ItemName"), new { @id = "txtItemId", @class = "form-control" })
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-3 " id="txtItemCategoryId-addon">Item Category</span>
+                        @Html.DropDownList("txtItemCategoryId", new SelectList(Enumerable.Empty
+                        <SelectListItem>()), new { @id = "txtItemCategoryId", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-3 " id="txtMainItem-addon">Main Item</span>
+                        @Html.DropDownList("txtMainItem", new SelectList(Enumerable.Empty
+                        <SelectListItem>()), new { @id = "txtMainItem", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-3 " id="txtItemId-addon">Item</span>
+                        @Html.DropDownList("txtItemId", new SelectList(Enumerable.Empty
+                        <SelectListItem>()), new { @id = "txtItemId", @class = "form-control" })
 
-                    @*<input id="txtUnit" class="form-control col-sm-9" placeholder="Unit" aria-describedby="txtUnit-addon" />*@
+                        @*@Html.DropDownList("txtItemId", new SelectList(Model.Items, "Id", "ItemName"), new { @id = "txtItemId", @class = "form-control" })*@
+
+                        @*<input id="txtUnit" class="form-control col-sm-9" placeholder="Unit" aria-describedby="txtUnit-addon" />*@
+                    </div>
                 </div>
                 @*<div class="input-group col-sm-12 row">
-                        <span class="input-group-text col-sm-3 " id="txtItem-addon">Item</span>
-                        <input id="txtItem" class="form-control col-sm-9" placeholder="Item" aria-describedby="txtItem-addon" />
-                    </div>*@
-                <div class="input-group col-sm-12 row">
+            <span class="input-group-text col-sm-3 " id="txtItem-addon">Item</span>
+            <input id="txtItem" class="form-control col-sm-9" placeholder="Item" aria-describedby="txtItem-addon" />
+        </div>*@
+            <div class="input-group col-sm-12 row">
+                <div class="input-group col-sm-12 mt-1 row">
                     <span class="input-group-text col-sm-3 " id="txtUnit-addon">Unit</span>
                     @Html.DropDownList("txtUnit", new SelectList(Model.ItemUnits, "Id", "ItemUnitName"), new { @id = "txtUnit", @class = "form-control" })
 
                     @*<input id="txtUnit" class="form-control col-sm-9" placeholder="Unit" aria-describedby="txtUnit-addon" />*@
+                    </div>
                 </div>
-                <div class="input-group col-sm-12 row">
+            <div class="input-group col-sm-12 row">
+                <div class="input-group col-sm-12 mt-1 row">
                     <span class="input-group-text col-sm-3 " id="txtQnt-addon">Qnt</span>
                     <input id="txtQnt" type="number" class="form-control col-sm-9" placeholder="Qnt" aria-describedby="txtQnt-addon" />
                     <span id="errQNT" class="text-danger"></span>
                 </div>
-                <div class="input-group col-sm-12 row">
-                    <span class="input-group-text col-sm-3 " id="txtPrice-addon">Price</span>
-                    <input id="txtPrice" type="number" class="form-control col-sm-9" placeholder="Price" aria-describedby="txtPrice-addon" />
-                    <span id="errPrice" class="text-danger"></span>
-                </div>
-                <div class="input-group col-sm-12 row">
-                    <span class="input-group-text col-sm-3 " id="txtTotal-addon">Total Price</span>
-                    <input id="txtTotal" readonly class="form-control col-sm-9" placeholder="Total" aria-describedby="txtTotal-addon" />
-                </div>
-                <div class="input-group col-sm-12 row">
-                    <span class="input-group-text col-sm-3 " id="txtNotes-addon">Notes</span>
-                    <input id="txtNotes" class="form-control col-sm-9" placeholder="Notes" aria-describedby="txtNotes-addon" />
-                </div>
-
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close</button>
-                <button id="btnSaveAjax" type="button" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> save</button>
+                <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-3 " id="txtPrice-addon">Price</span>
+                        <input id="txtPrice" type="number" class="form-control col-sm-9" placeholder="Price" aria-describedby="txtPrice-addon" />
+                        <span id="errPrice" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-3 " id="txtTotal-addon">Total Price</span>
+                        <input id="txtTotal" readonly class="form-control col-sm-9" placeholder="Total" aria-describedby="txtTotal-addon" />
+                    </div>
+                  </div>
+                <div class="input-group col-sm-12 row">
+                    <div class="input-group col-sm-12 mt-1 row">
+                        <span class="input-group-text col-sm-3 " id="txtNotes-addon">Notes</span>
+                        <input id="txtNotes" class="form-control col-sm-9" placeholder="Notes" aria-describedby="txtNotes-addon" />
+                    </div>
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close</button>
+                        <button id="btnSaveAjax" type="button" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> save</button>
 
 
-                @*<button type="button" class="btn btn-success" id="btnSaveAjax" >Save</button>*@
+                        @*<button type="button" class="btn btn-success" id="btnSaveAjax" >Save</button>*@
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
 </div>
 <!-----------------------Card-->
 <form method="post" class="mt-3">
@@ -276,6 +306,7 @@
                             function (response, status) {
                                 $('#OrderItems').html('');
                                 BuildItemsTable(response);
+                                
                             }
                         );
                 } else {
@@ -292,12 +323,27 @@
                             function (response, status) {
                                 $('#OrderItems').html('');
                                 BuildItemsTable(response);
+                                $('#txtId').val('');
+                                $('#txtNotes').val('');
+                                $('#txtItemId').val('');
+                                $('#txtUnit').val('');
+                                $('#txtQnt').val('');
+                                $('#txtPrice').val('');
                             }
                         );
                     }
                 }
             );
-
+            fillItemCategories();
+          $('#txtItemCategoryId').change(function () {
+               fillMainItems($('#txtItemCategoryId').val());
+            });
+            $('#txtMainItem').change(function () {
+               fillItems($('#txtMainItem').val());
+            });
+            $('#txtItemId').change(function () {
+               setItemDefaults($('#txtItemId').val());
+            });
 
         });
 
@@ -473,9 +519,92 @@
             $('#mnuTMS').removeClass('collapse show');
             $('#mnuOffers').addClass('collapse show');
             $('#mnuTMS').addClass('collapse hide');
+
+
         });
 
+        function fillItemCategories() {
+            var Id = 0;
+            $('#txtItemCategoryId').empty();
+            $.ajax({  
+                url: "/Offers/GetItemCategories",  
+                type: "GET",  
+                contentType: "application/json; charset=utf-8",  
+                datatype: JSON,  
+                success: function (result) {  
+                    $(result).each(function () {  
+                        if (Id == 0) {
+                            Id = this.Id;
+                        };
+                        $("#txtItemCategoryId").append($("<option></option>").val(this.Id).html(this.CategoryName));  
+                    });
+                    fillMainItems(Id);
+               },  
+                error: function(data) {}  
+            });  
+        }
 
+        function fillMainItems(ItemCategoryId) {
+            $('#txtMainItem').empty();
+            $.ajax({  
+                url: "/Offers/GetMainItems?ItemCategoryId=" + ItemCategoryId,  
+                type: "GET",  
+                contentType: "application/json; charset=utf-8",  
+                datatype: JSON,  
+                success: function (result) {  
+                    var Id = 0;
+                    $(result).each(function () {  
+                       if (Id == 0) {
+                            Id = this.Id;
+                        };
 
-    </script>
+                        $("#txtMainItem").append($("<option></option>").val(this.Id).html(this.MainItemName));  
+                    });
+                    fillItems(Id);
+                },  
+                error: function(data) {}  
+            });  
+       }
+
+        function fillItems(MainItemId) {
+            $('#txtItemId').empty();
+            $.ajax({  
+                url: "/Offers/GetItems?MainItemId=" + MainItemId,  
+                type: "GET",  
+                contentType: "application/json; charset=utf-8",  
+                datatype: JSON,  
+                success: function (result) {  
+                    var Id = 0;
+
+                    $(result).each(function() {  
+                        $("#txtItemId").append($("<option></option>").val(this.Id).html(this.ItemName));  
+                        if (Id == 0) {
+                            Id = this.Id;
+                        };
+                    }); 
+                    setItemDefaults(Id);
+                },  
+                error: function(data) {}  
+            });  
+        }
+
+        function setItemDefaults(ItemId) {
+            $.ajax({  
+                url: "/Offers/getItemDetails?ItemId=" + ItemId,  
+                type: "GET",  
+                contentType: "application/json; charset=utf-8",  
+                datatype: JSON,  
+                success: function (result) {  
+
+                    $('#txtUnit').val(result["ItemUnitId"]); 
+                    $('#txtQnt').val(1);
+                    $('#txtPrice').val(result["UnitPrice"]);
+                    $('#txtTotal').val(result["UnitPrice"]);
+                    //$(result).each(function() {  
+                    //    $("#txtItemId").append($("<option></option>").val(this.Id).html(this.ItemName));  
+                    //});  
+                },  
+                error: function(data) {}  
+            });  
+       }    </script>
 }

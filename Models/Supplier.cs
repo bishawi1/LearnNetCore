@@ -6,8 +6,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace MSIS.Models
 {
+    [NotMapped]
     public class Supplier
     {
+        [Key]
         public int Id { get; set; }
         [Required]
         [Column(TypeName ="nvarchar(100)")]
@@ -18,6 +20,8 @@ namespace MSIS.Models
         public string Email { get; set; }
         public string Address { get; set; }
         public string OtherInformation { get; set; }
+        [Required]
+        public string SupplierCode { get; set; }
 
     }
 }

@@ -5,7 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace MSIS.Models
 {
     public class AppDBContext:IdentityDbContext<ApplicationUser>
@@ -15,6 +16,12 @@ namespace MSIS.Models
         {
 
         }
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<ApplicationUser>()
+        //        .HasIndex(p => new { p.EmployeeId })
+        //        .IsUnique(true);
+        //}
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Project> Projects { get; set; }
@@ -36,7 +43,7 @@ namespace MSIS.Models
         public DbSet<PurchaseOrderItemsViewModel> SQLPurchaseOrderItemsViewModel { get; set; }
         public DbSet<ItemCategory> ItemCategories { get; set; }
         public DbSet<MainItem> MainItems { get; set; }
-
+        public DbSet<PurchaseOrderState> PurchaseOrderStates { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Offer> Offers { get; set; }
         public DbSet<OfferDetail> offerDetails { get; set; }
@@ -44,6 +51,20 @@ namespace MSIS.Models
         public DbSet<Page> Pages { get; set; }
         public DbSet<RolePage> RolePages { get; set; }
         public DbSet<UserPermissionDetailsViewModel> SQLUserAllowedParentMenuesViewModel { get; set; }
+        //[NotMapped]       
+        public DbSet<PurchaseOrderTotalsViewModel> PurchaseOrdersTotals { get; set; }
+        
+        public DbSet<SQLOffersViewModel> SQLOfferList { get; set; }
+        public DbSet<OffersTotalsViewModel> OffersTotals { get; set; }
+        public DbSet<PurchaseOrdersCountByStatusViewModel> SQLPurchaseOrdersCountByStatus { get; set; }
+
+        public DbSet<Setting> Settings { get; set; }
+        public DbSet<PeriodTypeModel> PeriodTypes { get; set; }
+
+        public DbSet<ContinuousTask> ContinuousTasks { get; set; }
+        public DbSet<SQLActiveContinuousTasks> vActiveContinuousTasks { get; set; }
+        public DbSet<PurchaseOrderPermission> PurchaseOrderPermissions { get; set; }
+        public DbSet<PurchaseOrderAttachment> PurchaseOrderAttachments { get; set; }
 
     }
 }

@@ -10,14 +10,21 @@
         <h4 class="card-title"> Supplier Details</h4>
     </div>
     <div class="card-body">
-        <div class="input-group col-sm-12 mt-1 row">
-            <span class="input-group-text col-sm-2 " id="Id-addon">Id</span>
-            <span class="form-control col-sm-8" placeholder="Id" aria-describedby="Id-addon"> @Model.Supplier.Id</span>
+        <div class="flex-container col-sm-12 row pl-2">
+            <div class="input-group col-sm-6 mt-1 ">
+                <span class="input-group-text col-sm-4 " id="Id-addon">Supplier Id</span>
+                <span class="form-control col-sm-4" placeholder="Id" aria-describedby="Id-addon"> @Model.Supplier.Id</span>
+            </div>
+            <div class="input-group col-sm-6 mt-1 ">
+                <span class="input-group-text col-sm-4 " id="SupplierCode-addon">Supplier Code</span>
+                <span class="form-control col-sm-4" placeholder="Supplier Code" aria-describedby="SupplierCode-addon"> @Model.Supplier.SupplierCode</span>
+            </div>
         </div>
         <div class="input-group col-sm-12 mt-1 row">
             <span class="input-group-text col-sm-2 " id="SupplierName-addon">Supplier Name</span>
             <span class="form-control col-sm-10" placeholder="Supplier Name" aria-describedby="SupplierName-addon"> @Model.Supplier.SupplierName</span>
         </div>
+
         <div class="input-group col-sm-12 mt-1 row">
             <span class="input-group-text col-sm-2 " id="Address-addon">Address</span>
             <span class="form-control col-sm-8" placeholder="Address" aria-describedby="Address-addon"> @Model.Supplier.Address</span>

@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 using MSIS.Utilites;
+using Microsoft.AspNetCore.Identity;
 
 namespace MSIS.ViewModels
 {
@@ -27,8 +28,14 @@ namespace MSIS.ViewModels
         public string ConfirmPassword { get; set; }
 
         public string City { get; set; }
+        [Required]
+        [Range(1, int.MaxValue, ErrorMessage = "Please enter Employee From List")]
         public int EmployeeId { get; set; }
 
         public List<Models.Employee> Employees { get; set; }
+        [NotMapped]
+        public string RoleId { get; set; }
+        public List<IdentityRole> RoleList { get; set; }
+
     }
 }

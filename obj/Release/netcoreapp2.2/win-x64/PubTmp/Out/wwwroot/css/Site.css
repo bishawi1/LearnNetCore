@@ -1,7 +1,12 @@
 ﻿.hideElem {
     display: none;
 }
-
+.chzn-container .chzn-results {
+    height: 150px;
+}
+.nav-item dropdown:empty {
+    display: none;
+}
 .flex-container {
     display: flex;
     flex-direction: row;

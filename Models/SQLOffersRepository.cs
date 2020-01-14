@@ -13,6 +13,65 @@ namespace MSIS.Models
         {
             this.context = Context;
         }
+        public AppDBContext getContext()
+        {
+            return this.context;
+        }
+        public List<MSIS.ViewModels.SQLOffersViewModel> getAllOfferDetails(ViewModels.OfferSearchViewModel Criteria)
+        {
+            try
+            {
+                string strWhere = "";
+                if (Criteria.CustomerId > 0)
+                {
+                    strWhere = strWhere + " CustomerId = " + Criteria.CustomerId.ToString();
+                }
+                if (Criteria.CurrencyId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " CurrencyId = " + Criteria.CurrencyId.ToString();
+                }
+
+                if (Criteria.FromDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " OfferDate >= '" + Criteria.FromDate.ToString() + "'";
+                }
+                if (Criteria.ToDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " OfferDate <= '" + Criteria.ToDate.ToString() + "'";
+                }
+                if (strWhere != "")
+                {
+                    strWhere = " Where " + strWhere;
+                }
+                if (Criteria.strGroupBy != null)
+                {
+                    if (Criteria.strGroupBy.ToLower() != "all")
+                    {
+                        strWhere = strWhere + " Order By " + Criteria.strGroupBy;
+                    }
+                }
+                var result = context.SQLOfferList.FromSql("SELECT *,'" + Criteria.strGroupBy + "' As strGroupBy FROM dbo.vOffers " + strWhere).ToList();
+
+                return result.ToList();// projectDetailViewModel;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            };
+        }
+
         public Offer Add(Offer offer)
         {
             context.Offers.Add(offer);
@@ -59,27 +118,49 @@ namespace MSIS.Models
             model.UserPermissions = result;
             return model;
         }
-
+        public List<MainItem> getMainItems(int ItemCategoryId)
+        {
+            return context.MainItems.Where(x => x.ItemCategoryId == ItemCategoryId).ToList();
+        }
+        public List<ItemCategory> getItemCategoriess()
+        {
+            return context.ItemCategories.ToList();
+        }
+        public List<Item> getItems(int MainItemId)
+        {
+            return context.Items.Where(x=>x.MainItemId==MainItemId).ToList();
+        }
+        public List<Item> getItemDetails(int ItemId)
+        {
+            List<Item> items=null;
+            items= context.Items.Where(x=>x.Id==ItemId ).ToList();
+            return items;
+        }
         public OfferListViewModels getOfferList()
         {
-            var result = (from offer in context.Offers
-                          join currency in context.Currency
-                          on offer.CurrencyId equals currency.Id
-                          join customer in context.Customers
-                          on offer.CustomerId equals customer.Id
-                          select new OfferViewModel
-                          {
-                              Address = customer.Address,
-                              CurrencyId=offer.CurrencyId,
-                              CurrencyName=currency.CurrencyName,
-                              CustomerId=offer.CustomerId,
-                              CustomerName=customer.CustomerName,
-                              Id=offer.Id,
-                              OfferDate=offer.OfferDate,
-                              OtherInformation=offer.OtherInformation
-                          }).ToList();
+            var result = context.SQLOfferList.FromSql("SELECT *,'ALL' As strGroupBy FROM dbo.vOffers " ).ToList();
+            //return result.ToList();// projectDetailViewModel;
+
+            //var result = (from offer in context.Offers
+            //              join currency in context.Currency
+            //              on offer.CurrencyId equals currency.Id
+            //              join customer in context.Customers
+            //              on offer.CustomerId equals customer.Id
+            //              select new OfferViewModel
+            //              {
+            //                  Address = customer.Address,
+            //                  CurrencyId=offer.CurrencyId,
+            //                  CurrencyName=currency.CurrencyName,
+            //                  CustomerId=offer.CustomerId,
+            //                  CustomerName=customer.CustomerName,
+            //                  Id=offer.Id,
+            //                  OfferDate=offer.OfferDate,
+            //                  OtherInformation=offer.OtherInformation
+            //              }).ToList();
             OfferListViewModels model = new OfferListViewModels();
             model.OfferList = result;
+            var Totals = context.OffersTotals.FromSql("Select * From dbo.vOffersTotals").ToList();
+            model.OffersTotals = Totals;
             return model;
 
         }
@@ -103,6 +184,7 @@ namespace MSIS.Models
         }
         public OfferDetailsViewModel getOffersDetails(int Id)
         {
+            Double totalAmount = 0;
             var result = (from offer in context.Offers
                           join currency in context.Currency
                           on offer.CurrencyId equals currency.Id
@@ -121,6 +203,14 @@ namespace MSIS.Models
                               OtherInformation = offer.OtherInformation
                           }).ToList();
             result[0].OfferItems = getOfferItemsList(Id).ToList();
+            if (result[0] != null)
+            {
+                foreach (var item in result[0].OfferItems)
+                {
+                    totalAmount = item.TotalPrice;
+                }
+                result[0].TotalAmount = totalAmount;
+            }
             return result[0];// projectDetailViewModel;
         }
         public EditOfferViewModel getEditOffers(int Id)
@@ -179,6 +269,10 @@ namespace MSIS.Models
                          on offerDetail.ItemUnitId equals itemUnits.Id
                          join item in context.Items
                          on offerDetail.ItemId equals item.Id
+                         join mainItem in context.MainItems
+                         on item.MainItemId equals mainItem.Id
+                         join itemCategory in context.ItemCategories
+                         on mainItem.ItemCategoryId equals itemCategory.Id
                          where offerDetail.OfferId == offerId
                          select new OfferItemsViewModel
                          {
@@ -190,6 +284,8 @@ namespace MSIS.Models
                              ItemUnitName = itemUnits.ItemUnitName,
                              OfferId = offerDetail.OfferId,
                              QNT = offerDetail.QNT,
+                             CategoryName=itemCategory.CategoryName,
+                             MainItemName=mainItem.MainItemName,
                              UnitPrice = offerDetail.UnitPrice,
                              TotalPrice =offerDetail.QNT * offerDetail.UnitPrice
                          }).ToList();

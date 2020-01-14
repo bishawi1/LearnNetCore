@@ -13,6 +13,7 @@ namespace MSIS.ViewModels
         [NotMapped]
         public UserPermissionDetailsViewModel Permission { get; set; }
 
+        public double TotalAmount { get; set; }
 
     }
 }

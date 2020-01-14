@@ -11,11 +11,16 @@
         </div>
         <div class="card-body">
             <img class="card-img-top" src="@PhotoPath" asp-append-version="true" />
-            <div class="input-group col-sm-12 mt-1 row">
-                <span class="input-group-text col-sm-4 " id="EmployeeID-addon">Employee ID</span>
-                <span class="form-control col-sm-8" placeholder="Employee ID" aria-describedby="EmployeeID-addon"> @Model.Employee.Id</span>
+            <div class="flex-container row">
+                <div class="input-group col-sm-6 mt-1 ">
+                    <span class="input-group-text col-sm-4 " id="EmployeeID-addon">ID</span>
+                    <span class="form-control col-sm-8" placeholder="Employee ID" aria-describedby="EmployeeID-addon"> @Model.Employee.Id</span>
+                </div>
+                <div class="input-group col-sm-6 mt-1 row">
+                    <span class="input-group-text col-sm-4 " id="EmployeeNo-addon">No</span>
+                    <span class="form-control col-sm-8" placeholder="Employee No" aria-describedby="EmployeeNo-addon"> @Model.Employee.EmployeeNo</span>
+                </div>
             </div>
-
             <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-4 " id="IdentityNo-addon">Identity No</span>
                 <span class="form-control col-sm-8" placeholder="Identity No" aria-describedby="IdentityNo-addon"> @Model.Employee.IdentityNo</span>

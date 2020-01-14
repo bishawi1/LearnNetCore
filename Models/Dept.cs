@@ -15,6 +15,13 @@ namespace MSIS.Models
     public enum TaskOperation
     {
         Approved,
-        Rejected
+        Rejected,
+        MoveBack_Rejected
+    }
+    public enum PurchaseOrderDeleveryOptions
+    {
+        Delivered,
+        DeliveredPartially,
+        CancelDelivery
     }
 }

@@ -49,6 +49,10 @@ namespace MSIS.Models
         [Column(TypeName ="nvarchar(Max)")]
         public string Description { get; set; }
 
+        public string TaskStartTime { get; set; }
+
+        public string TaskEndTime { get; set; }
+        public bool ContinuousTask { get; set; }
 
     }
 }

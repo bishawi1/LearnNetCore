@@ -2,11 +2,11 @@
 @{
     ViewData["Title"] = "Details";
 }
+    <div>
+        <a class="btn btn-outline-secondary" asp-action="printOfferForm" asp-controller="Offers" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+    </div>
 
 
-<div>
-    <a class="btn btn-outline-secondary" asp-action="PrintTaskDetails" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
-</div>
 <div class="card mt-3">
     <div class="card-header">
         <h3 class="text-center">Offer Details</h3>

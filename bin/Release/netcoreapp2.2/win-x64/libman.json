@@ -33,6 +33,14 @@
     {
       "library": "popper.js@1.15.0",
       "destination": "wwwroot/lib/popper.js/"
+    },
+    {
+      "library": "chosen@1.8.7",
+      "destination": "wwwroot/lib/chosen/"
+    },
+    {
+      "library": "select2@4.0.12",
+      "destination": "wwwroot/lib/select2/"
     }
   ]
 }

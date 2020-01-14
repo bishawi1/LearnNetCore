@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace MSIS.Models
 {
+    [NotMapped]
     public class Customer
     {
         [Key]
@@ -21,5 +22,8 @@ namespace MSIS.Models
         public string Address { get; set; }
         public string OtherInformation { get; set; }
         public bool Active { get; set; }
+        [Required]
+        public string CustomerCode { get; set; }
+
     }
 }

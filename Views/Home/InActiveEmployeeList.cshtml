@@ -1,0 +1,178 @@
+﻿@model ListEmployeesViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Employee List";
+}
+<!----------------------Confirm Delete -->
+<div class="modal fade" id="dlgConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalLabel">Activate Employee</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span><h5 class="card-text">Are you sure you want to Activate?</h5></span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> cancel</button>
+                <button id="btnSave" data-dismiss="modal" onclick="ValidateActivate()" type="button" class="btn btn-outline-success" style="width:auto;"><i class="fa fa-check"></i> Activate </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!----------------------Inform Dialog -->
+<div class="modal fade" id="dlgInform" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span id="ErrorMessage" class="card-text">Are you sure you want to delete?</span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="flex-container text-center">
+            <a asp-action="EmployeeList" asp-controller="Home" class="btn btn-success col-2" style="width:auto;">Active Employees</a>
+            <span class="col-9"><h5> Employees List</h5></span>
+            @if (Model.userPermission.CanAdd)
+            {
+                <a class="btn btn-outline-secondary mb-3 fa fa-plus-circle" style="width:auto" asp-action="create" asp-controller="home"></a>
+            }
+        </div>
+    </div>
+
+    @*<div class="mt-3">
+            <a class="btn btn-outline-primary mb-3 fa fa-plus-circle" style="width:auto" asp-action="create" asp-controller="home"></a>
+        </div>*@
+
+    <div class="card-body">
+        <div style=" border:solid 1px black; padding:3px;">
+            <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>No</th>
+                        <th>Name</th>
+                        <th>Mobile No</th>
+                        <th>Education</th>
+                        <th>Specialization</th>
+                        <th>Job Desc.</th>
+                       @* <th style="width:30px;"></th>*@
+                        @if (Model.userPermission.CanDelete)
+                        {
+                            <th style="width:30px;"></th>
+                        }
+                    </tr>
+                </thead>
+
+
+
+                @foreach (var employee in Model.Employees)
+                {
+
+                    <tr>
+                        <td>@employee.Id</td>
+                        <td>@employee.EmployeeNo</td>
+                        <td>@employee.Name</td>
+                        <td>@employee.MobileNo</td>
+                        <td>@employee.EducationDegree</td>
+                        <td>@employee.Specialization</td>
+                        <td>@employee.JobDescription</td>
+
+                        @*<td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Home" asp-route-Id="@employee.Id"><i class="fa fa-eye"></i></a></td>*@
+                        @if (Model.userPermission.CanDelete)
+                        {
+                            <td>
+                                <a href="#" class="btn btn-outline-success rounded btn-sm" style="width:auto"
+                                   onclick="contDelete('@employee.Id',true)"><i class="fa fa-check-circle"></i></a>
+                            </td>
+                        }
+                    </tr>
+
+                }
+
+
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuSettings').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+        //---------------Confirm Item Delete
+        function contDelete(ItemId) {
+            $('#txtDeleteItemID').val(ItemId);
+            $('#dlgConfirmDelete').modal('show');
+        };
+
+        //-------------- Delete Item Button
+        function DeleteItem() {
+            $.post('/Home/Activate',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    location.reload(true);
+
+                }
+            );
+        };
+
+        //-------------- Activate Item Button
+        function ActivateItem() {
+            $.post('/Home/Activate',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    location.reload(true);
+
+                }
+            );
+        };
+        //-------------- Delete Item Button
+        function ValidateActivate() {
+            $.post('/Home/ValidateActivate',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    if (response == "") {
+                        DeleteItem();
+                    } else {
+                        $('#ErrorMessage').text(response);
+                        $('#dlgInform').modal('show');
+                    }
+                    //location.reload(true);
+
+                }
+            );
+        };
+    </script>
+}

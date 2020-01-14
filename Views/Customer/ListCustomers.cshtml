@@ -60,6 +60,7 @@
         <table class="table table-hover gridtable" id="myTable">
             <thead class="thead-dark">
                 <tr>
+                    <th>Code</th>
                     <th>Name</th>
                     <th>Addresss</th>
                     <th>MobileNo</th>
@@ -75,6 +76,7 @@
             @foreach (var customer in Model.Customers)
             {
                 <tr>
+                    <td>@customer.CustomerCode</td>
                     <td>@customer.CustomerName</td>
                     <td>@customer.Address</td>
                     <td>@customer.MobileNo</td>

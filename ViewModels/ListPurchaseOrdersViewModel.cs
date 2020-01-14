@@ -11,6 +11,10 @@ namespace MSIS.ViewModels
         public List<ListPurchaseOrderDetailsViewModel> ListPurchaseOrders { get; set; }
         [NotMapped]
         public UserPermissionDetailsViewModel userPermission { get; set; }
+        [NotMapped]
+        public List<PurchaseOrderTotalsViewModel> PurchaseOrderTotals { get; set; }
+        public ViewModels.PurchaseOrdersCountByStatusViewModel CountByStatus { get; set; }
+        public Models.PurchaseOrderPermission purchaseOrderPermission { get; set; }
 
     }
 }

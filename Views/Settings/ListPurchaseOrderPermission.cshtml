@@ -1,0 +1,61 @@
+﻿@model ListPurchaseOrderPermissionViewModel
+@{
+    ViewData["Title"] = "ListPurchaseOrderPermission";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="flex-container text-center">
+            <span class="col-11"><h5>Purchase Order Permission List</h5></span>
+            @*@if (Model.userPermission.CanAdd)
+            {*@
+                <a class="btn btn-outline-secondary mb-3" style="width:auto" asp-action="CreatePurchaseOrderPermission" asp-controller="Settings"><i class="fa fa-plus-circle"></i></a>
+            @*}*@
+        </div>
+    </div>
+    <div class="card-body">
+        <div style="border:solid 1px black; padding:3px;">
+            <table class="table table-hover " id="myTable">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>User</th>
+                        <th>AllowConfirm</th>
+                        <th>AllowPrint</th>
+                        <th>AllowVerify</th>
+                        <th>AllowDelivery</th>
+                        <th>Notes</th>
+                        <th style="width:30px;"></th>
+                        @if (Model.userPermission.CanDelete)
+                        {
+                            <th style="width:30px;"></th>
+                        }
+                    </tr>
+                </thead>
+                @foreach (var purchaseOrderPermission in Model.purchaseOrderPermissions)
+                {
+            <tr>
+                <td>@purchaseOrderPermission.Id</td>
+                <td>@purchaseOrderPermission.UserName</td>
+                <td>@purchaseOrderPermission.AllowConfirm</td>
+                <td>@purchaseOrderPermission.AllowPrint</td>
+                <td>@purchaseOrderPermission.AllowVerify</td>
+                <td>@purchaseOrderPermission.AllowDelivery</td>
+                <td>@purchaseOrderPermission.Notes</td>
+                <td><a class="btn btn-outline-primary btn-sm rounded-circle" asp-action="PurchaseOrderPermissionDetails" asp-controller="Settings" asp-route-Id="@purchaseOrderPermission.Id" style="width:auto"><i class="fa fa-eye"></i></a></td>
+                @if (Model.userPermission.CanDelete)
+                {
+                    <td>
+                        <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                           onclick="contDelete('@purchaseOrderPermission.Id',true)"><i class="fa fa-trash"></i></a>
+                    </td>
+                }
+            </tr>
+                }
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+
+    </div>
+</div>

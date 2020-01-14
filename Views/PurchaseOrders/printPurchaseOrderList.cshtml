@@ -1,4 +1,4 @@
-﻿@model List<ListPurchaseOrderDetailsViewModel>
+﻿@model ListPurchaseOrdersViewModel
 @{
     ViewData["Title"] = "ListPurchaseOrders";
 }
@@ -35,7 +35,7 @@
 
 
 
-            @foreach (var order in Model)
+            @foreach (var order in Model.ListPurchaseOrders)
             {
 
                 <tr>
@@ -48,6 +48,27 @@
                 </tr>
 
             }
+
+            @if (Model.ListPurchaseOrders.Any())
+            {
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    @foreach (var total in Model.PurchaseOrderTotals)
+                    {
+                        <tr>
+                            <td colspan=4></td>
+                            <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
+                        </tr>
+                    }
+                </tfoot>
+            }
+
 
         </table>
     </div>

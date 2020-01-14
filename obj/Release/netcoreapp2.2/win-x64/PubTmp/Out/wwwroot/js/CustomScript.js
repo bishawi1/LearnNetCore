@@ -17,13 +17,18 @@ function ApplyPermission(response) {
     for (i = 0; i < response.ParentMenus.length; ++i) {
         if (response.ParentMenus[i] == "Settings") {
             $('#crdSettings').show();
+            $('#mnuFiles').removeClass('hideElem');
         } else if (response.ParentMenus[i] == "Task") {
             $('#crdTasks').show();
+            $('#mnuTask').removeClass('hideElem');
         } else if (response.ParentMenus[i] == "PurchaseOrder") {
             $('#crdOrders').show();
+            $('#mnuPurchaseOrders').removeClass('hideElem');
+
         } else if (response.ParentMenus[i] == "Offers") {
             $('#crdOffers').show();
-        }
+            $('#mnuOffers').removeClass('hideElem');
+       }
     };
     for (i = 0; i < response.UserPermissions.length; ++i) {
         if (response.UserPermissions[i].PageName == "Employees") {
@@ -101,6 +106,10 @@ function ApplyPermission(response) {
         } else if (response.UserPermissions[i].PageName == "All Offers") {
             if (response.UserPermissions[i].CanView) {
                 $('#lnkAllOffers').removeClass('hideElem');
+            };
+        } else if (response.UserPermissions[i].PageName == "Offers Reports") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkOffersReports').removeClass('hideElem');
             };
         }
     };

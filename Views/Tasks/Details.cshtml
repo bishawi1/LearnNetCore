@@ -4,27 +4,57 @@
 }
 
 
+<!-- Action/Note modal -->
+
+<div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group rounded row m-2">
+                    <span>Notes</span>
+                    <textarea id="txtNoteDescription" class="col-sm-12" type="text" placeholder="text" style="height:200px;"></textarea>
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close</button>
+                <button id="btnSave" data-dismiss="modal" onclick="btnSave_click()" type="button" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Action/Note modal -->
+
+
 <div>
-     <a class="btn btn-outline-secondary" asp-action="PrintTaskDetails" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
+    <a class="btn btn-outline-secondary" asp-action="PrintTaskDetails" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;"> <i class="fa fa-print"> Print</i></a>
 </div>
 <div class="card mt-3">
     <div class="card-header">
         <h3 class="text-center">Task Details</h3>
-        @if (Model.TaskStatusId == 1)
+        @if (Model.TaskStatusId == 1)//Waiting
         {
             <form asp-action="StartTask">
                 <div class="form-group rounded row">
-                    <span>Description</span>
+                    <span>Notes</span>
                     <input asp-for="Id" hidden />
-                    <input asp-for="Description" class="form-control" />
+                    <textarea asp-for="Description" class="form-control"></textarea>
 
-                    <button type="submit" class="btn btn-primary">Start!</button>
+                    <button type="submit" class="btn btn-primary mt-1">Start!</button>
 
                 </div>
             </form>
 
         }
-        else if (Model.TaskStatusId == 2)
+        else if (Model.TaskStatusId == 2)//in Progress
         {
             <form asp-action="CompleteTask">
                 <div class="form-group rounded row">
@@ -39,11 +69,11 @@
             </form>
 
         }
-        else if (Model.TaskStatusId == 4)
+        else if (Model.TaskStatusId == 4)//Done
         {
-            @if (User.IsInRole("Admin")||User.Identity.Name==Model.TaskOwnerUserName)
+            @if (User.IsInRole("Admin") || User.Identity.Name == Model.TaskOwnerUserName)
             {
-                <form asp-action="VerifyTaskExecution">
+                <form id="verifyTaskExecution" asp-action="VerifyTaskExecution">
                     <div class="form-group rounded row">
                         <input asp-for="Id" hidden />
                         <div class="form-group row">
@@ -52,22 +82,22 @@
                                 <select asp-for="TaskOperation" asp-items="Html.GetEnumSelectList<TaskOperation>()" class="form-control" style="width:auto;">
                                     <option value="">Verify Task</option>
                                 </select>
-                                <span asp-validation-for="TaskOperation" class="text-danger"></span>
+                                <span id="errOperation" asp-validation-for="TaskOperation" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <span>Description</span>
-                        <input asp-for="Description" class="form-control" />
+                        <span>Notes</span>
+                        <textarea asp-for="Description" class="form-control"></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Done!</button>
+                    <button type="submit" class="btn btn-primary mt-1">Verify!</button>
 
 
                 </form>
             }
             @* <a asp-action="VerifyTaskExecution" asp-controller="Tasks" asp-route-Id="@Model.Id" class="btn btn-primary" style="width:auto;">Approved!</a>
-            <a asp-action="RejectTask" asp-controller="Tasks" asp-route-Id="@Model.Id" class="btn btn-primary" style="width:auto;">Rejected!</a>*@
+                <a asp-action="RejectTask" asp-controller="Tasks" asp-route-Id="@Model.Id" class="btn btn-primary" style="width:auto;">Rejected!</a>*@
         }
 
     </div>
@@ -95,12 +125,25 @@
             </div>
             <div class="col-sm-6">
                 <div class="input-group mt-sm-3">
+                    <span id="TaskStartTime-addon" class="col-sm-3 input-group-text">Start Time</span>
+                    <span class="form-control col-sm-6" aria-describedby="TaskStartTime-addon"><h5>@Model.TaskStartTime</h5></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
                     <span id="TaskEndDate-addon" class="col-sm-3 input-group-text">End Date</span>
                     <span class="form-control col-sm-6" aria-describedby="TaskEndDate-addon"><h5>@Model.TaskEndDate.ToString("dd/MM/yyyy")</h5></span>
                 </div>
             </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="TaskEndTime-addon" class="col-sm-3 input-group-text">End Date</span>
+                    <span class="form-control col-sm-6" aria-describedby="TaskEndTime-addon"><h5>@Model.TaskEndTime</h5></span>
+                </div>
+            </div>
         </div>
-
         <div class="input-group mt-sm-3">
             <span id="taskSubject-addon" class="col-sm-2 input-group-text">Subject</span>
             <span class="form-control col-sm-8" aria-describedby="taskSubject-addon"><h5>@Model.TaskSubject</h5></span>
@@ -123,13 +166,45 @@
             <span id="OtherInformation-addon" class="col-sm-2 input-group-text">More Information</span>
             <span class="form-control col-sm-8" aria-describedby="OtherInformation-addon"><h5>@Model.OtherInformation</h5></span>
         </div>
+        @if (Model.ContinuousTask)
+        {
+            <div class="row col-sm-12">
+                <div class="input-group col-sm-6 mt-3">
+                    <span id="ContinuousTask-addon" asp-for="ContinuousTask" class="input-group-text col-sm-4 col-form-label">Continuous</span>
+                    <input type="checkbox" class="form-control col-sm-1" checked="@Model.ContinuousTask" />
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="input-group row col-sm-6 mt-2">
+                    <span id="ContinueFromDate-addon" class="input-group-text col-sm-4 col-form-label">From Date</span>
+                    <span class="form-control col-sm-5 " placeholder="ContinueFromDate" aria-describedby="ContinueFromDate-addon">@Model.ContinousTaskDetails.ContinueFromDate.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="input-group row col-sm-6 mt-2">
+                    <span id="ContinueToDate-addon" class="input-group-text col-sm-4 col-form-label">End Date</span>
+                    <span class="form-control col-sm-5 " aria-describedby="ContinueToDate-addon">@Model.ContinousTaskDetails.ContinueToDate.ToString("dd/MM/yyyy")</span>
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="input-group row col-sm-6 mt-2">
+                    <span class="input-group-text col-sm-5 col-form-label">Period</span>
+                    @Html.DropDownListFor(x => Model.ContinousTaskDetails.PeriodId, new SelectList(Model.PeriodTypes, "PeriodId", "PeriodType"), new { @class = "form-control  col-sm-8" })
+                </div>
 
+                    <div class="input-group row col-sm-4 mt-2">
+                        <a class="btn btn-outline-danger" style="width:auto;">Deactivate</a>
+                    </div>
+            </div>
+
+        }
     </div>
     <div class="card-footer">
         <div class="text-center mr-sm-2">
             @if (User.IsInRole("Admin") || User.Identity.Name == Model.TaskOwnerUserName)
             {
-                <a asp-action="Edit" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
+                if (@Model.TaskStatusId == 1 || @Model.TaskStatusId == 7)
+                {//Waiting
+                    <a asp-action="Edit" asp-controller="Tasks" asp-route-Id="@Model.Id" style="width:auto;" class="btn btn-outline-primary"><i class="fa fa-edit"></i> Edit</a>
+                }
             }
             <a asp-action="ListTasks" asp-controller="Tasks" style="width:auto;" class="btn btn-outline-danger ml-2"><i class="fa fa-times"></i> Cancel</a>
         </div>
@@ -138,52 +213,61 @@
 
 <div class="card mt-3">
     <div class="card-header">
-        <h4 class="card-title">Task Actions</h4>
-    </div>
-    <div class="card-body">
-        @if (Model.TaskActions.Any())
-        {
-            <table class="table  border table-hover">
-                <thead class="thead-dark">
-                    <tr >
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>New Status</th>
-                        <th>User Name</th>
-                    </tr>
-                </thead>
-                @foreach (var action in Model.TaskActions)
-                {
-                    <tr>
-                        <td>
-                            <span><h5>@action.ActionDate.ToString("dd/MM/yyyy")</h5></span>
-                        </td>
-                        <td>
-                            <span><h5>@action.Description</h5></span>
-                        </td>
-                        <td>
-                            <span><h5>@action.CurrentTaskStatusName</h5></span>
-                        </td>
-                        <td>
-                            <span><h5>@action.TaskStatusName</h5></span>
-                        </td>
-                        <td>
-                            <span><h5>@action.UserName</h5></span>
-                        </td>
-                    </tr>
-                }
-            </table>
-        }
-        else
-        {
-            <h5 class="card-title">none at the moment</h5>
-        }
-    </div>
-    <div class="card-footer">
+        <div class="flex-container text-center">
+            <span class="col-10"><h5> Task Actions</h5></span>
+            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#basicExampleModal" style="width:auto;">
+                Add Comment!
+            </button>
+        </div>
 
     </div>
-</div>
+    <div class="card-body">
+        <div id="divTaskActions">
+
+            @if (Model.TaskActions.Any())
+            {
+                <table class="table  border table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            @*<th>Status</th>*@
+                            <th>Status</th>
+                            <th>User Name</th>
+                        </tr>
+                    </thead>
+                    @foreach (var action in Model.TaskActions)
+                    {
+                        <tr>
+                            <td>
+                                <span><h5>@action.TimeStamp</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@action.Description</h5></span>
+                            </td>
+                            @*<td>
+                                <span><h5>@action.CurrentTaskStatusName</h5></span>
+                            </td>*@
+                            <td>
+                                <span><h5>@action.TaskStatusName</h5></span>
+                            </td>
+                            <td>
+                                <span><h5>@action.UserName</h5></span>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <h5 class="card-title">none at the moment</h5>
+            }
+        </div>
+    </div>
+        <div class="card-footer">
+
+        </div>
+    </div>
 
 
 <div class="card mt-3">
@@ -215,10 +299,65 @@
     <div class="card-footer">
         @if (User.IsInRole("Admin") || User.Identity.Name == Model.TaskOwnerUserName)
         {
-            <a asp-action="EditEmployeeInTask" asp-controller="Tasks" asp-route-TaskId="@Model.Id" class="btn btn-outline-primary" style="width:auto"><i class="fa fa-edit"></i> Add or Remove Employee</a>
+            @if (Model.TaskStatusId != 3 && Model.TaskStatusId != 5)
+            {
+                <a asp-action="EditEmployeeInTask" asp-controller="Tasks" asp-route-TaskId="@Model.Id" class="btn btn-outline-primary" style="width:auto"><i class="fa fa-edit"></i> Add or Remove Employee</a>
+            }
         }
     </div>
     <br />
     <br />
 </div>
 
+@section Scripts{
+
+    <script src="~/lib/jquery.form/jquery.form.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#verifyTaskExecution').ajaxForm({
+                beforeSubmit: validate,
+                success: function () {
+                    window.location.href = "/Tasks/ListTasks";
+                }
+            });
+        });
+
+        function validate(formData, jqForm, options) {
+            // jqForm is a jQuery object which wraps the form DOM element
+            //
+            // To validate, we can access the DOM elements directly and return true
+            // only if the values of both the username and password fields evaluate
+            // to true
+            //        var form = jqForm[0];
+            //if (!form.username.value || !form.password.value) {
+            //    alert('Please enter a value for both Username and Password');
+            //    return false;
+            //}
+            var selectedOperation = $('#TaskOperation').val();
+            if (selectedOperation == "") {
+                $('#errOperation').text('Select Task Action');
+                return false;
+            } else {
+                $('#errOperation').text('');
+                return true;
+            }
+
+        }
+
+         //------------- Add Note
+          function btnSave_click() {
+                $.post('/Tasks/AddComment',
+                    {
+                        TaskId: @Model.Id,
+                        Description: $('#txtNoteDescription').val(),
+                        TaskStatusId: @Model.TaskStatusId
+                    },
+                    function (response, status) {
+                        $('#divTaskActions').html(response);
+                        //BuildItemsTable(response);
+                    }
+                );
+          }
+         //-------------End Add Note
+    </script>
+}
