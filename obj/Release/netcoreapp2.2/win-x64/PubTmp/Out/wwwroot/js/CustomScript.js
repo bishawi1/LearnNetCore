@@ -99,6 +99,10 @@ function ApplyPermission(response) {
             if (response.UserPermissions[i].CanView) {
                 $('#lnkAllPurchaseOrders').removeClass('hideElem');
             };
+        } else if (response.UserPermissions[i].PageName == "UserTaskPermissions") {
+            if (response.UserPermissions[i].CanView) {
+                $('#lnkUserTaskPermissions').removeClass('hideElem');
+            };
         } else if (response.UserPermissions[i].PageName == "Purchase Orders Reports") {
             if (response.UserPermissions[i].CanView) {
                 $('#lnkPurchaseOrdersReports').removeClass('hideElem');

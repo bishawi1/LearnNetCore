@@ -7,39 +7,82 @@
     var DoneCount = 0;
     var ApprovedCount = 0;
     var RejectedCount = 0;
+
 }
-    <div class="card">
-        <div class="card-header text-center">
-            <div class="flex-container text-center">
-                <span class="col-11"><h5> List of Tasks</h5></span>
-                <a asp-action="Create" asp-controller="Tasks" class="btn btn-outline-secondary mt-2 mb-2" style="width:auto"><i class="fa fa-plus-circle"></i></a>
-            </div>
+<div class="card">
+    <div class="card-header text-center">
+        <div class="flex-container text-center">
+            <span class="col-11"><h5> List of Tasks</h5></span>
+            <a asp-action="Create" asp-controller="Tasks" class="btn btn-outline-secondary mt-2 mb-2" style="width:auto"><i class="fa fa-plus-circle"></i></a>
         </div>
-        <!-- Search -->
-        <div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
-            <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
-                <i class="fa fa-search"></i>
-                Search
-            </button>
-            <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
-            <br />
+    </div>
+    <!-- Search -->
+    <div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+        <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+            <i class="fa fa-search"></i>
+            Search
+        </button>
+        <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+        <br />
 
-            <div class="collapse" id="divCriteria">
+        <div class="collapse" id="divCriteria">
+            <div class="flex-container  border" style="padding-left:0px;">
+                <div class="row col-sm-12">
+                    <div class="input-group col-sm-5  mt-2">
+                        <span class="input-group-text col-sm-4 " id="FromTaskDate-addon">From Task Date</span>
+                        <input id="FromTaskDate" type="text" asp-for="@Model.criteria.FromTaskDate" class="form-control col-sm-6 datepicker" placeholder="From Task Date" aria-describedby="FromTaskDate-addon" />
+                    </div>
 
+                    <div class="input-group col-sm-5  mt-2">
+                        <span class="input-group-text col-sm-4 " id="ToTaskDate-addon">To Task Date</span>
+                        <input id="ToTaskDate" type="text" asp-for="@Model.criteria.ToTaskDate" class="form-control col-sm-6 datepicker" placeholder="To Task Date" aria-describedby="ToTaskDate-addon" />
+                    </div>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="input-group  col-sm-5 mt-2">
+                        <span class="input-group-text col-sm-4 col-form-label">Task Owner</span>
+                        @Html.DropDownListFor(x => @Model.criteria.TaskOwnerId, new SelectList(@Model.criteria.Employees, "Id", "Name"), new {@id="TaskOwnerId", @class = "form-control" })
+                    </div>
+                    <div class="input-group  col-sm-5 mt-2">
+                        <span class="input-group-text col-sm-4 col-form-label">Team Leader</span>
+                        @Html.DropDownListFor(x => @Model.criteria.TaskResponsibleId, new SelectList(@Model.criteria.Employees, "Id", "Name"), new {@id="TaskResponsibleId", @class = "form-control " })
+                    </div>
+                </div>
+                <div class="row col-sm-12">
+                    <div class="input-group  col-sm-5 mt-2">
+                        <span class="input-group-text col-sm-4 col-form-label">Project</span>
+                        @Html.DropDownListFor(x => @Model.criteria.ProjectId, new SelectList(@Model.criteria.Projects, "Id", "ProjectName"), new {@id="ProjectId", @class = "form-control" })
+                    </div>
+                    <div class="input-group  col-sm-5 mt-2">
+                        <span class="input-group-text col-sm-4 col-form-label">Branch</span>
+                        @Html.DropDownListFor(x => @Model.criteria.BranchId, new SelectList(@Model.criteria.Branches, "Id", "Name"), new {@id="BranchId", @class = "form-control" })
+                    </div>
+                </div>
 
+                <div class="row col-sm-12">
+                    <div class="input-group col-sm-5 mt-2">
+                        <span id="ContinuousTask-addon" asp-for="ContinuousTask" class="input-group-text col-sm-4 col-form-label">Continuous</span>
+                        <input id="ContinuousTask" type="checkbox" asp-for="@Model.criteria.ContinuousTask" class="form-control col-sm-1" placeholder="OtherInformation" aria-describedby="ContinuousTask-addon" />
+                    </div>
+                </div>
             </div>
+            <div class=" mt-3 mb-3">
+                <button onclick="btnTaskSearch_Click()" class="btn btn-outline-secondary" style="width:auto;"><i class="fa fa-running"></i> Search </button>
+            </div>
+
         </div>
+    </div>
 
 
 
 
-        @*<a class="btn  btn-outline-dark m-3 table-responsive-sm"  style="width:auto" asp-action="Create" asp-controller="Tasks"><i class="fa fa-plus-circle">Add New Task</i></a>*@
+    @*<a class="btn  btn-outline-dark m-3 table-responsive-sm"  style="width:auto" asp-action="Create" asp-controller="Tasks"><i class="fa fa-plus-circle">Add New Task</i></a>*@
 
     <div id="showWaiting" class="column">
         <div class="flex-container">
             @*<div class="column">
-            <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="Tasks" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
-        </div>*@
+                    <a class="nav-link btn btn-outline-primary  btn-sm" asp-action="Create" asp-controller="Tasks" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
+                </div>*@
             @{
                 if (Model.TaskDetails.Any())
                 {
@@ -130,7 +173,7 @@
                         }
                         @*@if (User.Identity.)*@
                         @*{// && (User.IsInRole("Admin")))// || User.IsInRole("PowerUsers")) )
-                        }*@
+                            }*@
 
                         <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="Tasks" asp-route-Id="@task.Id"><i class="fa fa-eye"></i></a></td>
                         <td>
@@ -165,10 +208,10 @@
             </table>
         </div>
     </div>
-        <div id="error">
+    <div id="error">
 
-        </div>
     </div>
+</div>
 @section Scripts{
 
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
@@ -179,20 +222,20 @@
             InitDatepicker();
             $('.chosen').chosen();
 
-        $.validator.setDefaults({ 
-            ignore: []
-          });
+            $.validator.setDefaults({
+                ignore: []
+            });
             $('#printReport').on('click', function () {
                 $('#showWaiting').printThis();
             });
             //------------------------ start Task Search ajax
-            $.ajax({
-                url: '/Tasks/TaskSearch?strGroupBy=ALL',
-                type: 'Get',
-                success: function (response) {
-                    $('#divCriteria').html(response);
-                }
-            });
+            //$.ajax({
+            //    url: '/Tasks/TaskSearch?TaskOwnerId=' +  $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
+            //    type: 'Get',
+            //    success: function (response) {
+            //        $('#divCriteria').html(response);
+            //    }
+            //});
             //------------------------ end Task search ajax
             //------------------------ start Task Count ajax
             //$.ajax({
@@ -218,12 +261,10 @@
 
 
 
-
-
         //////////////////////////////// Status filter
         $('#Waiting').click(function () {
             $.ajax({
-                url: '/Tasks/ListWaitingTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListWaitingTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -233,7 +274,7 @@
         });
         $('#InProgress').click(function () {
             $.ajax({
-                url: '/Tasks/ListInProgressTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListInProgressTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -244,7 +285,7 @@
 
         $('#Done').click(function () {
             $.ajax({
-                url: '/Tasks/ListDoneTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListDoneTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -255,7 +296,7 @@
 
         $('#Approved').click(function () {
             $.ajax({
-                url: '/Tasks/ListApprovedTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListApprovedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -265,7 +306,7 @@
         });
         $('#Rejected').click(function () {
             $.ajax({
-                url: '/Tasks/ListRejectedTasks/?TaskOwnerId='+ $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListRejectedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -276,7 +317,7 @@
 
         $('#showAll').click(function () {
             $.ajax({
-                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -285,7 +326,22 @@
             });
         });
 
-                                                  //data:$('form').serialize(),// JSON.stringify(formData),
-
+                                                      //data:$('form').serialize(),// JSON.stringify(formData),
+        function btnTaskSearch_Click() {
+                $.post("/Tasks/TaskSearchAsync",
+                    {
+                        TaskOwnerId: $('#TaskOwnerId').val(),
+                        TaskResponsibleId: $('#TaskResponsibleId').val(),
+                        ProjectId: $('#ProjectId').val(),
+                        FromTaskDate: $('#FromTaskDate').val(),
+                        ToTaskDate: $('#ToTaskDate').val(),
+                        BranchId: $('#BranchId').val(),
+                        ContinuousTask: $('#ContinuousTask').is(":checked"),
+                        strGroupBy: "@Model.criteria.strGroupBy"
+                    },
+                    function (data, status) {
+                        $('#showWaiting').html(data);
+                    });
+            };
     </script>
 }

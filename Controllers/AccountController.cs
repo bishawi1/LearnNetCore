@@ -140,9 +140,9 @@ namespace MSIS.Controllers
         [HttpPost]
         public async Task<IActionResult>  ResetPassword(ResetPasswordViewModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var user = await userManager.FindByIdAsync(model.UserId);
+            //if (ModelState.IsValid)
+            //{
+                var user = await userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
                     model.Token=  userManager.GeneratePasswordResetTokenAsync(user).Result;
@@ -159,7 +159,7 @@ namespace MSIS.Controllers
                 }
                 return RedirectToAction("ListUsers", "Administration");
                 //return View("ResetPasswordConfirmation");
-            }
+            //}
             return View(model);
         }
         [HttpGet]
@@ -270,7 +270,8 @@ namespace MSIS.Controllers
                     UserName = model.Email,
                     Email = model.Email,
                     City=model.City,
-                    EmployeeId=model.EmployeeId
+                    Category=model.Category,
+                    EmployeeId =model.EmployeeId
                 };
                var result= await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

@@ -11,5 +11,7 @@ namespace MSIS.ViewModels
         public List<TaskDetailsViewModel> TaskDetails { get; set; }
 
         public TaskCountByStatusViewModel CountByStatus { get; set; }
+        public SearchTaskViewModel criteria { get; set; }
+
     }
 }

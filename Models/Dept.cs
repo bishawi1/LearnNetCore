@@ -24,4 +24,14 @@ namespace MSIS.Models
         DeliveredPartially,
         CancelDelivery
     }
+    public enum VerifyPurchaseOrderOptions
+    {
+        Approved,
+        Rejected
+    }
+    public enum UserCategoryOptions
+    {
+        Employee,
+        Guest
+    }
 }

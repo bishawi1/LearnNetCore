@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using MSIS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using System.Net.Mail;
+//using System.Net.Mail;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace MSIS.Models
 {
@@ -30,52 +32,96 @@ namespace MSIS.Models
         }
         public string SendEmail(List<int> Employees, string Message)
         {
-
             try
             {
                 Setting settings = context.Settings.Find(1);
                 if (settings != null)
                 {
-                    // Credentials
-                    var credentials = new NetworkCredential(settings.SenderEmail, settings.SenderMailPassword);
-                    // Mail message
-                    var mail = new MailMessage();
-             
-                    mail.From = new MailAddress(settings.SenderEmail);
-                    mail.Subject = "Email Sender App";
-                    mail.Body = Message;
-                    mail.IsBodyHtml = true;
-                    mail.BodyEncoding = System.Text.Encoding.UTF8;
-                    mail.SubjectEncoding = System.Text.Encoding.UTF8;
+
+                    var message = new MimeMessage();
+                    message.From.Add(new MailboxAddress("نظام ادارة المهام",settings.SenderEmail.Trim()));
+                    //message.From.Add(new MailboxAddress("tet send mail", "noreply@msis.ps"));
                     foreach (int employeeId in Employees)
                     {
                         Employee employee = context.Employees.Find(employeeId);
                         if (employee != null)
                         {
-                            mail.To.Add(new MailAddress(employee.Email));
+                            message.To.Add(new MailboxAddress(employee.Name.Trim(), employee.Email.Trim()));
                         }
-                    }
-
-                    // Smtp client
-                    var client = new SmtpClient()
+                    }                    // Credentials
+                    message.Subject = "MSIS اشعار من شركة";
+                    message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
                     {
-                        Port = settings.Port,// 587,
-                        DeliveryMethod = SmtpDeliveryMethod.Network,
-                        UseDefaultCredentials = false,
-                        Host = settings.SMTPServer,
-                        EnableSsl = true,
-                        Credentials = credentials
+                        Text =Message
                     };
-
-                    client.Send(mail);
-                    
-                    return "Email Sent Successfully!";
+                    using (var client = new SmtpClient())
+                    {
+                        client.Connect(settings.SMTPServer,settings.Port, false);
+                        client.Authenticate(settings.SenderEmail.Trim(), settings.SenderMailPassword.Trim());
+                        //client.Connect("smtp.gmail.com", 587, false);
+                        //client.Authenticate("msisnoreply@gmail.com", "MArmslrr6");
+                        client.Send(message);
+                        client.Disconnect(true);
+                        return "Email Sent Successfully!";
+                    }
                 }
                 else
                 {
-                    return "employee not Found!";
+                    return "Setting not Found!";
                 }
-            }
+
+                    //Setting settings = context.Settings.Find(1);
+                    //if (settings != null)
+                    //{
+                    //    using (MailMessage mail = new MailMessage())
+                    //    {
+                    //        mail.From = new MailAddress(settings.SenderEmail.Trim());
+                    //        foreach (int employeeId in Employees)
+                    //        {
+                    //            Employee employee = context.Employees.Find(employeeId);
+                    //            if (employee != null)
+                    //            {
+                    //                mail.To.Add(new MailAddress(employee.Email.Trim()));
+                    //            }
+                    //        }                    // Credentials
+                    //        mail.Subject = "Email Sender App";
+                    //        mail.Body = Message;
+                    //        mail.IsBodyHtml = true;
+                    //        //var credentials = new NetworkCredential(settings.SenderEmail, settings.SenderMailPassword);
+                    //        // Mail message
+
+                    //        mail.BodyEncoding = System.Text.Encoding.UTF8;
+                    //        mail.SubjectEncoding = System.Text.Encoding.UTF8;
+                    //        using (SmtpClient smtp = new SmtpClient(settings.SMTPServer.Trim(), settings.Port))
+                    //        {
+                    //            smtp.Credentials = new NetworkCredential(settings.SenderEmail.Trim(), settings.SenderMailPassword);
+                    //            smtp.EnableSsl = true;
+                    //            //smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    //            smtp.UseDefaultCredentials = false;
+                    //            smtp.Timeout = 30000000;
+                    //            smtp.Send(mail);
+                    //        }
+                    //    }
+                    //    //// Smtp client
+                    //    //var client = new SmtpClient()
+                    //    //{
+                    //    //    Port = settings.Port,// 587,
+                    //    //    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    //    //    UseDefaultCredentials = false,
+                    //    //    Host = settings.SMTPServer,
+                    //    //    EnableSsl = true,
+                    //    //    Credentials = credentials
+                    //    //};
+
+                    //    //client.Send(mail);
+
+                    //    return "Email Sent Successfully!";
+                    //}
+                    //else
+                    //{
+                    //    return "employee not Found!";
+                    //}
+                }
             catch (System.Exception e)
             {
                 return e.Message;
@@ -83,7 +129,25 @@ namespace MSIS.Models
 
         }
 
-
+        public string testSendMail()
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("tet send mail", "noreply@msis.ps"));
+            message.To.Add(new MailboxAddress("mahmoud", "bishawi1@gmail.com"));
+            message.Subject = "test mail";
+            message.Body = new TextPart("plain")
+            {
+                Text = "Hello"
+            };
+            using(var client=new SmtpClient())
+            {
+                client.Connect("smtp.gmail.com", 587, false);
+                client.Authenticate("msisnoreply@gmail.com", "MArmslrr6");
+                client.Send(message);
+                client.Disconnect(true);
+            }
+            return "";
+        }
         public UserPermissionsViewModel GetSettingsUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
@@ -708,5 +772,150 @@ namespace MSIS.Models
             model.UserPermissions = result;
             return model;
         }
+//---------------------- User Projects
+        public List<SQLUserProjectsViewModel> GetUserProjects(string UserId)
+        {
+            List<SQLUserProjectsViewModel> userProjects = null;
+            try
+            {
+                var result=context.vUserProjects.FromSql("SELECT * FROM dbo.vUserProjects Where UserId = '" + UserId + "'").ToList();
+                userProjects = result;
+            }
+            catch(Exception ex)
+            {
+                var x=ex.Message.ToString();
+
+            }
+            return userProjects;
+        }
+        public UserProject AddUserProject(UserProject userProject)
+        {
+            context.UserProjects.Add(userProject);
+            context.SaveChanges();
+            return userProject;
+        }
+        public UserProject DeleteUserProject(int id)
+        {
+            UserProject userProject = context.UserProjects.Find(id);
+            if (userProject != null)
+            {
+                context.UserProjects.Remove(userProject);
+                context.SaveChanges();
+            }
+            return userProject;
+        }
+        public UserProject GetUserProject(int Id)
+        {
+            return context.UserProjects.Find(Id);
+        }
+        public UserProject UpdateUserProject(UserProject userProject)
+        {
+            var model = context.UserProjects.Attach(userProject);
+            model.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return userProject;
+        }
+        //---------------------- User Branches
+        public List<SQLUserBranchesViewModel> GetUserBranches(string UserId)
+        {
+            List<SQLUserBranchesViewModel> userBranches = null;
+            try
+            {
+                var result = context.vUserBranches.FromSql("SELECT * FROM dbo.vUserBranches Where UserId = '" + UserId + "'").ToList();
+                userBranches = result;
+            }
+            catch (Exception ex)
+            {
+                var x = ex.Message.ToString();
+
+            }
+            return userBranches;
+        }
+        public UserBranch AddUserBranch(UserBranch userBranch)
+        {
+            try
+            {
+                context.UserBranches.Add(userBranch);
+                context.SaveChanges();
+                return userBranch;
+
+            }catch(Exception ex)
+            {
+                return null;
+            }
+        }
+        public UserBranch DeleteUserBranch(int id)
+        {
+            UserBranch userBranch = context.UserBranches.Find(id);
+            if (userBranch != null)
+            {
+                context.UserBranches.Remove(userBranch);
+                context.SaveChanges();
+            }
+            return userBranch;
+        }
+        public UserBranch GetUserBranch(int Id)
+        {
+            return context.UserBranches.Find(Id);
+        }
+        public UserBranch UpdateUserBranch(UserBranch userBranch)
+        {
+            var model = context.UserBranches.Attach(userBranch);
+            model.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return userBranch;
+        }
+        //---------------------- User Employees
+        public List<SQLUserEmployeesViewModel> GetUserEmployees(string UserId)
+        {
+            List<SQLUserEmployeesViewModel> userEmployees = null;
+            try
+            {
+                var result = context.vUserEmployees.FromSql("SELECT * FROM dbo.vUserEmployees Where UserId = '" + UserId + "'").ToList();
+                userEmployees = result;
+            }
+            catch (Exception ex)
+            {
+                var x = ex.Message.ToString();
+
+            }
+            return userEmployees;
+        }
+        public UserEmployee AddUserEmployee(UserEmployee userEmployee)
+        {
+            try
+            {
+                context.UserEmployees.Add(userEmployee);
+                context.SaveChanges();
+                return userEmployee;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public UserEmployee DeleteUserEmployee(int id)
+        {
+            UserEmployee userEmployee = context.UserEmployees.Find(id);
+            if (userEmployee != null)
+            {
+                context.UserEmployees.Remove(userEmployee);
+                context.SaveChanges();
+            }
+            return userEmployee;
+        }
+        public UserEmployee GetUserEmployee(int Id)
+        {
+            return context.UserEmployees.Find(Id);
+        }
+        public UserEmployee UpdateUserEmployee(UserEmployee userEmployee)
+        {
+            var model = context.UserEmployees.Attach(userEmployee);
+            model.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.SaveChanges();
+            return userEmployee;
+        }
+
     }
 }

@@ -19,6 +19,22 @@
     </div>
     <div class="card-body">
         <div class="row">
+            @if (User.IsInRole("Admin") && Model.StateId != 1)//Back to editable state
+            {
+                @*<textarea id="Description"></textarea><br />*@
+                <form asp-action="BackToNewPurchaseOrder">
+                    <div class="form-group rounded row">
+                        @*<span>Description</span>*@
+                        <input asp-for="Id" hidden />
+                        @*<input asp-for="Description" class="form-control" />*@
+
+                        <button type="submit" class="btn btn-outline-secondary ml-3" style="width:auto;">Back to New!</button>
+
+                    </div>
+                </form>
+            }
+        </div>
+        <div class="row">
             @if (Model.StateId == 1)//New
             {
                 if (Model.purchaseOrderPermission.AllowConfirm)
@@ -46,7 +62,7 @@
                                 <input asp-for="Id" hidden />
                                 <div class="form-group row">
                                     <div class="col-sm-10 ml-3">
-                                        <select asp-for="StateId" asp-items="Html.GetEnumSelectList<TaskOperation>()" class="form-control" style="width:auto;">
+                                        <select asp-for="StateId" asp-items="Html.GetEnumSelectList<VerifyPurchaseOrderOptions>()" class="form-control" style="width:auto;">
                                             <option value="">Verify Order</option>
                                         </select>
                                         <span id="errOperation" asp-validation-for="StateId" class="text-danger"></span>
@@ -96,6 +112,29 @@
                         </form>
                     </div>
                 }
+            }
+            else if (Model.StateId == 6 || Model.StateId == 7)
+            {
+                <div class="col-md-12">
+                    <form id="verifyPurchaseOrder" asp-action="PayPurchaseOrder">
+                        <div class="form-group rounded row">
+                            <input asp-for="Id" hidden />
+                        </div>
+                        <div class="input-group col-sm-12 row">
+                            <span class="input-group-text col-sm-1 " id="txtSubtraction-addon">Subtraction</span>
+                            <input name="Subtraction" id="txtSubtraction" type="number" class="form-control col-sm-1" placeholder="Subtraction" aria-describedby="txtSubtraction-addon" />
+                            <span id="errSubtraction" class="text-danger"></span>
+                        </div>
+                        <div class="input-group col-sm-12 row">
+                            <span class="input-group-text col-sm-1 " id="txtDescription-addon">Description</span>
+                            <textarea asp-for="Description" id="txtDescription" class="form-control col-sm-10" placeholder="Description" aria-describedby="txtDescription-addon"></textarea>
+                            <span id="errDescription" class="text-danger"></span>
+                        </div>
+
+                        @*<textarea id="Description"></textarea><br />*@
+                        <button type="submit" class="btn btn-outline-secondary ml-3 mt-3" style="width:auto;">Pay!</button>
+                    </form>
+                </div>
             }
         </div>
         <div class="row">
@@ -162,66 +201,80 @@
                     <span class="form-control col-sm-9" aria-describedby="DeliveryDate-addon"><h5>@Model.DeliveryDate.ToString("dd/MM/yyyy")</h5></span>
                 </div>
             </div>
-            @*<div class="col-sm-6">
-                    <div class="input-group mt-sm-3">
-                        <span id="ProjectName-addon" class="col-sm-3 input-group-text">Project</span>
-                        <span class="form-control col-sm-6" aria-describedby="ProjectName-addon"><h5>@Model.ProjectName</h5></span>
-                    </div>
-                </div>*@
         </div>
-        <br />
         <div class="row">
-            <div class="bg-light col-sm-12  ">
-
-                <H3 class="card-title text-center">Purchase Order Items</H3>
+            <div class="col-sm-3">
+                <div class="input-group mt-sm-3">
+                    <span id="TotalPrice-addon" class="col-sm-6 input-group-text">Total Amount</span>
+                    <span class="form-control col-sm-4" aria-describedby="TotalPrice-addon"><h5>@Model.TotalPrice</h5></span>
+                </div>
             </div>
-            @if (Model.OrderItems.Any())
-            {
-                <table class="table  border table-hover">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Item</th>
-                            <th>QNT.</th>
-                            <th>Unit</th>
-                            <th>Unit Price</th>
-                            <th>Total Price</th>
-                        </tr>
-                    </thead>
-                    @foreach (var orderDetails in Model.OrderItems)
-                    {
-                        <tr>
-                            <td>
-                                <span><h5>@orderDetails.ItemName</h5></span>
-                            </td>
-                            <td>
-                                <span><h5>@orderDetails.QNT</h5></span>
-                            </td>
-                            <td>
-                                <span><h5>@orderDetails.ItemUnitName</h5></span>
-                            </td>
-                            <td>
-                                <span><h5>@orderDetails.UnitPrice</h5></span>
-                            </td>
-                            <td>
-                                <span><h5>@orderDetails.TotalPrice</h5></span>
-                            </td>
-                        </tr>
-                    }
-                    <tfoot>
-                        <tr>
-                            <th colspan="3"></th>
-                            <th style="text-align:right">Total</th>
-                            <th>@Model.TotalPrice</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            }
-            else
-            {
-                <h5 class="card-title">none at the moment</h5>
-            }
+            <div class="col-sm-3">
+                <div class="input-group mt-sm-3">
+                    <span id="SubtractionAmount-addon" class="col-sm-6 input-group-text">Subtraction</span>
+                    <span class="form-control col-sm-4" aria-describedby="SubtractionAmount-addon"><h5>@Model.SubtractionAmount</h5></span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="input-group mt-sm-3">
+                    <span id="SubtractNotes-addon" class="col-sm-3 input-group-text">Subtract. Notes</span>
+                    <span class="form-control col-sm-9" aria-describedby="SubtractNotes-addon"><h5>@Model.SubtractNotes</h5></span>
+                </div>
+            </div>
         </div>
-    </div>
+            <br />
+            <div class="row">
+                <div class="bg-light col-sm-12  ">
+
+                    <H3 class="card-title text-center">Purchase Order Items</H3>
+                </div>
+                @if (Model.OrderItems.Any())
+                {
+                    <table class="table  border table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Item</th>
+                                <th>QNT.</th>
+                                <th>Unit</th>
+                                <th>Unit Price</th>
+                                <th>Total Price</th>
+                            </tr>
+                        </thead>
+                        @foreach (var orderDetails in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>
+                                    <span><h5>@orderDetails.ItemName</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.QNT</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.ItemUnitName</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.UnitPrice</h5></span>
+                                </td>
+                                <td>
+                                    <span><h5>@orderDetails.TotalPrice</h5></span>
+                                </td>
+                            </tr>
+                        }
+                        <tfoot>
+                            <tr>
+                                <th colspan="3"></th>
+                                <th style="text-align:right">Total</th>
+                                <th>@Model.TotalPrice</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+                else
+                {
+                    <h5 class="card-title">none at the moment</h5>
+                }
+            </div>
+        </div>
     <div class="card-footer text-center">
         @if (Model.Permission != null)
         {

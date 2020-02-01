@@ -59,6 +59,9 @@ namespace MSIS
                      (resolver as DefaultContractResolver).NamingStrategy = null;
                  }
              });
+            services.AddSession(options=> {
+                options.IdleTimeout = TimeSpan.FromSeconds(3600);
+            });
             //services.AddSingleton<IEmployeeRepository, MockEmployeeRepository>();
             //services.AddScoped<IEmployeeRepository, MockEmployeeRepository>();
             services.AddScoped<IEmployeeRepository, SQLEmployeeRepository>();
@@ -85,6 +88,7 @@ namespace MSIS
             }
             else
             {
+                app.UseExceptionHandler("/Error");
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
             app.UseStaticFiles();
@@ -101,6 +105,8 @@ namespace MSIS
             //    RequestPath = new PathString("/images")
             //});
             app.UseAuthentication();
+            //app.UseCookiePolicy();
+            app.UseSession();
             app.UseMvc(Routes =>
             {
                 Routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");

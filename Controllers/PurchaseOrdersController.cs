@@ -26,7 +26,14 @@ namespace MSIS.Controllers
         {
             PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
             purchaseOrderRepository.ConfirmPurchaseOrder(purchaseOrderChanges);
-            return RedirectToAction("ListPurchaseOrders", "PurchaseOrders");
+            return RedirectToAction("Details", "PurchaseOrders",new { Id = Id});
+        }
+        [HttpPost]
+        public IActionResult BackToNewPurchaseOrder(int Id)
+        {
+            PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            purchaseOrderRepository.BackToNewPurchaseOrder(purchaseOrderChanges);
+            return RedirectToAction("Details", "PurchaseOrders",new { Id = Id});
         }
         [HttpPost]
         public IActionResult waitPurchaseOrderForDelivery(int Id)
@@ -39,8 +46,11 @@ namespace MSIS.Controllers
         public IActionResult DeliverPurchaseOrder(int Id, int StateId,double Subtraction, string Description)
         {
             PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            purchaseOrderChanges.SubtractionAmount = Subtraction;
+            purchaseOrderChanges.SubtractNotes = Description;
             if (StateId == 0)
             {
+
                 purchaseOrderRepository.DeleverPurchaseOrder(purchaseOrderChanges);
             }
             else if (StateId == 1)
@@ -54,6 +64,16 @@ namespace MSIS.Controllers
                 purchaseOrderRepository.DeleverCancelPurchaseOrder(purchaseOrderChanges);
             }
             return RedirectToAction("ListPurchaseOrders", "PurchaseOrders");
+        }
+        [HttpPost]
+        public IActionResult PayPurchaseOrder(int Id, int StateId,double Subtraction, string Description)
+        {
+            PurchaseOrder purchaseOrderChanges = purchaseOrderRepository.GetPurchaseOrder(Id);
+            purchaseOrderChanges.SubtractionAmount = Subtraction;
+            purchaseOrderChanges.SubtractNotes = Description;
+            purchaseOrderRepository.PayPurchaseOrder(purchaseOrderChanges);
+
+            return RedirectToAction("Edit", "PurchaseOrders", new { Id = Id });
         }
 
         [HttpPost]
@@ -258,6 +278,23 @@ namespace MSIS.Controllers
             return PartialView("_ListPurchaseOrders", model);
         }
         [HttpGet]
+        public IActionResult ListPayedPurchaseOrders()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            MSIS.ViewModels.UserPermissionsViewModel permission = purchaseOrderRepository.GetUserParentMenuPermission(userId, "All Purchase Orders");
+            var purchaseOrderPermission = purchaseOrderRepository.context.PurchaseOrderPermissions.ToList().Where(x => x.UserId == userId).FirstOrDefault();
+            var BranchId = 0;
+            if (purchaseOrderPermission != null)
+            {
+                BranchId = purchaseOrderPermission.BranchId;
+            }
+            ListPurchaseOrdersViewModel model = purchaseOrderRepository.getPurchaseOrderList(9,BranchId);
+            model.userPermission = permission.UserPermissions[0];
+            return PartialView("_ListPurchaseOrders", model);
+        }
+
+
+        [HttpGet]
         public IActionResult ListDeliveredPartialyPurchaseOrders()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -380,7 +417,8 @@ namespace MSIS.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            CreatePurchaseOrderViewModel purchaseOrder =  purchaseOrderRepository.getCreatePurchaseOrderDetails();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            CreatePurchaseOrderViewModel purchaseOrder =  purchaseOrderRepository.getCreatePurchaseOrderDetails(userId);
             if (purchaseOrder == null)
             {
                 return Redirect("NotFound");
@@ -406,6 +444,9 @@ namespace MSIS.Controllers
                 model.PurchaseOrderYear = DateTime.Today.Year;
                 model.PurchaseOrderCode = model.PurchaseOrderYear + "/" + model.PurchaseOrderNo;
                 model.SupplierId = purchaseOrder.PurchaseOrderDetails.SupplierId;
+                model.BranchId = purchaseOrder.PurchaseOrderDetails.BranchId;
+                model.ProjectId = purchaseOrder.PurchaseOrderDetails.ProjectId;
+                model.EmployeeId = purchaseOrder.PurchaseOrderDetails.EmployeeId;
                 model.Notes = purchaseOrder.PurchaseOrderDetails.Notes;
                 model.User_Name = User.Identity.Name;
                 model.DeliveryDate = purchaseOrder.PurchaseOrderDetails.DeliveryDate;
@@ -415,7 +456,32 @@ namespace MSIS.Controllers
             return View();
         }
 
-
+        [HttpPost]
+        public IActionResult CreateAjax(CreatePurchaseOrderViewModel purchaseOrder)
+        {
+            if (ModelState.IsValid)
+            {
+                PurchaseOrder model = new PurchaseOrder();
+                model.CurrencyId = purchaseOrder.PurchaseOrderDetails.CurrencyId;
+                model.CurrencyRate = purchaseOrder.PurchaseOrderDetails.CurrencyRate;
+                model.PurchaseOrderNo = purchaseOrderRepository.retPurchaseOrderNo();
+                model.PurchaseOrderDate = purchaseOrder.PurchaseOrderDetails.PurchaseOrderDate;
+                model.StateId = 1;
+                model.PurchaseOrderYear = DateTime.Today.Year;
+                model.PurchaseOrderCode = model.PurchaseOrderYear + "/" + model.PurchaseOrderNo;
+                model.SupplierId = purchaseOrder.PurchaseOrderDetails.SupplierId;
+                model.BranchId = purchaseOrder.PurchaseOrderDetails.BranchId;
+                model.ProjectId = purchaseOrder.PurchaseOrderDetails.ProjectId;
+                model.EmployeeId= purchaseOrder.PurchaseOrderDetails.EmployeeId;
+                model.Notes = purchaseOrder.PurchaseOrderDetails.Notes;
+                model.User_Name = User.Identity.Name;
+                model.DeliveryDate = purchaseOrder.PurchaseOrderDetails.DeliveryDate;
+                var newModel = purchaseOrderRepository.Add(model);
+                return new JsonResult(newModel.Id);
+                //return RedirectToAction("Edit", "PurchaseOrders", new { Id = newModel.Id });
+            }
+            return View();
+        }
         public IActionResult Edit(int Id)
         {
             EditPurchaseOrderViewModel purchaseOrder = purchaseOrderRepository.getEditPurchaseOrderDetails(Id);             

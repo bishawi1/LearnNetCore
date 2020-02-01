@@ -115,6 +115,13 @@ namespace MSIS.Models
             {
                 model.CountByStatus.DeliveredPartialyCount = CountByStatus.OrderCount;
             }
+            CountByStatus = result.Where(x => x.StateId == 9)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.CountByStatus.PayedOrderCount = CountByStatus.OrderCount;
+            }
             model.ListPurchaseOrders = result;
             model.PurchaseOrderTotals = Totals;
             return model;// projectDetailViewModel;
@@ -129,6 +136,14 @@ namespace MSIS.Models
         public PurchaseOrder ConfirmPurchaseOrder(PurchaseOrder purchaseOrderChanges)
         {
                 purchaseOrderChanges.StateId = 2;
+                var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+                purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.SaveChanges();
+                return purchaseOrderChanges;
+        }
+        public PurchaseOrder BackToNewPurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+                purchaseOrderChanges.StateId = 1;
                 var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
                 purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 context.SaveChanges();
@@ -153,6 +168,21 @@ namespace MSIS.Models
             try
             {
                 purchaseOrderChanges.StateId = 6;
+                var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
+                purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                context.SaveChanges();
+                return purchaseOrderChanges;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public PurchaseOrder PayPurchaseOrder(PurchaseOrder purchaseOrderChanges)
+        {
+            try
+            {
+                purchaseOrderChanges.StateId = 9;
                 var purchase = context.PurchaseOrders.Attach(purchaseOrderChanges);
                 purchase.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                 context.SaveChanges();
@@ -346,9 +376,10 @@ namespace MSIS.Models
         {
             return context.PurchaseOrderStates.ToList();
         }
-        public MSIS.ViewModels.CreatePurchaseOrderViewModel getCreatePurchaseOrderDetails()
+        public MSIS.ViewModels.CreatePurchaseOrderViewModel getCreatePurchaseOrderDetails(string userId)
         {
             PurchaseOrderDetailsViewModel result = new PurchaseOrderDetailsViewModel();
+            PurchaseOrderPermission purchaseOrderPermission = context.PurchaseOrderPermissions.Where(x => x.UserId == userId).FirstOrDefault();
 
             CreatePurchaseOrderViewModel model = new CreatePurchaseOrderViewModel();
             result.PurchaseOrderDate = DateTime.Today;
@@ -374,13 +405,31 @@ namespace MSIS.Models
                 Id = -1,
                 Name = "Select Employee ..."
             });
-
-            model.Branches = context.Branches.ToList();
-            model.Branches.Insert(0, new Models.Branch()
+            if (purchaseOrderPermission == null)
             {
-                Id = -1,
-                Name = "Select Branch ..."
-            });
+                model.Branches = context.Branches.ToList();
+                model.Branches.Insert(0, new Models.Branch()
+                {
+                    Id = -1,
+                    Name = "Select Branch ..."
+                });
+            }
+            else if(purchaseOrderPermission.BranchId==0) {
+                model.Branches = context.Branches.ToList();
+                model.Branches.Insert(0, new Models.Branch()
+                {
+                    Id = -1,
+                    Name = "Select Branch ..."
+                });
+            }else
+            {
+                model.Branches = context.Branches.ToList().Where(x=>x.Id==purchaseOrderPermission.BranchId).ToList();
+            }
+            //model.Branches.Insert(0, new Models.Branch()
+            //{
+            //    Id = -1,
+            //    Name = "Select Branch ..."
+            //});
             model.PurchaseOrderStates = context.PurchaseOrderStates.ToList();
             model.PurchaseOrderStates.Insert(0, new Models.PurchaseOrderState() { 
             Id=-1,

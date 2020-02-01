@@ -357,6 +357,7 @@ namespace MSIS.Controllers
                 Claims = userClaims.Select(c => c.Value).ToList(),
                 Employees = employees,
                 EmployeeId = user.EmployeeId,
+                Category = user.Category,
                 RoleList = roleList,
                 RoleId = ouser.AppRoleId,
                 Roles = userRoles
@@ -445,6 +446,7 @@ namespace MSIS.Controllers
             {
                 user.UserName = model.UserName;
                 user.City = model.City;
+                user.Category = model.Category;
                 user.Email = model.Email;
                 user.EmployeeId = model.EmployeeId;
                 var isValid= employeeRepository.IsEmployeeHasUser(user.UserName, user.EmployeeId);

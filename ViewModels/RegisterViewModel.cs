@@ -26,8 +26,9 @@ namespace MSIS.ViewModels
         [Display(Name="Confirm Password")]
         [Compare("Password",ErrorMessage ="Password and Confirmation Password do not match")]
         public string ConfirmPassword { get; set; }
-
         public string City { get; set; }
+
+        public string Category { get; set; }
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Please enter Employee From List")]
         public int EmployeeId { get; set; }

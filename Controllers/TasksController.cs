@@ -12,6 +12,8 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Itenso.TimePeriod;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace MSIS.Controllers
 {
@@ -126,7 +128,7 @@ namespace MSIS.Controllers
                     string link = UriHelper.GetDisplayUrl(Request).Replace("Create", "") + "Details/" + addedTask.Id.ToString();
                     //string strMyUrl = Context.Request.Scheme + Request.Host.Value +  Url.Action("Details", "Tasks", new { Id = addedTask.Id }).ToString();
                     //Uri myUri = new Uri("https://localhost:44309/Tasks/Details/" + );
-                    string strMessage = "you have new task to do. get task details at " + link.ToString();
+                    string strMessage = "تم اضافة مهمة جديدة، للتفاصيل الرجاء الضغط على الرابط  " + System.Environment.NewLine + link.ToString();
                     List<int> Employees = new List<int>();
                     Employees.Add(model.TaskOwnerId);
                     if (model.TaskResponsibleId != model.TaskOwnerId) { 
@@ -134,7 +136,7 @@ namespace MSIS.Controllers
                     }
                     SettingsRepository.SendEmail(Employees, strMessage);
                 }
-                return RedirectToAction("ListTasks", "Tasks");
+                return RedirectToAction("Details", "Tasks", new { Id=addedTask.Id});
             }
             else
             {
@@ -313,22 +315,45 @@ namespace MSIS.Controllers
         [HttpGet]
         public async Task <IActionResult> ListTasks()
         {
+            bool hasCriteria = true;
+            SearchTaskViewModel criteria = null;
+
+            if (HttpContext.Session.GetString("searchCriteria") == null)
+            {
+                hasCriteria = false;
+            }else
+            {
+                criteria = JsonConvert.DeserializeObject<SearchTaskViewModel>(HttpContext.Session.GetString("searchCriteria"));
+            }
+            
+
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
             var ActiveContinuousTask = tasksRepository.getActiveContinuousTask();
             CreateTasks(ActiveContinuousTask);
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
-
-                model.TaskDetails = tasksRepository.getAllTaskDetails().ToList();
-                model.CountByStatus = tasksRepository.getTaskCountByStatus();
+                if (hasCriteria)
+                {
+                    model.TaskDetails = tasksRepository.getAllTaskDetails(criteria,true).ToList();
+                    model.CountByStatus = tasksRepository.getTaskCountByStatus(model.TaskDetails);
+                    model.criteria = retCriteria(criteria);
+                }
+                else
+                {
+                    model.criteria = retCriteria(criteria);
+                    model.TaskDetails = tasksRepository.getAllTaskDetails(model.criteria,true).ToList();
+                    model.CountByStatus = tasksRepository.getTaskCountByStatus(model.TaskDetails);
+                }
                 //return PartialView("ListTasks", model);
                 return View(model);
                  
             }
             else
             {
-                model.TaskDetails = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
+                model.criteria = retCriteria(criteria);
+                model.TaskDetails = tasksRepository.getEmployeeTaskDetails(model.criteria, user.EmployeeId, "").ToList();
+                //model.TaskDetails = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
                 model.CountByStatus = tasksRepository.getTaskCountByStatus(user.EmployeeId);
                 return View(model);
             }
@@ -494,7 +519,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 1).ToList();
+                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId( user.EmployeeId, 1,criteria).ToList();
                 model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
@@ -524,7 +549,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 2).ToList();
+                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 2, criteria).ToList();
                 model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
@@ -554,7 +579,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 3).ToList();
+                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 3, criteria).ToList();
                 model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
@@ -584,7 +609,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 4).ToList();
+                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 4, criteria).ToList();
                 model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
@@ -614,7 +639,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 5).ToList();
+                model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 5, criteria).ToList();
                 model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
@@ -714,7 +739,7 @@ namespace MSIS.Controllers
                     }
                     SettingsRepository.SendEmail(Employees, strMessage);
                 }
-                return RedirectToAction("ListTasks", "Tasks");
+                return RedirectToAction("Details", "Tasks", new { Id=model.Id});
             }
             else
             {
@@ -745,7 +770,7 @@ namespace MSIS.Controllers
                     }
                     SettingsRepository.SendEmail(Employees, strMessage);
                 }
-                return RedirectToAction("ListTasks", "Tasks");
+                return RedirectToAction("Details", "Tasks",new { Id=model.Id});
             }
             else
             {
@@ -918,8 +943,130 @@ namespace MSIS.Controllers
         //    return View(model);
         }
 
-        [HttpGet]
-        public IActionResult TaskSearch(string strGroupBy)
+        private List<Project> retProjectsList()
+        {
+            AppDBContext context = tasksRepository.getContext();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = userManager.Users.ToList().Where(x => x.Id == userId).FirstOrDefault();
+            List<Project> ProjectList=null;
+            if (user.Category.ToLower() == "0")//employee
+            {
+                ProjectList = context.Projects.ToList();
+                ProjectList.Insert(0, new Project
+                {
+                    Id = -1,
+                    ProjectName = "Select Project"
+                });
+                return ProjectList;
+            }
+            else
+            {
+                var result = (from project in context.Projects
+                              join userProjects in context.UserProjects
+                              on project.Id equals userProjects.ProjectId
+                              where userProjects.UserId == userId
+                              select new Project()
+                              {
+                                  Address = project.Address,
+                                  Customer = project.Customer,
+                                  Email = project.Email,
+                                  EndDate = project.EndDate,
+                                  Fax = project.Fax,
+                                  Id = project.Id,
+                                  MobileNo = project.MobileNo,
+                                  OtheInformation = project.OtheInformation,
+                                  ProjectName = project.ProjectName,
+                                  ProjectOwner = project.ProjectOwner,
+                                  ProjectSerial = project.ProjectSerial,
+                                  ProjectYear = project.ProjectYear,
+                                  StartDate = project.StartDate
+                              }).ToList();
+                return result;
+            }
+
+        }
+        private List<Branch> retBranchesList()
+        {
+            AppDBContext context = tasksRepository.getContext();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = userManager.Users.ToList().Where(x => x.Id == userId).FirstOrDefault();
+            List<Branch> BranchList=null;
+            if (user.Category.ToLower() == "0")
+            {
+                BranchList = context.Branches.ToList();
+                BranchList.Insert(0, new Branch
+                {
+                    Id = -1,
+                    Name = "Select Branch"
+                });
+                return BranchList;
+            }
+            else
+            {
+                var result = (from branch in context.Branches
+                              join userBranches in context.UserBranches
+                              on branch.Id equals userBranches.BranchId
+                              where userBranches.UserId == userId
+                              select new Branch()
+                              {
+                                  Address = branch.Address,
+                                  Code=branch.Code,
+                                  Id=branch.Id,
+                                  Mobile=branch.Mobile,
+                                  Name=branch.Name,
+                                  Phone=branch.Phone
+                              }).ToList();
+                return result;
+            }
+
+        }
+        private List<Employee> retEmployeesList()
+        {
+            AppDBContext context = tasksRepository.getContext();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = userManager.Users.ToList().Where(x => x.Id == userId).FirstOrDefault();
+            List<Employee> employeeList = null;
+            if (user.Category.ToLower() == "0")
+            {
+                employeeList = context.Employees.ToList();
+                employeeList.Insert(0, new Employee
+                {
+                    Id = -1,
+                    Name = "Select ...s"
+                });
+                return employeeList;
+            }
+            else
+            {
+                var result = (from employee in context.Employees
+                              join userEmployees in context.UserEmployees
+                              on employee.Id equals userEmployees.EmployeeId
+                              where userEmployees.UserId == userId
+                              select new Employee()
+                              {
+                                  Id=employee.Id,
+                                  Name= employee.Name,
+                                  Active= employee.Active,
+                                  Address= employee.Address,
+                                  Department= employee.Department,
+                                  EducationDegree= employee.EducationDegree,
+                                  Email= employee.Email,
+                                  EmployeeNo= employee.EmployeeNo,
+                                  IdentityNo= employee.IdentityNo,
+                                  JobDescription= employee.JobDescription,
+                                  MobileNo= employee.MobileNo,
+                                  OtherInformation= employee.OtherInformation,
+                                  PhoneNo= employee.PhoneNo,
+                                  PhotoPath= employee.PhotoPath,
+                                  Specialization= employee.Specialization,
+                                  WorkMobileNo= employee.WorkMobileNo
+                              }).ToList();
+                return result;
+            }
+
+        }
+
+        private SearchTaskViewModel retCriteria(SearchTaskViewModel criteria)
         {
             AppDBContext context = tasksRepository.getContext();
             MSIS.ViewModels.SearchTaskViewModel model = new ViewModels.SearchTaskViewModel();
@@ -927,7 +1074,106 @@ namespace MSIS.Controllers
             SQLProjectRepository projectRepository = new SQLProjectRepository(context);
             SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
             SQLBranchRepository branchRepository = new SQLBranchRepository(context);
-            model.ContinuousTask = false;
+            if (criteria != null)
+            {
+                model.Projects = retProjectsList();
+                model.Branches = retBranchesList();
+                model.Employees = retEmployeesList();
+                model.FromTaskDate = new DateTime(2019, 1, 1);
+                model.ContinuousTask = criteria.ContinuousTask;
+                if (criteria.ProjectId > 0)
+                {
+                    model.ProjectId = criteria.ProjectId;
+                }
+                if (criteria.TaskOwnerId > 0)
+                {
+                    model.TaskOwnerId = criteria.TaskOwnerId;
+                }
+                if (criteria.TaskResponsibleId > 0)
+                {
+                    model.TaskResponsibleId = criteria.TaskResponsibleId;
+                }
+                if (criteria.BranchId > 0)
+                {
+                    model.BranchId = criteria.BranchId;
+                }
+                model.TaskStatusId = criteria.TaskStatusId;
+                if (criteria.strGroupBy == null)
+                {
+                    model.strGroupBy = "";
+                }
+                else
+                {
+                    model.strGroupBy = criteria.strGroupBy;
+                }
+                if (criteria.FromTaskDate.Year == 1)
+                {
+                    model.FromTaskDate = new DateTime(2019, 1, 1);
+                }
+                if (criteria.ToTaskDate.Year == 1)
+                {
+                    model.ToTaskDate = DateTime.Today;
+                }
+                model.ToTaskDate = DateTime.Today;
+                return model;
+            }
+            else
+            {
+                if (criteria == null)
+                {
+                    criteria = new SearchTaskViewModel();
+                }
+                criteria.Projects = retProjectsList();
+                criteria.Branches = retBranchesList();
+                criteria.Employees = retEmployeesList();
+                criteria.FromTaskDate = new DateTime(2019, 1, 1);
+                if (criteria.Projects.Count > 0)
+                {
+                    criteria.ProjectId = criteria.Projects[0].Id;
+                }
+                if (criteria.Branches.Count > 0)
+                {
+                    criteria.BranchId = criteria.Branches[0].Id;
+                }
+                if (criteria.Employees.Count > 0)
+                {
+                    criteria.TaskOwnerId = criteria.Employees[0].Id;
+                    criteria.TaskResponsibleId = criteria.Employees[0].Id;
+                }
+                criteria.FromTaskDate=new DateTime(2019, 1, 1);
+                criteria.ToTaskDate = DateTime.Today;
+                return criteria;
+            }
+        }
+
+        [HttpGet]
+        public IActionResult TaskSearch(SearchTaskViewModel criteria)
+        {
+            AppDBContext context = tasksRepository.getContext();
+            MSIS.ViewModels.SearchTaskViewModel model = new ViewModels.SearchTaskViewModel();
+            SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
+            SQLProjectRepository projectRepository = new SQLProjectRepository(context);
+            SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
+            SQLBranchRepository branchRepository = new SQLBranchRepository(context);
+            
+            model.ContinuousTask = criteria.ContinuousTask;
+            if (criteria.ProjectId > 0)
+            {
+              model.ProjectId= criteria.ProjectId;
+            }
+            if (criteria.TaskOwnerId > 0)
+            {
+                model.TaskOwnerId = criteria.TaskOwnerId;
+            }
+            if (criteria.TaskResponsibleId > 0)
+            {
+                model.TaskResponsibleId = criteria.TaskResponsibleId;
+            }
+            if (criteria.BranchId > 0)
+            {
+                model.BranchId = criteria.BranchId;
+            }
+            model.TaskStatusId = criteria.TaskStatusId;
             model.Projects = projectRepository.GetAllProjects().ToList();
             model.Projects.Insert(0, new Project
             {
@@ -946,15 +1192,22 @@ namespace MSIS.Controllers
                 Id = -1,
                 Name = "Select ..."
             });
-            model.FromTaskDate = new DateTime(2019,1,1);
-            model.ToTaskDate = DateTime.Today;
-            if (strGroupBy == null)
+            if (criteria.FromTaskDate.Year == 1)
+            {
+                model.FromTaskDate = new DateTime(2019, 1, 1);
+            }
+            if (criteria.ToTaskDate.Year == 1)
+            {
+                model.ToTaskDate = DateTime.Today;
+            }
+
+            if (criteria.strGroupBy == null)
             {
                 model.strGroupBy= "";
             }
             else
             {
-                model.strGroupBy = strGroupBy;
+                model.strGroupBy =criteria.strGroupBy;
             }
 
             return PartialView("_TaskSearch", model);
@@ -1031,7 +1284,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                model.TaskDetails = tasksRepository.getEmployeeTaskDetails(user.EmployeeId, strGroupBy).ToList();
+                model.TaskDetails = tasksRepository.getEmployeeTaskDetails(criteria, user.EmployeeId, strGroupBy).ToList();
                 model.CountByStatus = tasksRepository.getTaskCountByStatus(model.TaskDetails);
                 return model.CountByStatus;
             }
@@ -1048,6 +1301,9 @@ namespace MSIS.Controllers
             criteria.ToTaskDate = ToTaskDate;
             criteria.ContinuousTask = ContinuousTask;
             criteria.strGroupBy = strGroupBy;
+
+            HttpContext.Session.SetString("searchCriteria",JsonConvert.SerializeObject( criteria)); 
+
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             if (await userManager.IsInRoleAsync(user, "Admin"))
@@ -1058,7 +1314,7 @@ namespace MSIS.Controllers
             }
             else
             {
-                model.TaskDetails = tasksRepository.getEmployeeTaskDetails(user.EmployeeId, strGroupBy).ToList();
+                model.TaskDetails = tasksRepository.getEmployeeTaskDetails(criteria, user.EmployeeId, strGroupBy).ToList();
                 model.CountByStatus = tasksRepository.getTaskCountByStatus(model.TaskDetails);
                 return PartialView("_ListTasks",  model);
             }

@@ -471,6 +471,114 @@ namespace MSIS.Models
 
             return result;// projectDetailViewModel;
         }
+        public List<MSIS.ViewModels.TaskDetailsViewModel> getTaskDetailsByStatusId(int EmployeeId, int status, ViewModels.SearchTaskViewModel Criteria)
+        {
+            try
+            {
+                string strWhere = " TaskStatusId = " + status.ToString() + " And (TaskOwnerId = " + EmployeeId.ToString() + " Or TaskResponsibleId = " + EmployeeId.ToString() + " )";
+                if (Criteria.TaskOwnerId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskOwnerId = " + Criteria.TaskOwnerId.ToString();
+                }
+                if (Criteria.TaskResponsibleId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskResponsibleId = " + Criteria.TaskResponsibleId.ToString();
+                }
+                if (Criteria.ProjectId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " ProjectId = " + Criteria.ProjectId.ToString();
+                }
+                if (Criteria.BranchId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " BranchId = " + Criteria.BranchId.ToString();
+                }
+                if (Criteria.FromTaskDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskDate >= '" + Criteria.FromTaskDate.ToString() + "'";
+                }
+                if (Criteria.ToTaskDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskDate <= '" + Criteria.ToTaskDate.ToString() + "'";
+                }
+                if (strWhere != "")
+                {
+                    strWhere = " Where " + strWhere;
+                }
+                if (Criteria.strGroupBy != null)
+                {
+                    if (Criteria.strGroupBy.ToLower() != "all")
+                    {
+                        strWhere = strWhere + " Order By " + Criteria.strGroupBy;
+                    }
+                }
+                var result = context.SQLTaskDetails.FromSql("SELECT *,'" + Criteria.strGroupBy + "' As strGroupBy FROM dbo.vTaskDetails " + strWhere).ToList();
+
+                return result.ToList();// projectDetailViewModel;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            };
+
+            //MSIS.ViewModels.TaskDetailsViewModel taskDetailViewModel = null;
+            //var result = (from task in context.Tasks
+            //              join employee in context.Employees
+            //              on task.TaskResponsibleId equals employee.Id
+            //              join ownerEmployee in context.Employees
+            //              on task.TaskOwnerId equals ownerEmployee.Id
+            //              join taskStatus in context.TaskStatus
+            //              on task.TaskStatusId equals taskStatus.Id
+            //              join project in context.Projects
+            //              on task.ProjectId equals project.Id
+            //              join branch in context.Branches
+            //              on task.BranchId equals branch.Id
+            //              where task.TaskStatusId==status &&(task.TaskOwnerId==EmployeeId || task.TaskResponsibleId ==EmployeeId)
+            //              select new MSIS.ViewModels.TaskDetailsViewModel()
+            //              {
+            //                  Id = task.Id,
+            //                  Description = task.Description,
+            //                  TaskDate = task.TaskDate,
+            //                  OtherInformation = task.OtherInformation,
+            //                  TaskEndDate = task.TaskEndDate,
+            //                  TaskResponsibleName = employee.Name,
+            //                  TaskResultDescription = task.TaskResultDescription,
+            //                  TaskStartDate = task.TaskStartDate,
+            //                  TaskSubject = task.TaskSubject,
+            //                  StatusName = taskStatus.StatusName,
+            //                  ProjectName = project.ProjectName,
+            //                  TaskStatusId = task.TaskStatusId,
+            //                  TaskOwnerName=ownerEmployee.Name,
+            //                  BranchName = branch.Name
+
+
+            //              }).ToList();
+
+            //return result;// projectDetailViewModel;
+        }
 
         //private static Func<Employee, bool> GetDynamicQueryWithExpresionTrees(string propertyName, string val)
         //{
@@ -703,11 +811,103 @@ namespace MSIS.Models
          
             return result;// projectDetailViewModel;
         }
-        public List<MSIS.ViewModels.TaskDetailsViewModel> getEmployeeTaskDetails(int EmployeeId,string strGroupBy)
+        public List<MSIS.ViewModels.TaskDetailsViewModel> getEmployeeTaskDetails(ViewModels.SearchTaskViewModel Criteria, int EmployeeId,string strGroupBy)
         {
-            string strWhere = " Where (TaskOwnerId = " + EmployeeId + " or TaskResponsibleId = " + EmployeeId + ")";
-            try { 
-            var result = context.SQLTaskDetails.FromSql("SELECT *,'"+ strGroupBy + "' As strGroupBy FROM dbo.vTaskDetails " + strWhere).ToList();
+            //string strWhere = " Where TaskStatusId <> 7 And (TaskOwnerId = " + EmployeeId + " or TaskResponsibleId = " + EmployeeId + ")";
+            try {
+                string strWhere = "";
+                strWhere = strWhere + " (TaskOwnerId = " + EmployeeId + " or TaskResponsibleId = " + EmployeeId + ")";
+                if (Criteria.ContinuousTask == true)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere +  " (TaskStatusId = 7 or TaskStatusId = 8)  ";
+                }
+                else
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    //if (ActiveTaskOnly)
+                    //{
+                    strWhere = strWhere + " (TaskStatusId = 1 Or TaskStatusId = 2 Or TaskStatusId = 4) ";
+                    //}
+                }
+                if (Criteria.TaskOwnerId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskOwnerId = " + Criteria.TaskOwnerId.ToString();
+                }
+                if (Criteria.TaskResponsibleId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskResponsibleId = " + Criteria.TaskResponsibleId.ToString();
+                }
+                if (Criteria.ProjectId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " ProjectId = " + Criteria.ProjectId.ToString();
+                }
+                if (Criteria.BranchId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " BranchId = " + Criteria.BranchId.ToString();
+                }
+                if (Criteria.TaskStatusId > 0)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskStatusId = " + Criteria.TaskStatusId.ToString();
+                }
+
+                if (Criteria.FromTaskDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskDate >= '" + Criteria.FromTaskDate.ToString() + "'";
+                }
+                if (Criteria.ToTaskDate.Year > 1)
+                {
+                    if (strWhere != "")
+                    {
+                        strWhere = strWhere + " And ";
+                    }
+                    strWhere = strWhere + " TaskDate <= '" + Criteria.ToTaskDate.ToString() + "'";
+                }
+                if (strWhere != "")
+                {
+                    strWhere = " Where " + strWhere;
+                }
+                if (Criteria.strGroupBy != null)
+                {
+                    if (Criteria.strGroupBy.ToLower() != "all")
+                    {
+                        strWhere = strWhere + " Order By " + Criteria.strGroupBy;
+                    }
+                }
+
+
+
+                var result = context.SQLTaskDetails.FromSql("SELECT *,'"+ strGroupBy + "' As strGroupBy FROM dbo.vTaskDetails " + strWhere).ToList();
             return result.ToList();// projectDetailViewModel;
             }catch(Exception ex)
             {
@@ -748,6 +948,55 @@ namespace MSIS.Models
     //                      }).ToList();
 
     //        return result;// projectDetailViewModel;
+        }
+
+        public List<MSIS.ViewModels.TaskDetailsViewModel> getEmployeeTaskDetails( int EmployeeId, string strGroupBy)
+        {
+            string strWhere = " Where TaskStatusId <> 7 And (TaskOwnerId = " + EmployeeId + " or TaskResponsibleId = " + EmployeeId + ")";
+            try
+            {
+                var result = context.SQLTaskDetails.FromSql("SELECT *,'" + strGroupBy + "' As strGroupBy FROM dbo.vTaskDetails " + strWhere).ToList();
+                return result.ToList();// projectDetailViewModel;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            };
+
+            //MSIS.ViewModels.TaskDetailsViewModel taskDetailViewModel = null;
+            //        var result = (from task in context.Tasks
+            //                      join employee in context.Employees
+            //                      on task.TaskResponsibleId equals employee.Id
+            //                      join ownerEmployee in context.Employees
+            //                      on task.TaskOwnerId equals ownerEmployee.Id
+            //                      join taskStatus in context.TaskStatus
+            //                      on task.TaskStatusId equals taskStatus.Id
+            //                      join project in context.Projects
+            //                      on task.ProjectId equals project.Id
+            //                      join branch in context.Branches
+            //                      on task.BranchId equals branch.Id
+            //                      where (task.TaskOwnerId==EmployeeId || task.TaskResponsibleId==EmployeeId )
+            //                      select new MSIS.ViewModels.TaskDetailsViewModel()
+            //                      {
+            //                          Id = task.Id,
+            //                          Description = task.Description,
+            //                          TaskDate = task.TaskDate,
+            //                          OtherInformation = task.OtherInformation,
+            //                          TaskEndDate = task.TaskEndDate,
+            //                          TaskResponsibleName = employee.Name,
+            //                          TaskResultDescription = task.TaskResultDescription,
+            //                          TaskStartDate = task.TaskStartDate,
+            //                          TaskSubject = task.TaskSubject,
+            //                          StatusName = taskStatus.StatusName,
+            //                          ProjectName = project.ProjectName,
+            //                          TaskStatusId = task.TaskStatusId,
+            //                          TaskOwnerName=ownerEmployee.Name,
+            //                          BranchName = branch.Name
+
+
+            //                      }).ToList();
+
+            //        return result;// projectDetailViewModel;
         }
 
         public List<MSIS.ViewModels.TaskDetailsViewModel> getEmployeeTaskDetails(int EmployeeId, ViewModels.SearchTaskReportsViewModel Criteria)

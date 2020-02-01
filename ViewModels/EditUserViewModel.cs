@@ -20,6 +20,7 @@ namespace MSIS.ViewModels
         [Required][EmailAddress]
         public string Email { get; set; }
         public string City { get; set; }
+        public string Category { get; set; }
         public string RoleId { get; set; }
         public List<IdentityRole> RoleList { get; set; }
 

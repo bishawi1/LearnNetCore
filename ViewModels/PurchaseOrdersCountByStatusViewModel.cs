@@ -17,6 +17,7 @@ namespace MSIS.ViewModels
         public int WaitForDeliveryCount { get; set; }
         public int DeliveredCount { get; set; }
         public int DeliveredPartialyCount { get; set; }
+        public int PayedOrderCount { get; set; }
 
     }
 }

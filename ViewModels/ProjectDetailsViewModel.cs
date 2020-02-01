@@ -11,7 +11,6 @@ namespace MSIS.ViewModels
     {
         [Key]
         public int Id { get; set; }
-
         public int? ProjectYear { get; set; }
         public int? ProjectSerial { get; set; }
         public string ProjectName { get; set; }

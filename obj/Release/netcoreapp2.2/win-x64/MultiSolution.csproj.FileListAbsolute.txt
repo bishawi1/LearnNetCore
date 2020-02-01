@@ -136,3 +136,7 @@ E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netco
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Settings\PurchaseOrderPermissionDetails.cshtml.g.cs
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\PurchaseOrders\AddAttachment.cshtml.g.cs
 E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Tasks\_TaskActionList.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Shared\Error.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Settings\ListUserBranches.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Settings\ListUserEmployees.cshtml.g.cs
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Release\netcoreapp2.2\win-x64\Razor\Views\Settings\ListUserProjects.cshtml.g.cs

@@ -67,6 +67,10 @@
                     {
                         <td style="background-color:lightgreen" class="text-center">@order.StateName </td>
                     }
+                    else if (order.StateId == 9)
+                    {
+                        <td style="background-color:wheat" class="text-center">@order.StateName </td>
+                    }
 
 
                     <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>

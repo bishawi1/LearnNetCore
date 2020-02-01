@@ -25,6 +25,23 @@ namespace MultiSolution.Controllers
             HostingEnvironment = hostingEnvironment;
             this.userManager = userManager;
         }
+        public IActionResult testSendMail()
+        {
+            //SettingsRepository.testSendMail();
+            try
+            {
+            string Message = "نظام ادارة المهام";
+            var Employees = new List<int>() { 34 };
+            SettingsRepository.SendEmail(Employees, Message);
+            return new JsonResult(true);
+
+            }
+            catch(Exception ex)
+            {
+             return new JsonResult(ex.Message.ToString());
+               
+            }
+        }
         public IActionResult SendMail(List<int> Employees, string Message)
         {
             SettingsRepository.SendEmail(Employees, Message);
@@ -202,7 +219,7 @@ namespace MultiSolution.Controllers
         {
             PurchaseOrderPermissionDetailsViewModels model = new PurchaseOrderPermissionDetailsViewModels();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
+            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "PurchaseOrderPermission");
             if (permission.UserPermissions.Count > 0)
             {
                 model.Permission = permission.UserPermissions[0];
@@ -304,7 +321,7 @@ namespace MultiSolution.Controllers
             if (ModelState.IsValid)
             {
                 SettingsRepository.AddPurchaseOrderPermission(purchaseOrderPermission);
-                return RedirectToAction("ListPurchaseOrderPermissions", "Settings");
+                return RedirectToAction("ListPurchaseOrderPermission", "Settings"); 
             }
             return View();
         }
@@ -859,6 +876,344 @@ namespace MultiSolution.Controllers
             //return PartialView("~/Views/Shared/_SideBar.cshtml", Permission); 
         }
 
+        //--------------------------  User ProjectsList 
+        [HttpGet]
+        public IActionResult ListUserProjects(string UserId)
+        {
+            try
+            {
+                UserProjectListViewModel model = new UserProjectListViewModel();
+                MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");             
+                model.UserProjects = SettingsRepository.GetUserProjects(UserId);            
+                model.userPermission = permission.UserPermissions[0];
+                model.UserId = UserId;
+                model.Projects = SettingsRepository.context.Projects.ToList();
+                return View(model);
 
+            }catch(Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message.ToString();
+                return View("NotFound");
+            }
+            //return PartialView("~/Views/Shared/_SideBar.cshtml", Permission); 
+        }
+
+        [HttpPost]
+        public IActionResult AddUserProject(String UserId, int ProjectId)
+        {
+            UserProject userProject = new UserProject();
+            userProject.UserId = UserId;
+            userProject.ProjectId = ProjectId;
+            SettingsRepository.AddUserProject(userProject);
+
+
+            List<SQLUserProjectsViewModel> model = SettingsRepository.GetUserProjects(UserId);
+            return new JsonResult(model);
+            //return PartialView("_PurchaseOrderItems", model);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUserProject(int Id)
+        {
+            //string errorMessage = "";
+            //            errorMessage = SettingsRepository.ValidateDeletItem(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            //if (errorMessage == "")
+            //{
+            UserProject userProject = SettingsRepository.DeleteUserProject(Id);
+                if (userProject == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                //return new JsonResult("{Deleted:true,ErrorText:''}");
+                List<SQLUserProjectsViewModel> model = SettingsRepository.GetUserProjects(userProject.UserId);
+                return new JsonResult(model);
+
+                //return PartialView("_PurchaseOrderItems", model);
+
+            }
+
+            //}
+            //else
+            //{
+            //    return new JsonResult(errorMessage);
+            //}
+        }
+        [HttpGet]
+        public IActionResult EditUserProject(int Id)
+        {
+            UserProjectCreateViewModel model = new UserProjectCreateViewModel();
+            UserProject userProject = SettingsRepository.GetUserProject(Id);
+            if (userProject == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+
+                model.ProjectId = userProject.Id;
+                model.ProjectId = userProject.ProjectId;
+                model.UserId = userProject.UserId;
+                model.Projects = SettingsRepository.context.Projects.ToList();
+                model.Users = userManager.Users.ToList();
+                return View(userProject);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetUserProject(int Id)
+        {
+            UserProject userProject = SettingsRepository.GetUserProject(Id);
+            return new JsonResult(userProject);
+        }
+        [HttpPost]
+        public IActionResult EditUserProject(int Id, int ProjectId)
+        {
+                UserProject userProject = SettingsRepository.GetUserProject(Id);
+                if (userProject == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                    userProject.ProjectId = ProjectId;
+                    SettingsRepository.UpdateUserProject(userProject);
+
+
+                    List<SQLUserProjectsViewModel> model = SettingsRepository.GetUserProjects(userProject.UserId);
+                    return new JsonResult(model);
+                    //return PartialView("_PurchaseOrderItems", model);
+
+                }
+
+            return new JsonResult(false);
+        }
+
+        //--------------------------  User Branches List 
+        [HttpGet]
+        public IActionResult ListUserBranches(string UserId)
+        {
+            try
+            {
+                UserBranchListViewModel model = new UserBranchListViewModel();
+                MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");
+                model.UserBranches = SettingsRepository.GetUserBranches(UserId);
+                model.userPermission = permission.UserPermissions[0];
+                model.UserId = UserId;
+                model.Branches = SettingsRepository.context.Branches.ToList();
+                return View(model);
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message.ToString();
+                return View("NotFound");
+            }
+            //return PartialView("~/Views/Shared/_SideBar.cshtml", Permission); 
+        }
+
+        [HttpPost]
+        public IActionResult AddUserBranch(String UserId, int BranchId)
+        {
+            UserBranch userBranch = new UserBranch();
+            userBranch.UserId = UserId;
+            userBranch.BranchId = BranchId;
+            SettingsRepository.AddUserBranch(userBranch);
+
+
+            List<SQLUserBranchesViewModel> model = SettingsRepository.GetUserBranches(UserId);
+            return new JsonResult(model);
+            //return PartialView("_PurchaseOrderItems", model);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUserBranch(int Id)
+        {
+            //string errorMessage = "";
+            //            errorMessage = SettingsRepository.ValidateDeletItem(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            //if (errorMessage == "")
+            //{
+            UserBranch userBranch = SettingsRepository.DeleteUserBranch(Id);
+            if (userBranch == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+                //return new JsonResult("{Deleted:true,ErrorText:''}");
+                List<SQLUserBranchesViewModel> model = SettingsRepository.GetUserBranches(userBranch.UserId);
+                return new JsonResult(model);
+
+                //return PartialView("_PurchaseOrderItems", model);
+
+            }
+
+            //}
+            //else
+            //{
+            //    return new JsonResult(errorMessage);
+            //}
+        }
+        [HttpGet]
+        public IActionResult EditUserBranch(int Id)
+        {
+            UserProjectCreateViewModel model = new UserProjectCreateViewModel();
+            UserProject userProject = SettingsRepository.GetUserProject(Id);
+            if (userProject == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+
+                model.Id = userProject.Id;
+                model.ProjectId = userProject.ProjectId;
+                model.UserId = userProject.UserId;
+                model.Projects = SettingsRepository.context.Projects.ToList();
+                model.Users = userManager.Users.ToList();
+                return View(userProject);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetUserBranch(int Id)
+        {
+            UserBranch userBranch = SettingsRepository.GetUserBranch(Id);
+            return new JsonResult(userBranch);
+        }
+        [HttpPost]
+        public IActionResult EditUserBranch(int Id, int BranchId)
+        {
+            UserBranch userBranch = SettingsRepository.GetUserBranch(Id);
+            if (userBranch == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+                userBranch.BranchId = BranchId;
+                SettingsRepository.UpdateUserBranch(userBranch);
+
+
+                List<SQLUserBranchesViewModel> model = SettingsRepository.GetUserBranches(userBranch.UserId);
+                return new JsonResult(model);
+                //return PartialView("_PurchaseOrderItems", model);
+            }
+        }
+        //--------------------------  User Employees List 
+        [HttpGet]
+        public IActionResult ListUserEmployees(string UserId)
+        {
+            try
+            {
+                UserEmployeesListViewModel model = new UserEmployeesListViewModel();
+                MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");
+                model.UserEmployees = SettingsRepository.GetUserEmployees(UserId);
+                model.userPermission = permission.UserPermissions[0];
+                model.UserId = UserId;
+                model.Employees = SettingsRepository.context.Employees.ToList();
+                return View(model);
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message.ToString();
+                return View("NotFound");
+            }
+            //return PartialView("~/Views/Shared/_SideBar.cshtml", Permission); 
+        }
+
+        [HttpPost]
+        public IActionResult AddUserEmployee(String UserId, int EmployeeId)
+        {
+            UserEmployee userEmployee = new UserEmployee();
+            userEmployee.UserId = UserId;
+            userEmployee.EmployeeId = EmployeeId;
+            SettingsRepository.AddUserEmployee(userEmployee);
+
+
+            List<SQLUserEmployeesViewModel> model = SettingsRepository.GetUserEmployees(UserId);
+            return new JsonResult(model);
+            //return PartialView("_PurchaseOrderItems", model);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteUserEmployee(int Id)
+        {
+            //string errorMessage = "";
+            //            errorMessage = SettingsRepository.ValidateDeletItem(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            //if (errorMessage == "")
+            //{
+            UserEmployee userEmployee = SettingsRepository.DeleteUserEmployee(Id);
+            if (userEmployee == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+                //return new JsonResult("{Deleted:true,ErrorText:''}");
+                List<SQLUserEmployeesViewModel> model = SettingsRepository.GetUserEmployees(userEmployee.UserId);
+                return new JsonResult(model);
+
+                //return PartialView("_PurchaseOrderItems", model);
+
+            }
+
+            //}
+            //else
+            //{
+            //    return new JsonResult(errorMessage);
+            //}
+        }
+        [HttpGet]
+        public IActionResult EditUserEmployee(int Id)
+        {
+            UserEmployeeCreateViewModel model = new UserEmployeeCreateViewModel();
+            UserEmployee userEmployee = SettingsRepository.GetUserEmployee(Id);
+            if (userEmployee == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+
+                model.Id = userEmployee.Id;
+                model.EmployeeId = userEmployee.EmployeeId;
+                model.UserId = userEmployee.UserId;
+                model.Employees = SettingsRepository.context.Employees.ToList();
+                model.Users = userManager.Users.ToList();
+                return View(userEmployee);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetUserEmployee(int Id)
+        {
+            UserEmployee userEmployee = SettingsRepository.GetUserEmployee(Id);
+            return new JsonResult(userEmployee);
+        }
+        [HttpPost]
+        public IActionResult EditUserEmployee(int Id, int EmployeeId)
+        {
+            UserEmployee userEmployee = SettingsRepository.GetUserEmployee(Id);
+            if (userEmployee == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+                userEmployee.EmployeeId = EmployeeId;
+                SettingsRepository.UpdateUserEmployee(userEmployee);
+
+
+                List<SQLUserEmployeesViewModel> model = SettingsRepository.GetUserEmployees(userEmployee.UserId);
+                return new JsonResult(model);
+                //return PartialView("_PurchaseOrderItems", model);
+            }
+        }
     }
 }

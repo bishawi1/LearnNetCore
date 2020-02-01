@@ -8,6 +8,8 @@
     var WaitingForDeliveryCount = 0;
     var DeliveredCount = 0;
     var DeliveredPartialyCount = 0;
+    var PayedOrderCount = 0;
+
 }
 @*<a asp-action="printPurchaseOrderList" asp-controller="PurchaseOrders" class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</a>*@
 <!----------------------Confirm Delete -->
@@ -41,6 +43,7 @@
     WaitingForDeliveryCount = Model.CountByStatus.WaitForDeliveryCount;
     DeliveredCount = Model.CountByStatus.DeliveredCount;
     DeliveredPartialyCount = Model.CountByStatus.DeliveredPartialyCount;
+    PayedOrderCount = Model.CountByStatus.PayedOrderCount;
 
 }
 
@@ -80,7 +83,10 @@
                 </div>
                 <div class="column">
                     <button id="DeliveredPartialy" class="numberCircle btn text-center m-1" style="width:50px;background-color:lightgreen; border-radius:20;">@DeliveredPartialyCount</button>
-                </div> 
+                </div>
+                <div class="column">
+                    <button id="PayedOrder" class="numberCircle btn text-center m-1" style="width:50px;background-color:wheat; border-radius:20;">@PayedOrderCount</button>
+                </div>
                 <div class="column">
                     <button id="showAll" class="numberCircle btn btn-outline-primary text-center m-1" style="width:50px;border-radius:20;">All</button>
                 </div>
@@ -146,6 +152,10 @@
                             else if (order.StateId == 7)
                             {
                                 <td style="background-color:lightgreen" class="text-center">@order.StateName </td>
+                            }
+                            else if (order.StateId == 9)
+                            {
+                                <td style="background-color:wheat" class="text-center">@order.StateName </td>
                             }
                             <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>
                             @if (Model.userPermission.CanDelete)
@@ -289,6 +299,16 @@
                 }
             });
         });
+        $('#PayedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListPayedPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
         $('#DeliveredPartialy').click(function () {
             $.ajax({
                 url: '/PurchaseOrders/ListDeliveredPartialyPurchaseOrders',
@@ -299,6 +319,7 @@
                 }
             });
         });
+
         $('#showAll').click(function () {
             $.ajax({
                 url: '/PurchaseOrders/ListAllPurchaseOrders',

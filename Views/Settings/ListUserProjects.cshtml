@@ -1,0 +1,335 @@
+﻿@model UserProjectListViewModel
+
+@{
+    ViewBag.Title = "List User Projects";
+}
+<!----------------------Confirm Delete -->
+<div class="modal fade" id="dlgConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalLabel">title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span><h5 class="card-text">Are you sure you want to delete?</h5></span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> cancel</button>
+                <button id="btnSave" data-dismiss="modal" onclick="DeleteItem()" type="button" class="btn btn-outline-danger" style="width:auto;"><i class="fa fa-trash"></i> Delete </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!----------------------Inform Dialog -->
+<div class="modal fade" id="dlgInform" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <span id="ErrorMessage" class="card-text">Are you sure you want to delete?</span>
+                <input id="txtDeleteItemID" type="text" hidden placeholder="text" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-----------------------Modal        -->
+<div class="modal fade" id="basicExampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div>
+                <input type="text" id="txtEditMode" value="false" />
+            </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">User Project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+
+            </div>
+            <div class="modal-body">
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtItem-addon">Id</span>
+                    <input id="txtId" class="form-control col-sm-9" disabled placeholder="Id" aria-describedby="txtId-addon" />
+                </div>
+
+                <div class="input-group col-sm-12 row">
+                    <span class="input-group-text col-sm-3 " id="txtProject-addon">Project</span>
+                    @Html.DropDownList("txtProject", new SelectList(Model.Projects, "Id", "ProjectName"), new { @id = "txtProject", @class = "form-control col-sm-6" })
+
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" style="width:auto;"><i class="fa fa-times"></i> close</button>
+                <button id="btnSaveAjax" type="button" class="btn btn-outline-primary" style="width:auto;"><i class="fa fa-save"></i> save</button>
+
+
+                @*<button type="button" class="btn btn-success" id="btnSaveAjax" >Save</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="flex-container text-center">
+            <input asp-for="UserId" hidden />
+            <span class="col-11"><h5>User Projects List</h5></span>
+            @if (Model.userPermission.CanAdd)
+            {
+                <div class="col-1 "> <button id="btnAddProject" type="button" class="btn btn-primary" style="width:auto;text-align:left;"><i class="fa fa-plus-circle"></i></button></div>
+                //<a asp-action="Create" asp-controller="Projects" class="btn btn-outline-secondary mt-2 mb-2" style="width:auto"><i class="fa fa-plus-circle"></i></a>
+            }
+        </div>
+    </div>
+    <div style="border:solid 1px black; padding:3px;">
+        <div id="OrderItems" class="col-12">
+            <table class="table gridtable table-hover" id="tblItemDetails">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>User Name</th>
+                        <th>Employee Name</th>
+                        <th>Project</th>
+                        @if (Model.userPermission.CanEdit)
+                        {
+                            <th style="width:30px;"></th>
+                        }
+                        @if (Model.userPermission.CanDelete)
+                        {
+                            <th style="width:30px;"></th>
+                        }
+                    </tr>
+                </thead>
+                @foreach (var project in Model.UserProjects)
+                {
+            <tr>
+                <td>@project.Id</td>
+                <td>@project.UserName</td>
+                <td>@project.EmployeeName</td>
+                <td>@project.ProjectName</td>
+                @if (Model.userPermission.CanEdit)
+                {
+                    <td>
+                        <button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(@project.Id) style='width:auto'><i class='fa fa-edit'></i></button>
+                    </td>
+                }
+                    @if (Model.userPermission.CanDelete)
+                    {
+                        <td>
+                            <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                               onclick="contDelete(@project.Id)"><i class="fa fa-trash"></i></a>
+                        </td>
+                    }
+                </tr>
+                }
+            </table>
+        </div>
+        </div>
+    </div>
+
+
+@section Scripts{
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/lib/jquery.form/jquery.form.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script>
+        //---------------- Ready
+        $(document).ready(function () {
+            // -------------  General
+            $('.chosen').chosen();
+            $('#txtEditMode').val('true');
+            $('#txtEditMode').hide();
+
+            var table = $('#tblItemDetails').DataTable({
+                columnDefs: [
+                    { "name": "ItemUnitId", "targets": 2, visible: false }
+                ]
+            });
+
+            //------------- Add Project
+            $('#btnAddProject').on('click', function () {
+                $('#txtEditMode').val('false');
+                $('#txtProject').val('');
+                $('#basicExampleModal').modal('show')
+            });
+
+            function ClearItems() {
+                $('#txtEditMode').val('false');
+                $('#txtProject').val('');
+                $('#basicExampleModal').modal('show')
+            };
+            $('#btnSaveAjax').click(function () {
+                if (validateItem()) {
+                    if ($('#txtEditMode').val() == 'true') {
+                        $.post('/Settings/EditUserProject',
+                            {
+                                Id: $('#txtId').val(),
+                                ProjectId: $('#txtProject').val()
+                            },
+                            function (response, status) {
+                                $('#OrderItems').html('');
+                                BuildItemsTable(response);
+                            }
+                        );
+                    } else {
+                        $.post('/Settings/AddUserProject',
+                            {
+                                UserId: $('#UserId').val(),
+                                ProjectId: $('#txtProject').val()
+                            },
+                            function (response, status) {
+                                $('#OrderItems').html('');
+                                BuildItemsTable(response);
+                                ClearItems();
+                            }
+                        );
+                    }
+                }
+            }
+            );
+
+
+        });
+
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuSettings').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
+        //----------------- Render Table
+        function BuildItemsTable(response) {
+            var i;
+            var TotalPrice=0
+            var strResult = "";
+            strResult = '<table id="tblItemDetails" class="table table-hover">';
+            strResult = strResult + '<thead class="thead-dark">';
+            strResult += "<tr>";
+            strResult += "<th>Id</th>";
+            strResult += "<th>User Name</th>";
+            strResult += "<th>Employee Name</th>";
+            strResult += "<th>Project</th>";
+            strResult += "<th style='width:30px;'></th>";
+            strResult += "<th style='width:30px;'></th>";
+
+            strResult += "</tr>";
+
+            strResult += "</thead>";
+            strResult += "<tbody>";
+
+            var text = "";
+            for (i = 0; i < response.length; i++) {
+                strResult += "<tr>";
+                strResult += "<td>" + response[i].Id + "</td>";
+                strResult += "<td>" + response[i].UserName + "</td>";
+                strResult += "<td>" + response[i].EmployeeName + "</td>";
+                strResult += "<td>" + response[i].ProjectName + "</td>";
+                strResult += "<td>";
+                strResult += "<button type='button' id='btnEditItem' class='btn btn-outline-primary btn-sm rounded-circle' onclick=EditItem(" + response[i].Id + ") style = 'width:auto' > <i class='fa fa-edit'></i></button > ";
+                strResult +="</td>"
+                strResult +="<td>"
+                strResult += "                <Button Type='Button' class='btn btn-outline-danger rounded-circle btn-sm' style='width:auto'";
+                strResult += "                    onclick=contDelete(" + response[i].Id + ")><i class='fa fa-trash'></i></a>";
+                strResult += "</td>";
+                strResult += "</tr>";
+            };
+            strResult += "</tbody>";
+            strResult += "</table>";
+            $('#OrderItems').html(strResult);
+            var table = $('#tblItemDetails').DataTable();
+            return strResult;
+        };
+        //----------------- Edit order Items
+        function EditItem(Id) {
+            $.get('/Settings/GetUserProject',
+                { Id: Id },
+                function (data, status) {
+                    $('#txtEditMode').val('true');
+                    $('#txtProject').val(data.ProjectId);
+                    $('#txtId').val(data.Id);
+                    $('#basicExampleModal').modal('show')
+                }
+            );
+        };
+
+        //----------------- validate Item
+        function validateItem() {
+            var isValid = true;
+            //if ($.isNumeric($('#txtPrice').val())) {
+            //    if ($.isNumeric($('#txtQnt').val())) {
+            //        if ($('#txtPrice').val() == 0 || $('#txtQnt').val() == 0) {
+            //            isValid = false;
+            //            alert('Price and Qnt must be more than 0');
+            //        };
+            //    } else {
+            //            isValid = false;
+            //            alert('Qnt must be Numeric Value');
+            //    };
+
+            //    } else {
+            //            isValid = false;
+            //            alert('Price must be Numeric Value');
+            //    };
+
+            return isValid;
+        }
+        //---------------Confirm Item Delete
+        function contDelete(Id) {
+            $('#txtDeleteItemID').val(Id);
+            $('#dlgConfirmDelete').modal('show');
+        };
+
+        //-------------- Delete Item Button
+        function DeleteItem() {
+            $.post('/Settings/DeleteUserProject',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    location.reload(true);
+
+                }
+            );
+        };
+
+
+        //-------------- Validate Delete
+        function ValidateDelete() {
+            return true;
+            //$.post('/Projects/ValidateDelete',
+            //    {
+            //        Id: $('#txtDeleteItemID').val()
+            //    },
+            //    function (response, status) {
+            //        if (response == "") {
+            //            DeleteItem();
+            //        } else {
+            //            $('#ErrorMessage').text(response);
+            //            $('#dlgInform').modal('show');
+            //        }
+            //        //location.reload(true);
+
+            //    }
+            //);
+        };
+
+    </script>
+}

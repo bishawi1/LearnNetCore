@@ -40,7 +40,6 @@ namespace MSIS.Models
         public int StateId { get; set; }
         public string Description { get; set; }
 
-        [NotMapped]
         public Double SubtractionAmount { get; set; }
         [NotMapped]
         public string SubtractNotes { get; set; }

@@ -65,6 +65,13 @@ namespace MSIS.Models
         public DbSet<SQLActiveContinuousTasks> vActiveContinuousTasks { get; set; }
         public DbSet<PurchaseOrderPermission> PurchaseOrderPermissions { get; set; }
         public DbSet<PurchaseOrderAttachment> PurchaseOrderAttachments { get; set; }
+        public DbSet<SQLUserProjectsViewModel> vUserProjects { get; set; }
+        public DbSet<UserProject> UserProjects { get; set; }
+        public DbSet<SQLUserBranchesViewModel> vUserBranches { get; set; }
+        public DbSet<UserBranch> UserBranches { get; set; }
+        public DbSet<UserEmployee> UserEmployees { get; set; }
+        public DbSet<SQLUserEmployeesViewModel> vUserEmployees { get; set; }
+
 
     }
 }
