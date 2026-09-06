@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "smTBEkZ96Ho=",
+  "dgSpecHash": "KidvJa97fDI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
+  "projectFilePath": "C:\\Users\\iCloud Tech\\source\\repos\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\iCloud Tech\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\iCloud Tech\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
@@ -226,9 +226,9 @@
       "code": "NU1902",
       "level": "Warning",
       "message": "Package 'MailKit' 4.13.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-9j88-vvj5-vhgr",
-      "projectPath": "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
+      "projectPath": "C:\\Users\\iCloud Tech\\source\\repos\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
+      "filePath": "C:\\Users\\iCloud Tech\\source\\repos\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
       "libraryId": "MailKit",
       "targetGraphs": [
         "net9.0"

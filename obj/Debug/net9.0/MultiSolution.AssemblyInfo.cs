@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultiSolution")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3a34d09c4995f9d8d3b7841d5fb2c82f94015cea")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c8ca63eed8f9b4d7149f17f6d6d7c59e05d37d17")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultiSolution")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultiSolution")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
