@@ -10,28 +10,27 @@
 
     <environment include="Development">
         <link href="~/lib/bootstrap/css/bootstrap.css" rel="stylesheet" />
-        <script src="~/lib/jquery/jquery.js"></script>
-        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+
         <script src="~/lib/jquery-validate/jquery.validate.js"></script>
         <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+
         <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
         <link href="~/lib/jqueryui/themes/base/jquery-ui.css" rel="stylesheet" />
 
         <link href="~/lib/datatables/DataTables-1.10.20/css/jquery.dataTables.css" rel="stylesheet" />
-        <script src="~/lib/datatables/DataTables-1.10.20/js/jquery.dataTables.js"></script>
 
         <script src="~/lib/jquery-tabledit-1.2.3/jquery.tabledit.min.js"></script>
     </environment>
     <environment exclude="Staging">
         @*<link rel="stylesheet"
-              href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-              crossorigin="anonymous"
-              asp-fallback-href=""
-              asp-fallback-test-class="sr-only"
-              asp-fallback-test-property="position"
-              asp-fallback-test-value="absolute"
-              asp-suppress-fallback-integrity="true">*@
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous"
+            asp-fallback-href=""
+            asp-fallback-test-class="sr-only"
+            asp-fallback-test-property="position"
+            asp-fallback-test-value="absolute"
+            asp-suppress-fallback-integrity="true">*@
         <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     </environment>
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
@@ -84,29 +83,29 @@
                     <div id="accordion" class="bg-transparent m-0">
 
                         @*@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-                        {*@
-                            <div id="crdSettings" hide class="card bg-transparent">
-                                <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
-                                    <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuSettings">
-                                        <i class="fa fa-cog"></i>
-                                        Settings
-                                    </a>
-                                </div>
-                                <div id="mnuSettings" data-collapsed="false" class="collapse hide" data-parent="#accordion">
-                                    <div class="card-body" style="padding:0px;">
-                                        <a id="lnkEmployees1" asp-action="EmployeeList" asp-controller="Home" class="hideElem list-group-item list-group-item-action bg-dark text-light">Employees</a>
-                                        <a id="lnkBranches1" asp-action="ListBranches" asp-controller="Branches" class="hideElem list-group-item list-group-item-action bg-dark text-light">Branches</a>
-                                        <a id="lnkProjects1" asp-action="ListProjects" asp-controller="Projects" class="hideElem list-group-item list-group-item-action bg-dark text-light">Projects</a>
-                                        <a id="lnkCustomers1" asp-action="ListCustomers" asp-controller="Customer" class="hideElem list-group-item list-group-item-action bg-dark text-light">Customers</a>
-                                        <a id="lnkSuppliers1" asp-action="ListSuppliers" asp-controller="Suppliers" class="hideElem list-group-item list-group-item-action bg-dark text-light">Suppliers</a>
-                                        <a id="lnkItemUnits1" asp-action="ListItemUnit" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Item Units</a>
-                                        <a id="lnkItems1" asp-action="ListItems" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Items</a>
-                                        <a id="lnkMainItems1" asp-action="ListMainItems" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Main Items</a>
-                                        <a id="lnkItemCategory1" asp-action="ListItemCategory" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Item Categories</a>
-                                        <a id="lnkCurrency1" asp-action="ListCurrency" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Currency</a>
-                                    </div>
+                            {*@
+                        <div id="crdSettings" hide class="card bg-transparent">
+                            <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
+                                <a class="list-group-item list-group-item-action bg-dark text-light" data-toggle="collapse" href="#mnuSettings">
+                                    <i class="fa fa-cog"></i>
+                                    Settings
+                                </a>
+                            </div>
+                            <div id="mnuSettings" data-collapsed="false" class="collapse hide" data-parent="#accordion">
+                                <div class="card-body" style="padding:0px;">
+                                    <a id="lnkEmployees1" asp-action="EmployeeList" asp-controller="Home" class="hideElem list-group-item list-group-item-action bg-dark text-light">Employees</a>
+                                    <a id="lnkBranches1" asp-action="ListBranches" asp-controller="Branches" class="hideElem list-group-item list-group-item-action bg-dark text-light">Branches</a>
+                                    <a id="lnkProjects1" asp-action="ListProjects" asp-controller="Projects" class="hideElem list-group-item list-group-item-action bg-dark text-light">Projects</a>
+                                    <a id="lnkCustomers1" asp-action="ListCustomers" asp-controller="Customer" class="hideElem list-group-item list-group-item-action bg-dark text-light">Customers</a>
+                                    <a id="lnkSuppliers1" asp-action="ListSuppliers" asp-controller="Suppliers" class="hideElem list-group-item list-group-item-action bg-dark text-light">Suppliers</a>
+                                    <a id="lnkItemUnits1" asp-action="ListItemUnit" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Item Units</a>
+                                    <a id="lnkItems1" asp-action="ListItems" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Items</a>
+                                    <a id="lnkMainItems1" asp-action="ListMainItems" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Main Items</a>
+                                    <a id="lnkItemCategory1" asp-action="ListItemCategory" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Item Categories</a>
+                                    <a id="lnkCurrency1" asp-action="ListCurrency" asp-controller="Settings" class="hideElem list-group-item list-group-item-action bg-dark text-light">Currency</a>
                                 </div>
                             </div>
+                        </div>
                         @*}*@
                         <div id="crdTasks" hide class="card bg-transparent">
                             <div class="card-header" style="padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;">
@@ -138,7 +137,7 @@
                                 <div class="card-body" style="padding:0px;">
                                     <a id="lnkAllPurchaseOrders1" asp-action="ListPurchaseOrders" asp-controller="PurchaseOrders" class="hideElem list-group-item list-group-item-action bg-dark text-light">Purchase Orders</a>
                                     <a id="lnkPurchaseOrdersReports1" asp-action="printPurchaseOrderList" asp-controller="PurchaseOrders" class="hideElem list-group-item list-group-item-action bg-dark text-light">Purchase Orders Reports</a>
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -167,12 +166,12 @@
                 </div>            <!-------------- start of Buttons   -->
                 @*<div class="list-group list-group-flush">
 
-                    <a asp-action="EmployeeList" asp-controller="Home" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
-                    <a asp-action="ListBranches" asp-controller="Branches" class="list-group-item list-group-item-action bg-dark text-light">Branches</a>
-                    <a asp-action="ListProjects" asp-controller="Projects" class="list-group-item list-group-item-action bg-dark text-light">Projects</a>
-                    <a asp-action="ListCustomers" asp-controller="Customer" class="list-group-item list-group-item-action bg-dark text-light">Customers</a>
-                    <a asp-action="ListTasks" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">Tasks</a>
-                </div>*@
+                        <a asp-action="EmployeeList" asp-controller="Home" class="list-group-item list-group-item-action bg-dark text-light">Employees</a>
+                        <a asp-action="ListBranches" asp-controller="Branches" class="list-group-item list-group-item-action bg-dark text-light">Branches</a>
+                        <a asp-action="ListProjects" asp-controller="Projects" class="list-group-item list-group-item-action bg-dark text-light">Projects</a>
+                        <a asp-action="ListCustomers" asp-controller="Customer" class="list-group-item list-group-item-action bg-dark text-light">Customers</a>
+                        <a asp-action="ListTasks" asp-controller="Tasks" class="list-group-item list-group-item-action bg-dark text-light">Tasks</a>
+                    </div>*@
                 <!-------------- End of Buttons   -->
             </div>
         }
@@ -242,20 +241,20 @@
                         }
                         @if (signInManager.IsSignedIn(User))
                         {
-                            <li id="mnuTask"  class="hideElem nav-item dropdown" >
+                            <li id="mnuTask" class="hideElem nav-item dropdown">
                                 <a asp-action="ListRoles" asp-controller="Administration" class="nav-link dropdown-toggle"
                                    id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Task
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a asp-action="ListTasks" asp-controller="Tasks"
-                                      id="lnkAllTasks" class="hideElem dropdown-item">
+                                       id="lnkAllTasks" class="hideElem dropdown-item">
                                         Task List
                                     </a>
                                     @*<a asp-action="Create" asp-controller="Tasks"
-                                       class="hideElem dropdown-item">
-                                        New Task
-                                    </a>*@
+                       class="hideElem dropdown-item">
+                        New Task
+                    </a>*@
                                     <a asp-action="TaskReport" asp-controller="Tasks"
                                        id="lnkTaskReports" class="hideElem dropdown-item">
                                         Reports
@@ -265,7 +264,7 @@
                             </li>
                             <li id="mnuPurchaseOrders" class="hideElem nav-item dropdown">
                                 <a asp-action="ListRoles" asp-controller="Administration" class="nav-link dropdown-toggle"
-                                   id="navbarDropdownMenuLink"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                   id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     Purchase Orders
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -274,9 +273,9 @@
                                         Orders List
                                     </a>
                                     @*<a asp-action="Create" asp-controller="PurchaseOrders"
-                                       class="hideElem dropdown-item">
-                                        New Order
-                                    </a>*@
+                       class="hideElem dropdown-item">
+                        New Order
+                    </a>*@
                                     <a asp-action="printPurchaseOrderList" asp-controller="PurchaseOrders"
                                        id="lnkPurchaseOrdersReports" class="hideElem dropdown-item">
                                         Reports
@@ -295,9 +294,9 @@
                                         Orders List
                                     </a>
                                     @*<a asp-action="Create" asp-controller="Offers"
-                                       class="hideElem dropdown-item">
-                                        New Order
-                                    </a>*@
+                       class="hideElem dropdown-item">
+                        New Order
+                    </a>*@
                                     <a asp-action="PrintOffersList" asp-controller="Offers"
                                        id="lnkOffersReports" class="hideElem dropdown-item">
                                         Reports
@@ -316,7 +315,7 @@
                                         Employees
                                     </a>
                                     <a asp-action="ListBranches" asp-controller="Branches"
-                                      id="lnkBranches"  class="hideElem dropdown-item">
+                                       id="lnkBranches" class="hideElem dropdown-item">
                                         Branches
                                     </a>
                                     <a asp-action="ListProjects" asp-controller="Projects"
@@ -348,12 +347,33 @@
                                         Item Categories
                                     </a>
                                     <a asp-action="ListCurrency" asp-controller="Settings"
-                                      id="lnkCurrency" class="hideElem dropdown-item">
+                                       id="lnkCurrency" class="hideElem dropdown-item">
                                         Currency
                                     </a>
                                 </div>
                             </li>
+                                try
+                                {
+                                    @await Component.InvokeAsync("Default")
+
+                                }
+                                catch (Exception ex)
+                                {
+
+                                    Console.WriteLine(ex.Message.ToString());
+
+                                }
+
+
+
+
                         }
+
+
+
+
+
+
 
                         @*<li class="nav-item">
             <a class="nav-link" href="#">Team</a>
@@ -398,8 +418,8 @@
         </div>
         <!-- /#page-content-wrapper -->
         @*<div>
-            @RenderBody()
-        </div>*@
+                @RenderBody()
+            </div>*@
         @if (IsSectionDefined("Scripts"))
         {
             @RenderSection("Scripts", required: true)

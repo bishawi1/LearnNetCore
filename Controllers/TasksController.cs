@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MSIS.Models;
-using MSIS.ViewModels;
+using TMS.Models;
+using TMS.ViewModels;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -15,7 +15,7 @@ using Itenso.TimePeriod;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace MSIS.Controllers
+namespace TMS.Controllers
 {
     public class TasksController : Controller
     {
@@ -41,7 +41,7 @@ namespace MSIS.Controllers
         public IActionResult Create()
         {
             AppDBContext context = tasksRepository.getContext();
-            MSIS.ViewModels.CreateTaskViewModel model = new ViewModels.CreateTaskViewModel();
+            TMS.ViewModels.CreateTaskViewModel model = new ViewModels.CreateTaskViewModel();
             SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
             SQLProjectRepository projectRepository = new SQLProjectRepository(context);
             SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
@@ -165,7 +165,7 @@ namespace MSIS.Controllers
             else
             {
                 AppDBContext context = tasksRepository.getContext();
-                MSIS.ViewModels.CreateTaskViewModel model = new ViewModels.CreateTaskViewModel();
+                TMS.ViewModels.CreateTaskViewModel model = new ViewModels.CreateTaskViewModel();
                 SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
                 SQLProjectRepository projectRepository = new SQLProjectRepository(context);
                 SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
@@ -466,46 +466,47 @@ namespace MSIS.Controllers
             return new JsonResult(model);
         }
         [HttpGet]
-        public async Task <IActionResult> ListTasksPartial(int TaskOwnerId, int TaskResponsibleId, int ProjectId, int TaskStatusId, int BranchId, DateTime FromTaskDate, DateTime ToTaskDate, string strGroupBy)
+        public async Task <IActionResult> ListTasksPartial(int TaskOwnerId, int TaskResponsibleId, int ProjectId, int TaskStatusId, int BranchId, DateTime FromTaskDate, DateTime ToTaskDate,bool Exclude, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;
             criteria.FromTaskDate = FromTaskDate;
             criteria.ToTaskDate = ToTaskDate;
             criteria.strGroupBy = strGroupBy;
-                        criteria.BranchId = BranchId;
-
+            criteria.BranchId = BranchId;
+            criteria.Exclude = Exclude;
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
 
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 model.TaskDetails = tasksRepository.getAllTaskDetails(criteria,true).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId,BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId,BranchId, FromTaskDate, ToTaskDate,Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             else
             {
                 model.TaskDetails = tasksRepository.getEmployeeTaskDetails(user.EmployeeId,"").ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
 
             //var model = tasksRepository.GetAllTasks().ToList();
         }
         [HttpGet]
-        public async Task <IActionResult> ListWaitingTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask, string strGroupBy)
+        public async Task <IActionResult> ListWaitingTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask,bool Exclude, string strGroupBy)
         {
                                                                                                        
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;
             criteria.FromTaskDate = FromTaskDate;
             criteria.ToTaskDate = ToTaskDate;
             criteria.strGroupBy = strGroupBy;
+            criteria.Exclude = Exclude;
             criteria.ContinuousTask = ContinuousTask;
             criteria.BranchId = BranchId;
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
@@ -514,13 +515,13 @@ namespace MSIS.Controllers
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(1,criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             else
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId( user.EmployeeId, 1,criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             ////var model = tasksRepository.GetAllTasks().ToList();
@@ -528,15 +529,16 @@ namespace MSIS.Controllers
             //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public async Task <IActionResult> ListInProgressTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask, string strGroupBy)
+        public async Task <IActionResult> ListInProgressTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask,bool Exclude, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;
             criteria.FromTaskDate = FromTaskDate;
             criteria.ToTaskDate = ToTaskDate;
             criteria.ContinuousTask = ContinuousTask;
+            criteria.Exclude = Exclude;
             criteria.BranchId = BranchId;
             criteria.strGroupBy = strGroupBy;
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
@@ -544,13 +546,13 @@ namespace MSIS.Controllers
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(2,criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             else
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 2, criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             ////var model = tasksRepository.GetAllTasks().ToList();
@@ -558,9 +560,9 @@ namespace MSIS.Controllers
             //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public async Task <IActionResult> ListRejectedTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask, string strGroupBy)
+        public async Task <IActionResult> ListRejectedTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask,bool Exclude, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;
@@ -568,19 +570,20 @@ namespace MSIS.Controllers
             criteria.ToTaskDate = ToTaskDate;
             criteria.strGroupBy = strGroupBy;
             criteria.BranchId = BranchId;
+            criteria.Exclude = Exclude;
             criteria.ContinuousTask = ContinuousTask;
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(3,criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             else
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 3, criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             ////var model = tasksRepository.GetAllTasks().ToList();
@@ -588,15 +591,16 @@ namespace MSIS.Controllers
             //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public async Task <IActionResult> ListDoneTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask, string strGroupBy)
+        public async Task <IActionResult> ListDoneTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask,bool Exclude, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;
             criteria.FromTaskDate = FromTaskDate;
             criteria.ToTaskDate = ToTaskDate;
             criteria.strGroupBy = strGroupBy;
+            criteria.Exclude = Exclude;
             criteria.ContinuousTask = ContinuousTask;
             criteria.BranchId = BranchId;
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
@@ -604,13 +608,13 @@ namespace MSIS.Controllers
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(4,criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             else
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 4, criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             ////var model = tasksRepository.GetAllTasks().ToList();
@@ -618,9 +622,9 @@ namespace MSIS.Controllers
             //return PartialView("_ListTasks", model);
         }
         [HttpGet]
-        public async Task <IActionResult> ListApprovedTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask, string strGroupBy)
+        public async Task <IActionResult> ListApprovedTasks(int TaskOwnerId, int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask,bool Exclude, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;
@@ -628,19 +632,20 @@ namespace MSIS.Controllers
             criteria.ToTaskDate = ToTaskDate;
             criteria.strGroupBy = strGroupBy;
             criteria.BranchId = BranchId;
+            criteria.Exclude = Exclude;
             criteria.ContinuousTask = ContinuousTask;
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
             var user = await userManager.FindByNameAsync(User.Identity.Name);
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(5,criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             else
             {
                 model.TaskDetails = tasksRepository.getTaskDetailsByStatusId(user.EmployeeId, 5, criteria).ToList();
-                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
 
@@ -1032,7 +1037,7 @@ namespace MSIS.Controllers
                 employeeList.Insert(0, new Employee
                 {
                     Id = -1,
-                    Name = "Select ...s"
+                    Name = "Select ..."
                 });
                 return employeeList;
             }
@@ -1069,7 +1074,7 @@ namespace MSIS.Controllers
         private SearchTaskViewModel retCriteria(SearchTaskViewModel criteria)
         {
             AppDBContext context = tasksRepository.getContext();
-            MSIS.ViewModels.SearchTaskViewModel model = new ViewModels.SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel model = new ViewModels.SearchTaskViewModel();
             SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
             SQLProjectRepository projectRepository = new SQLProjectRepository(context);
             SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
@@ -1150,7 +1155,7 @@ namespace MSIS.Controllers
         public IActionResult TaskSearch(SearchTaskViewModel criteria)
         {
             AppDBContext context = tasksRepository.getContext();
-            MSIS.ViewModels.SearchTaskViewModel model = new ViewModels.SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel model = new ViewModels.SearchTaskViewModel();
             SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
             SQLProjectRepository projectRepository = new SQLProjectRepository(context);
             SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
@@ -1217,7 +1222,7 @@ namespace MSIS.Controllers
         public IActionResult TaskReportsSearch(string strGroupBy)
         {
             AppDBContext context = tasksRepository.getContext();
-            MSIS.ViewModels.SearchTaskReportsViewModel model = new ViewModels.SearchTaskReportsViewModel();
+            TMS.ViewModels.SearchTaskReportsViewModel model = new ViewModels.SearchTaskReportsViewModel();
             SQLCustomerRepository customerRepository = new SQLCustomerRepository(context);
             SQLProjectRepository projectRepository = new SQLProjectRepository(context);
             SQLEmployeeRepository employeeRepository = new SQLEmployeeRepository(context);
@@ -1264,15 +1269,16 @@ namespace MSIS.Controllers
 
         }
        
-        private async Task<TaskCountByStatusViewModel> getTaskStatusCount(int TaskOwnerId,int TaskResponsibleId, int ProjectId,int BranchId, DateTime FromTaskDate, DateTime ToTaskDate, string strGroupBy)
+        private async Task<TaskCountByStatusViewModel> getTaskStatusCount(int TaskOwnerId,int TaskResponsibleId, int ProjectId,int BranchId, DateTime FromTaskDate, DateTime ToTaskDate,bool Exclude, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;
             criteria.FromTaskDate = FromTaskDate;
             criteria.ToTaskDate = ToTaskDate;
             criteria.BranchId = BranchId;
+            criteria.Exclude = Exclude;
             criteria.strGroupBy = strGroupBy;
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
             var user = await userManager.FindByNameAsync(User.Identity.Name);
@@ -1290,9 +1296,9 @@ namespace MSIS.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> TaskSearchAsync(int TaskOwnerId,int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId, bool ContinuousTask, string strGroupBy)
+        public async Task<IActionResult> TaskSearchAsync(int TaskOwnerId,int TaskResponsibleId, int ProjectId, DateTime FromTaskDate, DateTime ToTaskDate, int BranchId,bool Exclude, bool ContinuousTask, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
+            TMS.ViewModels.SearchTaskViewModel criteria = new SearchTaskViewModel();
             criteria.ProjectId = ProjectId;
             criteria.BranchId = BranchId;
             criteria.TaskOwnerId = TaskOwnerId;
@@ -1301,7 +1307,7 @@ namespace MSIS.Controllers
             criteria.ToTaskDate = ToTaskDate;
             criteria.ContinuousTask = ContinuousTask;
             criteria.strGroupBy = strGroupBy;
-
+            criteria.Exclude = Exclude;
             HttpContext.Session.SetString("searchCriteria",JsonConvert.SerializeObject( criteria)); 
 
             TaskDetailsListViewModel model = new TaskDetailsListViewModel();
@@ -1309,7 +1315,7 @@ namespace MSIS.Controllers
             if (await userManager.IsInRoleAsync(user, "Admin"))
             {
                 model.TaskDetails = tasksRepository.getAllTaskDetails(criteria,true).ToList();
-                model.CountByStatus = model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, strGroupBy);
+                model.CountByStatus = model.CountByStatus = await getTaskStatusCount(TaskOwnerId, TaskResponsibleId, ProjectId, BranchId, FromTaskDate, ToTaskDate, Exclude, strGroupBy);
                 return PartialView("_ListTasks", model);
             }
             else
@@ -1324,7 +1330,7 @@ namespace MSIS.Controllers
         [HttpPost]
         public async Task<IActionResult> TaskReportsSearchAsync(int TaskOwnerId, int TaskResponsibleId, int ProjectId, int TaskStatusId, int BranchId, DateTime FromTaskDate, DateTime ToTaskDate, string strGroupBy)
         {
-            MSIS.ViewModels.SearchTaskReportsViewModel criteria = new SearchTaskReportsViewModel();
+            TMS.ViewModels.SearchTaskReportsViewModel criteria = new SearchTaskReportsViewModel();
             criteria.ProjectId = ProjectId;
             criteria.TaskOwnerId = TaskOwnerId;
             criteria.TaskResponsibleId = TaskResponsibleId;

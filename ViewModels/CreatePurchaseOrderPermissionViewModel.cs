@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MSIS.Models;
+using TMS.Models;
 
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     public class CreatePurchaseOrderPermissionViewModel:PurchaseOrderPermission
     {

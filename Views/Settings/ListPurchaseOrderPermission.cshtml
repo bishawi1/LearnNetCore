@@ -24,6 +24,8 @@
                         <th>AllowPrint</th>
                         <th>AllowVerify</th>
                         <th>AllowDelivery</th>
+                        <th>AllowBackToNew</th>
+                        <th>AllowPay</th>
                         <th>Notes</th>
                         <th style="width:30px;"></th>
                         @if (Model.userPermission.CanDelete)
@@ -41,6 +43,8 @@
                 <td>@purchaseOrderPermission.AllowPrint</td>
                 <td>@purchaseOrderPermission.AllowVerify</td>
                 <td>@purchaseOrderPermission.AllowDelivery</td>
+                <td>@purchaseOrderPermission.AllowBackToNew</td>
+                <td>@purchaseOrderPermission.AllowPay</td>
                 <td>@purchaseOrderPermission.Notes</td>
                 <td><a class="btn btn-outline-primary btn-sm rounded-circle" asp-action="PurchaseOrderPermissionDetails" asp-controller="Settings" asp-route-Id="@purchaseOrderPermission.Id" style="width:auto"><i class="fa fa-eye"></i></a></td>
                 @if (Model.userPermission.CanDelete)

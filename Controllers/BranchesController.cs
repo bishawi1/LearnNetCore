@@ -5,10 +5,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using MSIS.Models;
-using MSIS.ViewModels;
+using TMS.Models;
+using TMS.ViewModels;
 
-namespace MSIS.Controllers
+namespace TMS.Controllers
 {
     public class BranchesController : Controller
     {
@@ -25,7 +25,7 @@ namespace MSIS.Controllers
         public IActionResult ListBranches()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = brachRepository.GetUserParentMenuPermission(userId, "Branches");
+            TMS.ViewModels.UserPermissionsViewModel permission = brachRepository.GetUserParentMenuPermission(userId, "Branches");
 
             ListBranchesViewModel model = brachRepository.ListBranches();
             model.userPermission = permission.UserPermissions[0];
@@ -97,7 +97,7 @@ namespace MSIS.Controllers
         {
             BranchDetailsViewModel model = new BranchDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = brachRepository.GetUserParentMenuPermission(userId, "Branches");
+            TMS.ViewModels.UserPermissionsViewModel permission = brachRepository.GetUserParentMenuPermission(userId, "Branches");
 
             if (permission.UserPermissions.Count > 0)
             {

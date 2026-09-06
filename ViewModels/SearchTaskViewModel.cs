@@ -4,9 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MSIS.Models;
+using TMS.Models;
 
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     public class SearchTaskViewModel
     {
@@ -21,6 +21,8 @@ namespace MSIS.ViewModels
         public DateTime ToTaskDate { get; set; }
         public int TaskOwnerId { get; set; }
         public int TaskResponsibleId { get; set; }
+        public bool Exclude { get; set; }
+
         public int ProjectId { get; set; }
         public int BranchId { get; set; }
         public int TaskStatusId { get; set; }
@@ -31,7 +33,7 @@ namespace MSIS.ViewModels
         public List<Employee> Employees { get; set; }
         public List<Branch> Branches { get; set; }
 
-        public List<MSIS.Models.TaskStatus> TaskStatsus { get; set; }
+        public List<TMS.Models.TaskStatus> TaskStatsus { get; set; }
 
 
 

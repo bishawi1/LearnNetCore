@@ -35,6 +35,64 @@
         </div>
     </div>
 </div>
+
+<!-- Search -->
+<div id="toolbar" class="bg-light" style="padding-left:10px; padding-top:10px; padding-bottom:10px;width:auto">
+    <button type="button" class="btn btn-outline-secondary" data-toggle="collapse" data-target="#divCriteria" style="width:auto;">
+        <i class="fa fa-search"></i>
+        Search
+    </button>
+    <button class="btn btn-outline-secondary" id="printReport" style="width:auto"><i class="fa fa-print"></i> Print</button>
+    <br />
+
+    <div class="collapse" id="divCriteria">
+        <div class="flex-container  border" style="padding-left:0px;">
+            <div class="row col-sm-12">
+                <div class="input-group col-sm-5  mt-2">
+                    <span class="input-group-text col-sm-4 " id="FromPurchaseOrderDate-addon">From Order Date</span>
+                    <input id="FromPurchaseOrderDate" type="text" asp-for="@Model.criteria.FromPurchaseOrderDate" class="form-control col-sm-6 datepicker" placeholder="From Order Date" aria-describedby="FromPurchaseOrderDate-addon" />
+                </div>
+
+                <div class="input-group col-sm-5  mt-2">
+                    <span class="input-group-text col-sm-4 " id="ToPurchaseOrderDate-addon">To Order Date</span>
+                    <input id="ToPurchaseOrderDate" type="text" asp-for="@Model.criteria.ToPurchaseOrderDate" class="form-control col-sm-6 datepicker" placeholder="To Order Date" aria-describedby="ToPurchaseOrderDate-addon" />
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="input-group  col-sm-5 mt-2">
+                    <span class="input-group-text col-sm-4 col-form-label">Task Owner</span>
+                    @Html.DropDownListFor(x => @Model.criteria.EmployeeId, new SelectList(@Model.criteria.Employees, "Id", "Name"), new { @id = "EmployeeId", @class = "form-control" })
+                </div>
+                <div class="input-group  col-sm-5 mt-2">
+                    <span class="input-group-text col-sm-4 col-form-label">Supplier</span>
+                    @Html.DropDownListFor(x => @Model.criteria.SupplierId, new SelectList(@Model.criteria.Suppliers, "Id", "SupplierName"), new { @id = "SupplierId", @class = "form-control " })
+                </div>
+            </div>
+            <div class="row col-sm-12">
+                <div class="input-group  col-sm-5 mt-2">
+                    <span class="input-group-text col-sm-4 col-form-label">Project</span>
+                    @Html.DropDownListFor(x => @Model.criteria.ProjectId, new SelectList(@Model.criteria.Projects, "Id", "ProjectName"), new { @id = "ProjectId", @class = "form-control" })
+                </div>
+                <div class="input-group  col-sm-5 mt-2">
+                    <span class="input-group-text col-sm-4 col-form-label">Branch</span>
+                    @Html.DropDownListFor(x => @Model.criteria.BranchId, new SelectList(@Model.criteria.Branches, "Id", "Name"), new { @id = "BranchId", @class = "form-control" })
+                </div>
+            </div>
+
+            @*<div class="row col-sm-12">
+                <div class="input-group col-sm-5 mt-2">
+                    <span id="ContinuousTask-addon" asp-for="ContinuousTask" class="input-group-text col-sm-4 col-form-label">Continuous</span>
+                    <input id="ContinuousTask" type="checkbox" asp-for="@Model.criteria.ContinuousTask" class="form-control col-sm-1" placeholder="OtherInformation" aria-describedby="ContinuousTask-addon" />
+                </div>
+            </div>*@
+        </div>
+        <div class=" mt-3 mb-3">
+            <button onclick="btnTaskSearch_Click()" class="btn btn-outline-secondary" style="width:auto;"><i class="fa fa-running"></i> Search </button>
+        </div>
+
+    </div>
+</div>
+
 @{
     NewOrderCount = Model.CountByStatus.NewOrdersCount;
     ConfirmedCount = Model.CountByStatus.ConfirmedOrdersCount;
@@ -47,21 +105,21 @@
 
 }
 
-    <div class="card">
-        <div class="card-header">
-            <div class="flex-container text-center">
-                <span class="col-11"><h5> Purchase Orders List</h5></span>
-                @if (Model.userPermission != null)
+<div class="card">
+    <div class="card-header">
+        <div class="flex-container text-center">
+            <span class="col-11"><h5> Purchase Orders List</h5></span>
+            @if (Model.userPermission != null)
+            {
+                if (Model.userPermission.CanAdd == true)
                 {
-                    if (Model.userPermission.CanAdd == true)
-                    {
-                        <a class="nav-link btn btn-outline-secondary  btn-sm" asp-action="Create" asp-controller="PurchaseOrders" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
-                    }
+                    <a class="nav-link btn btn-outline-secondary  btn-sm" asp-action="Create" asp-controller="PurchaseOrders" style="width:auto;"><i class="fa fa-plus-circle"></i> <span class="sr-only">(current)</span></a>
                 }
-            </div>
+            }
         </div>
-        <div class="card-body">
-            
+    </div>
+    <div class="card-body">
+        <div id="showOrders">
             <div class="flex-container">
                 <div class="column">
                     <button id="NewOrder" class="numberCircle btn btn-secondary text-center m-1 " style="width:50px;border-radius:20;">@NewOrderCount</button>
@@ -93,152 +151,152 @@
 
             </div>
 
-            <div id="showOrders">
-                @if (Model.ListPurchaseOrders.Any())
-                {
-                    <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
-                        <table class="table table-hover" id="myTable">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>Order No</th>
-                                    <th>Date</th>
-                                    <th>Supplier</th>
-                                    <th>Currency</th>
-                                    <th>Total Price</th>
-                                    <th style="width:50px;">State</th>
+
+            @if (Model.ListPurchaseOrders.Any())
+            {
+                <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
+                    <table class="table table-hover" id="myTable">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Order No</th>
+                                <th>Date</th>
+                                <th>Supplier</th>
+                                <th>Currency</th>
+                                <th>Total Price</th>
+                                <th style="width:50px;">State</th>
+                                <th style="width:30px;"></th>
+                                @if (Model.userPermission.CanDelete)
+                                {
                                     <th style="width:30px;"></th>
-                                    @if (Model.userPermission.CanDelete)
+                                }
+                            </tr>
+                        </thead>
+
+
+
+                        @foreach (var order in Model.ListPurchaseOrders)
+                        {
+
+                            <tr>
+                                <td>@order.PurchaseOrderCode</td>
+                                <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
+                                <td>@order.SupplierName</td>
+                                <td>@order.CurrencyName</td>
+                                <td>@order.TotalPrice</td>
+                                @if (order.StateId == 1)
+                                {
+                                    <td class="bg-secondary text-center">@order.StateName </td>
+                                }
+                                else if (order.StateId == 2)
+                                {
+                                    <td class="bg-primary text-center">@order.StateName </td>
+                                }
+                                else if (order.StateId == 3)
+                                {
+                                    <td class="bg-danger text-center">@order.StateName </td>
+                                }
+                                else if (order.StateId == 4)
+                                {
+                                    <td class="bg-info text-center">@order.StateName </td>
+                                }
+                                else if (order.StateId == 5)
+                                {
+                                    <td class="bg-warning text-center">@order.StateName </td>
+                                }
+                                else if (order.StateId == 6)
+                                {
+                                    <td class="bg-success text-center">@order.StateName </td>
+                                }
+                                else if (order.StateId == 7)
+                                {
+                                    <td style="background-color:lightgreen" class="text-center">@order.StateName </td>
+                                }
+                                else if (order.StateId == 9)
+                                {
+                                    <td style="background-color:wheat" class="text-center">@order.StateName </td>
+                                }
+                                <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>
+                                @if (Model.userPermission.CanDelete)
+                                {
+                                    @if (order.StateId == 1)// New
                                     {
-                                        <th style="width:30px;"></th>
+                                        <td>
+                                            <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
+                                               onclick="contDelete('@order.Id',true)"><i class="fa fa-trash"></i></a>
+                                        </td>
                                     }
+                                    else
+                                    {
+                                        <td>
+                                        </td>
+                                    }
+                                }
+
+                            </tr>
+
+                        }
+                        @if (Model.ListPurchaseOrders.Any())
+                        {
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
-                            </thead>
-
-
-
-                            @foreach (var order in Model.ListPurchaseOrders)
-                            {
-
-                        <tr>
-                            <td>@order.PurchaseOrderCode</td>
-                            <td>@order.PurchaseOrderDate.ToString("dd/MM/yyyy")</td>
-                            <td>@order.SupplierName</td>
-                            <td>@order.CurrencyName</td>
-                            <td>@order.TotalPrice</td>
-                            @if (order.StateId == 1)
-                            {
-                                <td class="bg-secondary text-center">@order.StateName </td>
-                            }
-                            else if (order.StateId == 2)
-                            {
-                                <td class="bg-primary text-center">@order.StateName </td>
-                            }
-                            else if (order.StateId == 3)
-                            {
-                                <td class="bg-danger text-center">@order.StateName </td>
-                            }
-                            else if (order.StateId == 4)
-                            {
-                                <td class="bg-info text-center">@order.StateName </td>
-                            }
-                            else if (order.StateId == 5)
-                            {
-                                <td class="bg-warning text-center">@order.StateName </td>
-                            }
-                            else if (order.StateId == 6)
-                            {
-                                <td class="bg-success text-center">@order.StateName </td>
-                            }
-                            else if (order.StateId == 7)
-                            {
-                                <td style="background-color:lightgreen" class="text-center">@order.StateName </td>
-                            }
-                            else if (order.StateId == 9)
-                            {
-                                <td style="background-color:wheat" class="text-center">@order.StateName </td>
-                            }
-                            <td><a class="btn btn-outline-primary btn-sm rounded-circle " style="width:auto" asp-action="Details" asp-controller="PurchaseOrders" asp-route-Id="@order.Id"><i class="fa fa-eye"></i></a></td>
-                            @if (Model.userPermission.CanDelete)
-                            {
-                                @if (order.StateId == 1)// New
+                                @foreach (var total in Model.PurchaseOrderTotals)
                                 {
-                                    <td>
-                                        <a href="#" class="btn btn-outline-danger rounded-circle btn-sm" style="width:auto"
-                                           onclick="contDelete('@order.Id',true)"><i class="fa fa-trash"></i></a>
-                                    </td>
-                                }
-                                else
-                                {
-                                    <td>
-                                    </td>
-                                }
-                            }
-
-                        </tr>
-
-                            }
-                            @if (Model.ListPurchaseOrders.Any())
-                            {
-                                <tfoot>
                                     <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
+                                        <td colspan=4></td>
+                                        <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
                                     </tr>
-                                    @foreach (var total in Model.PurchaseOrderTotals)
-                                    {
-                                        <tr>
-                                            <td colspan=4></td>
-                                            <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
-                                        </tr>
-                                    }
-                                </tfoot>
-                            }
-                        </table>
-                    </div>
-                }
-            </div>
+                                }
+                            </tfoot>
+                        }
+                    </table>
+                </div>
+            }
         </div>
     </div>
+</div>
 
-    @section Scripts{
+@section Scripts{
 
-        <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
-        <script src="~/js/CustomScript.js"></script>
-        <script src="~/lib/printthis/printThis.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/js/CustomScript.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>
 
-        <script>
-            $(window).ready(function () {
-                $('#mnuTMS').removeClass('collapse show');
-                $('#mnuPurchaseOrders').addClass('collapse show');
-                $('#mnuTMS').addClass('collapse hide');
-            });
+    <script>
+        $(window).ready(function () {
+            $('#mnuTMS').removeClass('collapse show');
+            $('#mnuPurchaseOrders').addClass('collapse show');
+            $('#mnuTMS').addClass('collapse hide');
+        });
 
-            //---------------Confirm Item Delete
-            function contDelete(ItemId) {
-                $('#txtDeleteItemID').val(ItemId);
-                $('#dlgConfirmDelete').modal('show');
-            };
+        //---------------Confirm Item Delete
+        function contDelete(ItemId) {
+            $('#txtDeleteItemID').val(ItemId);
+            $('#dlgConfirmDelete').modal('show');
+        };
 
-            //-------------- Delete Item Button
-            function DeleteItem() {
-                $.post('/PurchaseOrders/Delete',
-                    {
-                        Id: $('#txtDeleteItemID').val()
-                    },
-                    function (response, status) {
-                        location.reload(true);
+        //-------------- Delete Item Button
+        function DeleteItem() {
+            $.post('/PurchaseOrders/Delete',
+                {
+                    Id: $('#txtDeleteItemID').val()
+                },
+                function (response, status) {
+                    location.reload(true);
 
-                    }
-                );
-            };
+                }
+            );
+        };
 
-//----------------------------- filter By State
+        //----------------------------- filter By State
         $('#NewOrder').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListNewPurchaseOrders',
+                url: '/PurchaseOrders/ListNewPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -249,7 +307,7 @@
 
         $('#ConfirmedOrder').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListConfirmedPurchaseOrders',
+                url: '/PurchaseOrders/ListConfirmedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -260,7 +318,7 @@
 
         $('#RejectedOrder').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListRejectedPurchaseOrders',
+                url: '/PurchaseOrders/ListRejectedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -271,7 +329,7 @@
 
         $('#ApprovedOrder').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListApprovedPurchaseOrders',
+                url: '/PurchaseOrders/ListApprovedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -281,7 +339,7 @@
         });
         $('#WaitingForDelivery').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListWaitingForDeliveryPurchaseOrders',
+                url: '/PurchaseOrders/ListWaitingForDeliveryPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -291,7 +349,7 @@
         });
         $('#Delivered').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListDeliveredPurchaseOrders',
+                url: '/PurchaseOrders/ListDeliveredPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -301,7 +359,7 @@
         });
         $('#PayedOrder').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListPayedPurchaseOrders',
+                url: '/PurchaseOrders/ListPayedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -311,7 +369,7 @@
         });
         $('#DeliveredPartialy').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListDeliveredPartialyPurchaseOrders',
+                url: '/PurchaseOrders/ListDeliveredPartialyPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -322,7 +380,7 @@
 
         $('#showAll').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListAllPurchaseOrders',
+                url: '/PurchaseOrders/ListAllPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -330,5 +388,22 @@
                 }
             });
         });
-        </script>
-    }
+
+        function btnTaskSearch_Click() {
+                $.post("/PurchaseOrders/PurchaseOrdersSearchAsync",
+                    {
+                        EmployeeId: $('#EmployeeId').val(),
+                        SupplierId: $('#SupplierId').val(),
+                        ProjectId: $('#ProjectId').val(),
+                        FromPurchaseOrderDate: $('#FromPurchaseOrderDate').val(),
+                        ToPurchaseOrderDate: $('#ToPurchaseOrderDate').val(),
+                        BranchId: $('#BranchId').val()@*,
+                        ContinuousTask: $('#ContinuousTask').is(":checked"),
+                        strGroupBy: "@Model.criteria.strGroupBy"*@
+                    },
+                    function (data, status) {
+                        $('#showOrders').html(data);
+                    });
+            };
+    </script>
+}

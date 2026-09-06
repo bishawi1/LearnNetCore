@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MSIS.Migrations
+namespace TMS.Migrations
 {
     public partial class NewCustomer : Migration
     {
@@ -8,7 +8,7 @@ namespace MSIS.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Address",
-                table: "Customers",
+                table: "Customer",
                 type: "nvarchar(300)",
                 nullable: true,
                 oldClrType: typeof(string),
@@ -20,7 +20,7 @@ namespace MSIS.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Address",
-                table: "Customers",
+                table: "Customer",
                 type: "nvarchar(200)",
                 nullable: true,
                 oldClrType: typeof(string),

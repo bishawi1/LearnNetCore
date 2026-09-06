@@ -19675,6 +19675,7 @@
       "GitHub >= 1.14.2",
       "MailKit >= 2.5.0",
       "Microsoft.AspNetCore.App >= 2.2.7",
+      "Microsoft.AspNetCore.Authentication.JwtBearer >= 2.2.0",
       "Microsoft.AspNetCore.Razor.Design >= 2.2.0",
       "Microsoft.EntityFrameworkCore.SqlServer >= 2.2.6",
       "Microsoft.NETCore.App >= 2.2.7",
@@ -19739,6 +19740,10 @@
             "target": "Package",
             "version": "[2.2.7, )",
             "autoReferenced": true
+          },
+          "Microsoft.AspNetCore.Authentication.JwtBearer": {
+            "target": "Package",
+            "version": "[2.2.0, )"
           },
           "Microsoft.AspNetCore.Razor.Design": {
             "suppressParent": "All",

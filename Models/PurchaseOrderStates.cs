@@ -1,4 +1,4 @@
-﻿namespace MSIS.Models
+﻿namespace TMS.Models
 {
     public class PurchaseOrderStates
     {

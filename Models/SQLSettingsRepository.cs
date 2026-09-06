@@ -1,16 +1,16 @@
-﻿using MSIS.Models;
+﻿using TMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.ViewModels;
+using TMS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 //using System.Net.Mail;
 using MimeKit;
 using MailKit.Net.Smtp;
 
-namespace MSIS.Models
+namespace TMS.Models
 {
     public class SQLSettingsRepository
     {
@@ -19,16 +19,17 @@ namespace MSIS.Models
         {
             this.context = context;
         }
+        public AppDBContext getContext()
+        {
+            return context;
+        }
+        #region "Mail"
         public Boolean SendMailOnCreateTask()
         {
             Setting settings= context.Settings.Find(1);
             bool sendMail = settings.SendMailOnCreateTask;
             
             return sendMail;
-        }
-        public AppDBContext getContext()
-        {
-            return context;
         }
         public string SendEmail(List<int> Employees, string Message)
         {
@@ -70,57 +71,6 @@ namespace MSIS.Models
                     return "Setting not Found!";
                 }
 
-                    //Setting settings = context.Settings.Find(1);
-                    //if (settings != null)
-                    //{
-                    //    using (MailMessage mail = new MailMessage())
-                    //    {
-                    //        mail.From = new MailAddress(settings.SenderEmail.Trim());
-                    //        foreach (int employeeId in Employees)
-                    //        {
-                    //            Employee employee = context.Employees.Find(employeeId);
-                    //            if (employee != null)
-                    //            {
-                    //                mail.To.Add(new MailAddress(employee.Email.Trim()));
-                    //            }
-                    //        }                    // Credentials
-                    //        mail.Subject = "Email Sender App";
-                    //        mail.Body = Message;
-                    //        mail.IsBodyHtml = true;
-                    //        //var credentials = new NetworkCredential(settings.SenderEmail, settings.SenderMailPassword);
-                    //        // Mail message
-
-                    //        mail.BodyEncoding = System.Text.Encoding.UTF8;
-                    //        mail.SubjectEncoding = System.Text.Encoding.UTF8;
-                    //        using (SmtpClient smtp = new SmtpClient(settings.SMTPServer.Trim(), settings.Port))
-                    //        {
-                    //            smtp.Credentials = new NetworkCredential(settings.SenderEmail.Trim(), settings.SenderMailPassword);
-                    //            smtp.EnableSsl = true;
-                    //            //smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    //            smtp.UseDefaultCredentials = false;
-                    //            smtp.Timeout = 30000000;
-                    //            smtp.Send(mail);
-                    //        }
-                    //    }
-                    //    //// Smtp client
-                    //    //var client = new SmtpClient()
-                    //    //{
-                    //    //    Port = settings.Port,// 587,
-                    //    //    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    //    //    UseDefaultCredentials = false,
-                    //    //    Host = settings.SMTPServer,
-                    //    //    EnableSsl = true,
-                    //    //    Credentials = credentials
-                    //    //};
-
-                    //    //client.Send(mail);
-
-                    //    return "Email Sent Successfully!";
-                    //}
-                    //else
-                    //{
-                    //    return "employee not Found!";
-                    //}
                 }
             catch (System.Exception e)
             {
@@ -148,16 +98,10 @@ namespace MSIS.Models
             }
             return "";
         }
-        public UserPermissionsViewModel GetSettingsUserParentMenuPermission(string UserId, string PageName)
-        {
-            UserPermissionsViewModel model = new UserPermissionsViewModel();
-            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Settings' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
-            var Menues = result.Select(x => x.ParentName).Distinct().ToList();
-            model.ParentMenus = Menues;
-            model.UserPermissions = result;
-            return model;
-        }
+        #endregion
 
+
+        #region "Currency"
         //----------------------- Currency
         public string ValidateDeletCurrency(int Id)
         {
@@ -220,8 +164,9 @@ namespace MSIS.Models
             return currencyChanges;
         }
         //--------------End Currency
+        #endregion
 
-
+        #region "Units"
         //----------------------- Units
         public ListItemUnitsViewModel ListItemUnits()
         {
@@ -284,8 +229,10 @@ namespace MSIS.Models
             context.SaveChanges();
             return itemUnitChanges;
         }
-        //--------------End Currency
+        //--------------End Units
+        #endregion
 
+        #region "Item Category"
         //----------------------- Item Category
         public string ValidateDeletItemCategory(int Id)
         {
@@ -342,6 +289,9 @@ namespace MSIS.Models
             return itemCategoryChanges;
         }
         //--------------End Category
+        #endregion
+
+        #region "Main Item"
         //----------------------- Main Item 
         public string ValidateDeletMainItem(int Id)
         {
@@ -422,8 +372,9 @@ namespace MSIS.Models
             return mainItemChanges;
         }
         //--------------End Main Item
+        #endregion
 
-
+        #region "Item"
         //-----------------------  Item 
         public string ValidateDeletItem(int Id)
         {
@@ -527,6 +478,9 @@ namespace MSIS.Models
         }
 
         //--------------End Item
+        #endregion
+
+        #region "Period Type"
         //-----------------------  Period Type 
         public string ValidateDeletPeriodType(int Id)
         {
@@ -577,8 +531,10 @@ namespace MSIS.Models
         }
 
         //--------------End Period Type
-        //----------------------- PurchaseOrderPermission
+        #endregion
 
+        #region "PurchaseOrderPermission"
+        //----------------------- PurchaseOrderPermission
 
         public PurchaseOrderPermission AddPurchaseOrderPermission(PurchaseOrderPermission purchaseOrderPermission)
         {
@@ -617,6 +573,8 @@ namespace MSIS.Models
                               AllowDelivery = permission.AllowDelivery,
                               AllowPrint = permission.AllowPrint,
                               AllowVerify =permission.AllowVerify,
+                              AllowBackToNew=permission.AllowBackToNew,
+                              AllowPay=permission.AllowPay,
                               Id =permission.Id,
                               UserId = permission.UserId,
                               UserName=user.UserName
@@ -653,9 +611,21 @@ namespace MSIS.Models
             context.SaveChanges();
             return purchaseOrderPermissionChanges;
         }
-        //--------------End Currency
+        //--------------End PurchaseOrderPermission
+        #endregion
 
+        #region "RolePages"
         //--------------Roles
+        public UserPermissionsViewModel GetSettingsUserParentMenuPermission(string UserId, string PageName)
+        {
+            UserPermissionsViewModel model = new UserPermissionsViewModel();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSqlInterpolated($"SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Settings' And UserId = {UserId} And PageName ={PageName}").ToList();
+            var Menues = result.Select(x => x.ParentName).Distinct().ToList();
+            model.ParentMenus = Menues;
+            model.UserPermissions = result;
+            return model;
+        }
+
         public Boolean verifyRolePages(string RoleId)
         {
             var pages = context.Pages.ToList();
@@ -757,7 +727,7 @@ namespace MSIS.Models
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
-            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where UserId = '" + UserId +"'").ToList();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSqlInterpolated($"SELECT * FROM dbo.UserAllowedParentMenu Where UserId = {UserId}").ToList();
             var Menues= result.Select(x => x.ParentName).Distinct().ToList();
             model.ParentMenus = Menues;
             model.UserPermissions = result;
@@ -766,19 +736,22 @@ namespace MSIS.Models
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
-            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSqlInterpolated($"SELECT * FROM dbo.UserAllowedParentMenu Where UserId = {UserId} And PageName ={PageName}").ToList();
             var Menues = result.Select(x => x.ParentName).Distinct().ToList();
             model.ParentMenus = Menues;
             model.UserPermissions = result;
             return model;
         }
-//---------------------- User Projects
+        #endregion
+
+            #region "User Projects"
+            //---------------------- User Projects
         public List<SQLUserProjectsViewModel> GetUserProjects(string UserId)
         {
             List<SQLUserProjectsViewModel> userProjects = null;
             try
             {
-                var result=context.vUserProjects.FromSql("SELECT * FROM dbo.vUserProjects Where UserId = '" + UserId + "'").ToList();
+                var result=context.vUserProjects.FromSqlInterpolated($"SELECT * FROM dbo.vUserProjects Where UserId = {UserId}").ToList();
                 userProjects = result;
             }
             catch(Exception ex)
@@ -815,13 +788,16 @@ namespace MSIS.Models
             context.SaveChanges();
             return userProject;
         }
+        #endregion
+
+        #region "User Branches"
         //---------------------- User Branches
         public List<SQLUserBranchesViewModel> GetUserBranches(string UserId)
         {
             List<SQLUserBranchesViewModel> userBranches = null;
             try
             {
-                var result = context.vUserBranches.FromSql("SELECT * FROM dbo.vUserBranches Where UserId = '" + UserId + "'").ToList();
+                var result = context.vUserBranches.FromSqlInterpolated($"SELECT * FROM dbo.vUserBranches Where UserId = {UserId}").ToList();
                 userBranches = result;
             }
             catch (Exception ex)
@@ -865,13 +841,16 @@ namespace MSIS.Models
             context.SaveChanges();
             return userBranch;
         }
+        #endregion
+
+        #region "User Employees"
         //---------------------- User Employees
         public List<SQLUserEmployeesViewModel> GetUserEmployees(string UserId)
         {
             List<SQLUserEmployeesViewModel> userEmployees = null;
             try
             {
-                var result = context.vUserEmployees.FromSql("SELECT * FROM dbo.vUserEmployees Where UserId = '" + UserId + "'").ToList();
+                var result = context.vUserEmployees.FromSqlInterpolated($"SELECT * FROM dbo.vUserEmployees Where UserId = {UserId}").ToList();
                 userEmployees = result;
             }
             catch (Exception ex)
@@ -916,6 +895,6 @@ namespace MSIS.Models
             context.SaveChanges();
             return userEmployee;
         }
-
+        #endregion
     }
 }

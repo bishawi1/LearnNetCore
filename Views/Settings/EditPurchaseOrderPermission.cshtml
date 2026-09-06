@@ -43,6 +43,16 @@
                 <span asp-validation-for="AllowPrint" class="text-danger"></span>
             </div>
             <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="AllowBackToNew-addon">Allow BackToNew</span>
+                <input asp-for="AllowBackToNew" class="form-control col-sm-1" placeholder="Allow BackToNew" aria-describedby="AllowBackToNew-addon" />
+                <span asp-validation-for="AllowBackToNew" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
+                <span class="input-group-text col-sm-2 " id="AllowPay-addon">Allow Pay</span>
+                <input asp-for="AllowPay" class="form-control col-sm-1" placeholder="Allow Pay" aria-describedby="AllowPay-addon" />
+                <span asp-validation-for="AllowPay" class="text-danger"></span>
+            </div>
+            <div class="input-group col-sm-12 mt-1 row">
                 <span class="input-group-text col-sm-2 " id="AllowVerify-addon">Allow Verify</span>
                 <input asp-for="AllowVerify" class="form-control col-sm-1" placeholder="Allow Verify" aria-describedby="AllowVerify-addon" />
                 <span asp-validation-for="AllowVerify" class="text-danger"></span>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MSIS.Models
+namespace TMS.Models
 {
     public class userPermission
     {

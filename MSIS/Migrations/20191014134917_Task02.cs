@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MSIS.Migrations
+namespace TMS.Migrations
 {
     public partial class Task02 : Migration
     {

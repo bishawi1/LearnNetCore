@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.Models;
-namespace MSIS.ViewModels
+using TMS.Models;
+namespace TMS.ViewModels
 {
     public class HomeDetailsViewModel
     {

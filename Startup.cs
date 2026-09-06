@@ -1,23 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using MSIS.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Newtonsoft.Json.Serialization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using Microsoft.Extensions.Logging;
+using TMS.Models;
+using Newtonsoft.Json.Serialization;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 
-namespace MSIS
+
+namespace TMS
 {
     public class Startup
     {
@@ -29,6 +32,8 @@ namespace MSIS
         {
             services.AddDbContextPool<AppDBContext>(options => options.UseSqlServer(_config.GetConnectionString("EmployeeDBConnectionString")));
             //services.AddDbContextPool<AppDBContext>(options => options.UseMySQL(_config.GetConnectionString("TMSDBConnectionString")));
+            
+            services.AddControllersWithViews(); // or AddRazorPages(), depending on your app
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options => {
                 options.Password.RequiredLength = 6;
@@ -44,21 +49,36 @@ namespace MSIS
             //    options.Password.RequireNonAlphanumeric = false;
             //});
             services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(5));
-            services.AddMvc(options=> {
-                var policy = new AuthorizationPolicyBuilder()
-                               .RequireAuthenticatedUser()
-                               .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
+            //services.AddMvc(options=> {
+            //    var policy = new AuthorizationPolicyBuilder()
+            //                   .RequireAuthenticatedUser()
+            //                   .Build();
+            //    options.Filters.Add(new AuthorizeFilter(policy));
 
-            }).AddXmlSerializerFormatters()
-            .AddJsonOptions(Options =>
-             {
-                 var resolver = Options.SerializerSettings.ContractResolver;
-                 if (resolver != null)
-                 {
-                     (resolver as DefaultContractResolver).NamingStrategy = null;
-                 }
-             });
+            //}).AddXmlSerializerFormatters()
+            //.AddJsonOptions(Options =>
+            // {
+            //     var resolver = Options.SerializerSettings.ContractResolver;
+            //     if (resolver != null)
+            //     {
+            //         (resolver as DefaultContractResolver).NamingStrategy = null;
+            //     }
+            // });
+            services.AddMvc(options =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            })
+            .AddXmlSerializerFormatters()
+            .AddNewtonsoftJson(options =>
+            {
+                if (options.SerializerSettings.ContractResolver is DefaultContractResolver resolver)
+                {
+                    resolver.NamingStrategy = null; // Preserves property name casing
+                }
+            });
             services.AddSession(options=> {
                 options.IdleTimeout = TimeSpan.FromSeconds(3600);
             });
@@ -80,7 +100,7 @@ namespace MSIS
             _config = config;
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -105,13 +125,30 @@ namespace MSIS
             //    RequestPath = new PathString("/images")
             //});
             app.UseAuthentication();
-            //app.UseCookiePolicy();
+            app.UseCookiePolicy();
             app.UseSession();
-            app.UseMvc(Routes =>
+
+            app.UseRouting();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                Routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-            //app.UseMvcWithDefaultRoute();
-       }
+
+
+
+
+
+
+
+            //app.UseMvc(Routes =>
+            //{
+            //    Routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            //});
+            ////app.UseMvcWithDefaultRoute();
+        }
     }
 }

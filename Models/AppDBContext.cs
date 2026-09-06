@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using MSIS.ViewModels;
+using TMS.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace MSIS.Models
+namespace TMS.Models
 {
     public class AppDBContext:IdentityDbContext<ApplicationUser>
     {
@@ -71,6 +71,10 @@ namespace MSIS.Models
         public DbSet<UserBranch> UserBranches { get; set; }
         public DbSet<UserEmployee> UserEmployees { get; set; }
         public DbSet<SQLUserEmployeesViewModel> vUserEmployees { get; set; }
+
+        public DbSet<MainMenu> MainMenus { get; set; }
+        public DbSet<SubMenu> SubMenus { get; set; }
+        public DbSet<SQLMainMenuPermissions> MainMenuPermissions { get; set; }
 
 
     }

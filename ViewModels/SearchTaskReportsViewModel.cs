@@ -1,10 +1,10 @@
-﻿using MSIS.Models;
+﻿using TMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     public class SearchTaskReportsViewModel
     {
@@ -27,7 +27,7 @@ namespace MSIS.ViewModels
         public List<Project> Projects { get; set; }
         public List<Employee> Employees { get; set; }
         public List<Branch> Branches { get; set; }
-        public List<MSIS.Models.TaskStatus> TaskStatsus { get; set; }
+        public List<TMS.Models.TaskStatus> TaskStatsus { get; set; }
 
     }
 }

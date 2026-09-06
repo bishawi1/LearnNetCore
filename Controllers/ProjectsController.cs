@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using MSIS.ViewModels;
-using MSIS.Models;
+using TMS.ViewModels;
+using TMS.Models;
 using System.Security.Claims;
 
-namespace MSIS.Controllers
+namespace TMS.Controllers
 {
     public class ProjectsController : Controller
     {
@@ -66,7 +66,7 @@ namespace MSIS.Controllers
         public IActionResult ListProjects()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = projectsRepository.GetUserParentMenuPermission(userId, "projects");
+            TMS.ViewModels.UserPermissionsViewModel permission = projectsRepository.GetUserParentMenuPermission(userId, "projects");
 
             ListProjectsViewModels model = projectsRepository.ListProjects();
             model.userPermission = permission.UserPermissions[0];
@@ -80,7 +80,7 @@ namespace MSIS.Controllers
         {
             ProjectDetailsViewModels model = new ProjectDetailsViewModels();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = projectsRepository.GetUserParentMenuPermission(userId, "projects");
+            TMS.ViewModels.UserPermissionsViewModel permission = projectsRepository.GetUserParentMenuPermission(userId, "projects");
 
             if (permission.UserPermissions.Count > 0)
             {
@@ -89,7 +89,7 @@ namespace MSIS.Controllers
 
             Project project = projectsRepository.GetProject(Id);
             Customer customer = customersRepository.GetCustomer(project.ProjectOwner);
-            MSIS.ViewModels.ProjectDetailViewModel details = new ViewModels.ProjectDetailViewModel() {
+            TMS.ViewModels.ProjectDetailViewModel details = new ViewModels.ProjectDetailViewModel() {
                 Code = project.ProjectSerial.ToString() + "/" + project.ProjectYear.ToString() ,
                 Address=project.Address,
                 ProjectSerial=project.ProjectSerial,
@@ -110,7 +110,7 @@ namespace MSIS.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var project = new MSIS.ViewModels.CreateProjectViewModel();
+            var project = new TMS.ViewModels.CreateProjectViewModel();
             project.Customers = customersRepository.GetAllCustomers().ToList();
             project.Customers.Insert(0,new Customer() { 
             Id=-1,
@@ -121,7 +121,7 @@ namespace MSIS.Controllers
             return View(project);
         }
         [HttpPost]
-        public IActionResult Create(MSIS.ViewModels.CreateProjectViewModel model)
+        public IActionResult Create(TMS.ViewModels.CreateProjectViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -145,7 +145,7 @@ namespace MSIS.Controllers
         public IActionResult Edit(int Id)
         {
             var project = projectsRepository.GetProject(Id);
-            var model = new MSIS.ViewModels.CreateProjectViewModel();
+            var model = new TMS.ViewModels.CreateProjectViewModel();
             model.Customers = customersRepository.GetAllCustomers().ToList();
             
             model.Id = project.Id;
@@ -161,7 +161,7 @@ namespace MSIS.Controllers
             return View(model);
         }
         [HttpPost]
-        public IActionResult Edit(MSIS.ViewModels.CreateProjectViewModel model)
+        public IActionResult Edit(TMS.ViewModels.CreateProjectViewModel model)
         {
             if (ModelState.IsValid)
             {

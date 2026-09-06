@@ -1,0 +1,4 @@
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp3.0\MultiSolution.csprojAssemblyReference.cache
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp3.0\MultiSolution.MvcApplicationPartsAssemblyInfo.cache
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp3.0\MultiSolution.AssemblyInfoInputs.cache
+E:\Home Programs\Web\MultiSolution\MultiSolution\MultiSolution\obj\Debug\netcoreapp3.0\MultiSolution.AssemblyInfo.cs

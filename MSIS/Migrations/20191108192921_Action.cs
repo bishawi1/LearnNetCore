@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace MSIS.Migrations
+namespace TMS.Migrations
 {
     public partial class Action : Migration
     {

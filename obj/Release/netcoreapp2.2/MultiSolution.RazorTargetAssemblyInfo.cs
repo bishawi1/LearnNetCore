@@ -17,7 +17,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultiSolution")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3a34d09c4995f9d8d3b7841d5fb2c82f94015cea")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultiSolution.Views")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 

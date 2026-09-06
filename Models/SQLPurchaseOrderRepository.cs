@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.ViewModels;
+using TMS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace MSIS.Models
+namespace TMS.Models
 {
     public class SQLPurchaseOrderRepository
     {
@@ -28,43 +28,230 @@ namespace MSIS.Models
             }
 
         }
-
+        
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
         {            
             UserPermissionsViewModel model = new UserPermissionsViewModel();
-            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'PurchaseOrder' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSqlInterpolated($"SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'PurchaseOrder' And UserId = {UserId} And PageName ={PageName}").ToList();
             var Menues = result.Select(x => x.ParentName).Distinct().ToList();
             model.ParentMenus = Menues;
             model.UserPermissions = result;
             return model;
         }
-        public MSIS.ViewModels.ListPurchaseOrdersViewModel getPurchaseOrderList(int StateId,int BranchId)
+        //-------------------------------------------------------------------
+        #region Last
+        public List<TMS.ViewModels.ListPurchaseOrderDetailsViewModel> getPurchaseOrderListDetails(TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel criteria)
         {
+            criteria = criteria ?? new TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel();
             var strWhere = "";
-            if (StateId!=0)
+            if (criteria.StateId != 0)
             {
                 if (strWhere != "")
                 {
                     strWhere = strWhere + " And ";
                 }
-                strWhere = " StateId = " + StateId.ToString();
+                strWhere = " StateId = " +criteria.StateId.ToString();
             }
-            if (BranchId != 0)
+            if (criteria.BranchId != -1)
             {
                 if (strWhere != "")
                 {
                     strWhere = strWhere + " And ";
                 }
-                strWhere = strWhere + " BranchId = " + BranchId.ToString();
+                strWhere = strWhere + " BranchId = " + criteria.BranchId.ToString();
+            }
+            if (criteria.EmployeeId != -1)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " EmployeeId = " + criteria.EmployeeId.ToString();
+            }
+            if (criteria.SupplierId != -1)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " SupplierId = " + criteria.SupplierId.ToString();
+            }
+            if (criteria.ProjectId != -1)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " ProjectId = " + criteria.ProjectId.ToString();
+            }
+            if (criteria.FromPurchaseOrderDate.Year > 1)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " PurchaseOrderDate >= '" + criteria.FromPurchaseOrderDate.ToString() + "'";
+            }
+            if (criteria.ToPurchaseOrderDate.Year > 1)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " PurchaseOrderDate <= '" + criteria.ToPurchaseOrderDate.ToString() + "'";
             }
             if (strWhere != "")
             {
                 strWhere = " Where " + strWhere;
             }
-            var result =context.SQLListPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders " + strWhere).ToList();
+            var result = context.SQLListPurchaseOrderDetailsViewModel.FromSqlRaw("SELECT * FROM dbo.vPurchaseOrders " + strWhere).ToList();
+            return result;
+        }
+        public List<TMS.ViewModels.PurchaseOrderTotalsViewModel> getPurchaseOrderListTotals(TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel criteria)
+        {
+            criteria = criteria ?? new TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel();
+            var strWhere = "";
+            if (criteria.StateId != 0)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = " StateId = " + criteria.StateId.ToString();
+            }
+            if (criteria.BranchId != 0)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " BranchId = " + criteria.BranchId.ToString();
+            }
+            if (strWhere != "")
+            {
+                strWhere = " Where " + strWhere;
+            }
+            var Totals = context.PurchaseOrdersTotals.FromSqlRaw("SELECT CurrencyId, CurrencyCode, CurrencyName, SUM(TotalPrice) AS TotalAmount FROM dbo.vPurchaseOrders " + strWhere + " GROUP BY CurrencyId, CurrencyCode, CurrencyName").ToList();
+            return Totals;
+        }
+        public TMS.ViewModels.PurchaseOrdersCountByStatusViewModel getPurchaseOrdersCountByStatus(List<TMS.ViewModels.ListPurchaseOrderDetailsViewModel> result)
+        {
+            PurchaseOrdersCountByStatusViewModel model = new PurchaseOrdersCountByStatusViewModel();
+            var CountByStatus = result.Where(x => x.StateId == 1)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.NewOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 2)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.ConfirmedOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 3)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.RejectedOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 4)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.ApprovedOrdersCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 5)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.WaitForDeliveryCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 6)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.DeliveredCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 7)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.DeliveredPartialyCount = CountByStatus.OrderCount;
+            }
+            CountByStatus = result.Where(x => x.StateId == 9)
+                                     .GroupBy(x => new { OrderStatusId = x.StateId })
+                                     .Select(x => new { OrderCount = x.Count() }).FirstOrDefault();
+            if (CountByStatus != null)
+            {
+                model.PayedOrderCount = CountByStatus.OrderCount;
+            }
+            return model;
+        }
+        public UserPermissionsViewModel getUserPermission(string UserId, string PageName)
+        {
+            UserPermissionsViewModel model = new UserPermissionsViewModel();
+            model = GetUserParentMenuPermission(UserId, PageName);
+            return model;
+        }
+        public TMS.ViewModels.ListPurchaseOrdersViewModel getPurchaseOrderList(TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel criteria,string UserId, string PageName)
+        {
+            criteria = criteria ?? new TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel();
+            ListPurchaseOrdersViewModel model = new ListPurchaseOrdersViewModel();
+            model.ListPurchaseOrders = getPurchaseOrderListDetails(criteria);
+            model.PurchaseOrderTotals = getPurchaseOrderListTotals(criteria);
+            if (criteria.StateId != 0)
+            {
+                List<ListPurchaseOrderDetailsViewModel> temp = new List<ListPurchaseOrderDetailsViewModel>();
+                criteria.StateId = 0;
+                temp= getPurchaseOrderListDetails(criteria);
+                model.CountByStatus = getPurchaseOrdersCountByStatus(temp);
+            }
+            else
+            {
+                model.CountByStatus = getPurchaseOrdersCountByStatus(model.ListPurchaseOrders);
+            }
+            model.userPermission = getUserPermission(UserId, PageName).UserPermissions[0];
+            return model;// projectDetailViewModel;
+        }
+        #endregion
+
+
+        public TMS.ViewModels.ListPurchaseOrdersViewModel getPurchaseOrderList(TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel criteria)
+        {
+            criteria = criteria ?? new TMS.ViewModels.PurchaseOrderSearchCriteriaViewModel();
+            var strWhere = "";
+            if (criteria.SupplierId!=-1)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = " SupplierId = " + criteria.SupplierId.ToString();
+            }
+            if (criteria.BranchId != 0)
+            {
+                if (strWhere != "")
+                {
+                    strWhere = strWhere + " And ";
+                }
+                strWhere = strWhere + " BranchId = " + criteria.BranchId.ToString();
+            }
+            if (strWhere != "")
+            {
+                strWhere = " Where " + strWhere;
+            }
+            var result =context.SQLListPurchaseOrderDetailsViewModel.FromSqlRaw("SELECT * FROM dbo.vPurchaseOrders " + strWhere).ToList();
             ListPurchaseOrdersViewModel model = new ListPurchaseOrdersViewModel();
             model.CountByStatus = new PurchaseOrdersCountByStatusViewModel();
-            var Totals = context.PurchaseOrdersTotals.FromSql("SELECT CurrencyId, CurrencyCode, CurrencyName, SUM(TotalPrice) AS TotalAmount FROM dbo.vPurchaseOrders " + strWhere + " GROUP BY CurrencyId, CurrencyCode, CurrencyName").ToList();
+            var Totals = context.PurchaseOrdersTotals.FromSqlRaw("SELECT CurrencyId, CurrencyCode, CurrencyName, SUM(TotalPrice) AS TotalAmount FROM dbo.vPurchaseOrders " + strWhere + " GROUP BY CurrencyId, CurrencyCode, CurrencyName").ToList();
             
             var CountByStatus = result.Where(x => x.StateId == 1)
                                      .GroupBy(x => new { OrderStatusId = x.StateId })
@@ -239,12 +426,12 @@ namespace MSIS.Models
             context.SaveChanges();
             return purchaseOrderChanges;
         }
-        public MSIS.ViewModels.PurchaseOrderDetailsViewModel getPurchaseOrderDetails(int Id)
+        public TMS.ViewModels.PurchaseOrderDetailsViewModel getPurchaseOrderDetails(int Id)
         {
             try
             {
-            var result = context.SQLPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders Where Id = " + Id.ToString()).ToList();
-            var Details = context.SQLPurchaseOrderItemsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrdersDetails Where PuchaseOrderId = " + Id.ToString()).ToList();
+            var result = context.SQLPurchaseOrderDetailsViewModel.FromSqlInterpolated($"SELECT * FROM dbo.vPurchaseOrders Where Id = {Id.ToString()}" ).ToList();
+            var Details = context.SQLPurchaseOrderItemsViewModel.FromSqlInterpolated($"SELECT * FROM dbo.vPurchaseOrdersDetails Where PuchaseOrderId = {Id.ToString()}").ToList();
 
             result[0].OrderItems = Details;
             return result[0];// projectDetailViewModel;
@@ -254,10 +441,10 @@ namespace MSIS.Models
             }
 
         }
-        public MSIS.ViewModels.EditPurchaseOrderViewModel getEditPurchaseOrderDetails(int Id)
+        public TMS.ViewModels.EditPurchaseOrderViewModel getEditPurchaseOrderDetails(int Id)
         {
-            var result = context.SQLPurchaseOrderDetailsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrders Where Id = " + Id.ToString()).ToList();
-            var Details = context.SQLPurchaseOrderItemsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrdersDetails Where PuchaseOrderId = " + Id.ToString()).ToList();
+            var result = context.SQLPurchaseOrderDetailsViewModel.FromSqlInterpolated($"SELECT * FROM dbo.vPurchaseOrders Where Id = {Id.ToString()}" ).ToList();
+            var Details = context.SQLPurchaseOrderItemsViewModel.FromSqlInterpolated($"SELECT * FROM dbo.vPurchaseOrdersDetails Where PuchaseOrderId = {Id.ToString()}" ).ToList();
             result[0].OrderItems = Details;
             EditPurchaseOrderViewModel model=new EditPurchaseOrderViewModel();
             model.PurchaseOrderDetails = result[0];
@@ -274,7 +461,7 @@ namespace MSIS.Models
         {
             return this.context;
         }
-        public List<MSIS.ViewModels.PurchaseOrderDetailsViewModel> getAllPurchaseOrderDetails(ViewModels.PurchaseOrderSearchViewModel Criteria)
+        public List<TMS.ViewModels.PurchaseOrderDetailsViewModel> getAllPurchaseOrderDetails(ViewModels.PurchaseOrderSearchViewModel Criteria)
         {
             try
             {
@@ -342,7 +529,7 @@ namespace MSIS.Models
                     {
                         strWhere = strWhere + " And ";
                     }
-                    strWhere = strWhere + " PurchaseOrderDate >= '" + Criteria.FromDate.ToString() + "'";
+                    strWhere = strWhere + " PurchaseOrderDate >= '" + Criteria.FromDate.ToString("yyyy-MM-dd") + "'";
                 }
                 if (Criteria.ToDate.Year > 1)
                 {
@@ -350,7 +537,7 @@ namespace MSIS.Models
                     {
                         strWhere = strWhere + " And ";
                     }
-                    strWhere = strWhere + " PurchaseOrderDate <= '" + Criteria.ToDate.ToString() + "'";
+                    strWhere = strWhere + " PurchaseOrderDate <= '" + Criteria.ToDate.ToString("yyyy-MM-dd") + "'";
                 }
                 if (strWhere != "")
                 {
@@ -363,7 +550,7 @@ namespace MSIS.Models
                         strWhere = strWhere + " Order By " + Criteria.strGroupBy;
                     }
                 }
-                var result = context.SQLPurchaseOrderDetailsViewModel.FromSql("SELECT *,'" + Criteria.strGroupBy + "' As strGroupBy FROM dbo.vPurchaseOrders " + strWhere).ToList();
+                var result = context.SQLPurchaseOrderDetailsViewModel.FromSqlRaw(("SELECT *,'" + (Criteria.strGroupBy == null ? "" : Criteria.strGroupBy.Replace("'", "''")) + "' As strGroupBy FROM dbo.vPurchaseOrders " + strWhere)).ToList();
 
                 return result.ToList();// projectDetailViewModel;
             }
@@ -376,7 +563,7 @@ namespace MSIS.Models
         {
             return context.PurchaseOrderStates.ToList();
         }
-        public MSIS.ViewModels.CreatePurchaseOrderViewModel getCreatePurchaseOrderDetails(string userId)
+        public TMS.ViewModels.CreatePurchaseOrderViewModel getCreatePurchaseOrderDetails(string userId)
         {
             PurchaseOrderDetailsViewModel result = new PurchaseOrderDetailsViewModel();
             PurchaseOrderPermission purchaseOrderPermission = context.PurchaseOrderPermissions.Where(x => x.UserId == userId).FirstOrDefault();
@@ -437,14 +624,14 @@ namespace MSIS.Models
             });
             return model;// projectDetailViewModel;
         }
-        public List<MSIS.ViewModels.PurchaseOrderItemsViewModel> getPurchaseOrderItems(int Id)
+        public List<TMS.ViewModels.PurchaseOrderItemsViewModel> getPurchaseOrderItems(int Id)
         {
-            var Details = context.SQLPurchaseOrderItemsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrdersDetails Where PuchaseOrderId = " + Id.ToString()).ToList();
+            var Details = context.SQLPurchaseOrderItemsViewModel.FromSqlInterpolated($"SELECT * FROM dbo.vPurchaseOrdersDetails Where PuchaseOrderId = {Id.ToString()}").ToList();
             return Details;
         }
-        public MSIS.ViewModels.PurchaseOrderItemsViewModel getPurchaseOrderItemDetails(int Id)
+        public TMS.ViewModels.PurchaseOrderItemsViewModel getPurchaseOrderItemDetails(int Id)
         {
-            var Details = context.SQLPurchaseOrderItemsViewModel.FromSql("SELECT * FROM dbo.vPurchaseOrdersDetails Where Id = " + Id.ToString()).ToList();
+            var Details = context.SQLPurchaseOrderItemsViewModel.FromSqlInterpolated($"SELECT * FROM dbo.vPurchaseOrdersDetails Where Id = {Id.ToString()}").ToList();
             return Details[0];
         }
         public PurchaseOrder GetPurchaseOrder(int Id)

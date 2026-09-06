@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
-    [NotMapped]
     public class ListPurchaseOrderDetailsViewModel
     {
         public int Id { get; set; }

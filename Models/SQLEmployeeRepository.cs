@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MSIS.ViewModels;
+using TMS.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MSIS.Models
+namespace TMS.Models
 {
     public class SQLEmployeeRepository : IEmployeeRepository
     {
         private readonly AppDBContext context;
         public Boolean IsEmployeeExists(int EmployeeId, string EmployeeNo)
         {
-            var result = context.Employees.FromSql("Select * from dbo.Employees Where Id <> " + EmployeeId.ToString() + " And EmployeeNo = '" + EmployeeNo + "'").ToList();
+            var result = context.Employees.FromSqlInterpolated($"Select * from dbo.Employees Where Id <> {EmployeeId.ToString()} And EmployeeNo = {EmployeeNo}").ToList();
             Boolean value = false;
             if (result.Count > 0)
             {
@@ -27,7 +27,7 @@ namespace MSIS.Models
 
         public Boolean IsEmployeeHasUser(string UserName, int EmployeeId)
         {
-            var result = context.Users.FromSql("Select * from dbo.AspNetUsers Where UserName <> '" + UserName + "' And EmployeeId = " + EmployeeId).ToList();
+            var result = context.Users.FromSqlInterpolated($"Select * from dbo.AspNetUsers Where UserName <> {UserName} And EmployeeId = {EmployeeId}").ToList();
             Boolean value = true;
             if (result.Count > 0)
             {
@@ -38,7 +38,7 @@ namespace MSIS.Models
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
-            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Settings' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSqlInterpolated($"SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Settings' And UserId = {UserId} And PageName ={PageName}").ToList();
             var Menues = result.Select(x => x.ParentName).Distinct().ToList();
             model.ParentMenus = Menues;
             model.UserPermissions = result;

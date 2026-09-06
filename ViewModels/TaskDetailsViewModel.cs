@@ -4,11 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MSIS.Models;
+using TMS.Models;
 
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
-    [NotMapped]
     public class TaskDetailsViewModel
     {
         public int Id { get; set; }
@@ -46,7 +45,9 @@ namespace MSIS.ViewModels
 
         public string strGroupBy { get; set; }
 
+        [NotMapped]
         public List<EmployeesInTaskViewModel> TaskTeam { get; set; }
+        [NotMapped]
         public List<ViewModels.TaskActionDetailsViewModel> TaskActions { get; set; }
         [NotMapped]
         public Models.ContinuousTask  ContinousTaskDetails { get; set; }

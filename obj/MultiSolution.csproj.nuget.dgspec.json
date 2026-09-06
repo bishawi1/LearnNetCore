@@ -1,36 +1,37 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Home Programs\\Web\\MultiSolution\\MultiSolution\\MultiSolution\\MultiSolution.csproj": {}
+    "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj": {}
   },
   "projects": {
-    "E:\\Home Programs\\Web\\MultiSolution\\MultiSolution\\MultiSolution\\MultiSolution.csproj": {
+    "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Home Programs\\Web\\MultiSolution\\MultiSolution\\MultiSolution\\MultiSolution.csproj",
+        "projectUniqueName": "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
         "projectName": "MultiSolution",
-        "projectPath": "E:\\Home Programs\\Web\\MultiSolution\\MultiSolution\\MultiSolution\\MultiSolution.csproj",
-        "packagesPath": "C:\\Users\\mkbishawi-PC\\.nuget\\packages\\",
-        "outputPath": "E:\\Home Programs\\Web\\MultiSolution\\MultiSolution\\MultiSolution\\obj\\",
+        "projectPath": "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\MultiSolution.csproj",
+        "packagesPath": "C:\\Users\\iCloud Tech\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\iCloud Tech\\OneDrive\\Home_Programs\\VBNet\\MultiSolution\\TMS\\MultiSolution\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\mkbishawi-PC\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\DevExpress 19.1.config",
+          "C:\\Users\\iCloud Tech\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp2.2"
+          "net9.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\DevExpress 19.1\\Components\\System\\Components\\Packages": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp2.2": {
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -38,51 +39,67 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
-        "netcoreapp2.2": {
+        "net9.0": {
+          "targetAlias": "net9.0",
           "dependencies": {
+            "Carbon.Data.Protection": {
+              "target": "Package",
+              "version": "[4.2.2, )"
+            },
             "GitHub": {
               "target": "Package",
-              "version": "[1.14.2, )"
+              "version": "[1.34.0, )"
             },
             "MailKit": {
               "target": "Package",
-              "version": "[2.5.0, )"
+              "version": "[4.13.0, )"
             },
-            "Microsoft.AspNetCore.App": {
-              "suppressParent": "All",
+            "Microsoft.AspNetCore": {
               "target": "Package",
-              "version": "[2.2.0, )",
-              "autoReferenced": true
+              "version": "[2.3.0, )"
             },
-            "Microsoft.AspNetCore.Razor.Design": {
-              "suppressParent": "All",
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[2.2.0, )"
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            },
+            "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
+              "target": "Package",
+              "version": "[9.0.6, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[2.2.6, )"
+              "version": "[9.0.6, )"
             },
-            "Microsoft.NETCore.App": {
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[2.2.0, )",
-              "autoReferenced": true
+              "version": "[9.0.6, )"
             },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
-              "version": "[2.2.4, )"
+              "version": "[9.0.0, )"
             },
-            "MySql.Data.EntityFrameworkCore": {
+            "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[8.0.18, )"
+              "version": "[13.0.3, )"
             },
             "TimePeriodLibrary.NET": {
               "target": "Package",
-              "version": "[2.1.1, )"
+              "version": "[2.1.6, )"
             }
           },
           "imports": [
@@ -91,11 +108,20 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.111/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

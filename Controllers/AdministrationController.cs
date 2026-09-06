@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.Models;
-using MSIS.ViewModels;
+using TMS.Models;
+using TMS.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MSIS.Controllers
+namespace TMS.Controllers
 {
     //[Authorize(Roles ="Admin,User")]
     //[Authorize(Roles = "User")]

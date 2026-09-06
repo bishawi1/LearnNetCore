@@ -5,9 +5,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using MSIS.Models;
-using MSIS.ViewModels;
-namespace MSIS.Controllers
+using TMS.Models;
+using TMS.ViewModels;
+namespace TMS.Controllers
 {
     public class OffersController : Controller
     {
@@ -47,7 +47,7 @@ namespace MSIS.Controllers
         public IActionResult ListOffers()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
+            TMS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
 
             OfferListViewModels model = OffersRepository.getOfferList();
             
@@ -60,7 +60,7 @@ namespace MSIS.Controllers
         {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
+            TMS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
             var model = OffersRepository.getOffersDetails(Id);
             if (permission.UserPermissions.Count > 0)
             {
@@ -72,7 +72,7 @@ namespace MSIS.Controllers
         public IActionResult PrintOffersList()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
+            TMS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
 
             OfferListViewModels model = OffersRepository.getOfferList();
 
@@ -106,7 +106,7 @@ namespace MSIS.Controllers
         public IActionResult OfferSearchAsync(string strGroupBy)
         {
             AppDBContext context = OffersRepository.getContext();
-            MSIS.ViewModels.OfferSearchViewModel model = new ViewModels.OfferSearchViewModel();
+            TMS.ViewModels.OfferSearchViewModel model = new ViewModels.OfferSearchViewModel();
             SQLSettingsRepository settingRepository = new SQLSettingsRepository(context);
             SQLSupplierRepository supplierRepository = new SQLSupplierRepository(context);
             model.CurrencyList = settingRepository.GetCurrencyList().ToList();
@@ -142,7 +142,7 @@ namespace MSIS.Controllers
             List<SQLOffersViewModel> model = new List<SQLOffersViewModel>();
             try
             {
-                MSIS.ViewModels.OfferSearchViewModel criteria = new OfferSearchViewModel();
+                TMS.ViewModels.OfferSearchViewModel criteria = new OfferSearchViewModel();
                 criteria.CustomerId = CustomerId;
                 criteria.CurrencyId = CurrencyId;
                 criteria.FromDate = FromDate;
@@ -167,7 +167,7 @@ namespace MSIS.Controllers
         public IActionResult Details(int Id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
+            TMS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
 
             OfferDetailsViewModel model = OffersRepository.getOffersDetails(Id);
             if (permission.UserPermissions.Count > 0)
@@ -286,7 +286,7 @@ namespace MSIS.Controllers
             {
                 OffersRepository.DeleteOffer(Id);
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                MSIS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
+                TMS.ViewModels.UserPermissionsViewModel permission = OffersRepository.GetUserParentMenuPermission(userId, "All Offers");
 
                 model = OffersRepository.getOfferList();
                         model.userPermission = permission.UserPermissions[0];

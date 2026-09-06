@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using MSIS.ViewModels;
-namespace MSIS.Models
+using TMS.ViewModels;
+namespace TMS.Models
 {
     public class SQLOffersRepository
     {
@@ -17,7 +17,7 @@ namespace MSIS.Models
         {
             return this.context;
         }
-        public List<MSIS.ViewModels.SQLOffersViewModel> getAllOfferDetails(ViewModels.OfferSearchViewModel Criteria)
+        public List<TMS.ViewModels.SQLOffersViewModel> getAllOfferDetails(ViewModels.OfferSearchViewModel Criteria)
         {
             try
             {
@@ -41,7 +41,7 @@ namespace MSIS.Models
                     {
                         strWhere = strWhere + " And ";
                     }
-                    strWhere = strWhere + " OfferDate >= '" + Criteria.FromDate.ToString() + "'";
+                    strWhere = strWhere + " OfferDate >= '" + Criteria.FromDate.ToString("yyyy-MM-dd") + "'";
                 }
                 if (Criteria.ToDate.Year > 1)
                 {
@@ -49,7 +49,7 @@ namespace MSIS.Models
                     {
                         strWhere = strWhere + " And ";
                     }
-                    strWhere = strWhere + " OfferDate <= '" + Criteria.ToDate.ToString() + "'";
+                    strWhere = strWhere + " OfferDate <= '" + Criteria.ToDate.ToString("yyyy-MM-dd") + "'";
                 }
                 if (strWhere != "")
                 {
@@ -62,7 +62,7 @@ namespace MSIS.Models
                         strWhere = strWhere + " Order By " + Criteria.strGroupBy;
                     }
                 }
-                var result = context.SQLOfferList.FromSql("SELECT *,'" + Criteria.strGroupBy + "' As strGroupBy FROM dbo.vOffers " + strWhere).ToList();
+                var result = context.SQLOfferList.FromSqlRaw(("SELECT *,'" + (Criteria.strGroupBy == null ? "" : Criteria.strGroupBy.Replace("'", "''")) + "' As strGroupBy FROM dbo.vOffers " + strWhere)).ToList();
 
                 return result.ToList();// projectDetailViewModel;
             }
@@ -112,7 +112,7 @@ namespace MSIS.Models
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
-            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Offers' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSqlInterpolated($"SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Offers' And UserId = {UserId} And PageName ={PageName}").ToList();
             var Menues = result.Select(x => x.ParentName).Distinct().ToList();
             model.ParentMenus = Menues;
             model.UserPermissions = result;
@@ -138,7 +138,7 @@ namespace MSIS.Models
         }
         public OfferListViewModels getOfferList()
         {
-            var result = context.SQLOfferList.FromSql("SELECT *,'ALL' As strGroupBy FROM dbo.vOffers " ).ToList();
+            var result = context.SQLOfferList.FromSqlInterpolated($"SELECT *,'ALL' As strGroupBy FROM dbo.vOffers " ).ToList();
             //return result.ToList();// projectDetailViewModel;
 
             //var result = (from offer in context.Offers
@@ -159,7 +159,7 @@ namespace MSIS.Models
             //              }).ToList();
             OfferListViewModels model = new OfferListViewModels();
             model.OfferList = result;
-            var Totals = context.OffersTotals.FromSql("Select * From dbo.vOffersTotals").ToList();
+            var Totals = context.OffersTotals.FromSqlInterpolated($"Select * From dbo.vOffersTotals").ToList();
             model.OffersTotals = Totals;
             return model;
 

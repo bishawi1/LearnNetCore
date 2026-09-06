@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.Models;
+using TMS.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     [NotMapped]
     public class ChangeUserPasswordViewModel

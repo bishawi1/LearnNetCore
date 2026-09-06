@@ -46,6 +46,8 @@
                     <div class="input-group  col-sm-5 mt-2">
                         <span class="input-group-text col-sm-4 col-form-label">Team Leader</span>
                         @Html.DropDownListFor(x => @Model.criteria.TaskResponsibleId, new SelectList(@Model.criteria.Employees, "Id", "Name"), new {@id="TaskResponsibleId", @class = "form-control " })
+                        Exclude
+                        <input id="ExcludeResponsible" type="checkbox" asp-for="@Model.criteria.Exclude" class="form-control col-sm-1" placeholder="OtherInformation" aria-describedby="ContinuousTask-addon" />
                     </div>
                 </div>
                 <div class="row col-sm-12">
@@ -133,6 +135,7 @@
 
                     </tr>
                 </thead>
+
 
 
 
@@ -264,7 +267,7 @@
         //////////////////////////////// Status filter
         $('#Waiting').click(function () {
             $.ajax({
-                url: '/Tasks/ListWaitingTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
+                url: '/Tasks/ListWaitingTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -274,7 +277,7 @@
         });
         $('#InProgress').click(function () {
             $.ajax({
-                url: '/Tasks/ListInProgressTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
+                url: '/Tasks/ListInProgressTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -285,7 +288,7 @@
 
         $('#Done').click(function () {
             $.ajax({
-                url: '/Tasks/ListDoneTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
+                url: '/Tasks/ListDoneTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -296,7 +299,7 @@
 
         $('#Approved').click(function () {
             $.ajax({
-                url: '/Tasks/ListApprovedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
+                url: '/Tasks/ListApprovedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -306,7 +309,7 @@
         });
         $('#Rejected').click(function () {
             $.ajax({
-                url: '/Tasks/ListRejectedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
+                url: '/Tasks/ListRejectedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -317,7 +320,7 @@
 
         $('#showAll').click(function () {
             $.ajax({
-                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&strGroupBy=All',
+                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All',
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -336,6 +339,7 @@
                         FromTaskDate: $('#FromTaskDate').val(),
                         ToTaskDate: $('#ToTaskDate').val(),
                         BranchId: $('#BranchId').val(),
+                        Exclude: $('#ExcludeResponsible').is(":checked"),
                         ContinuousTask: $('#ContinuousTask').is(":checked"),
                         strGroupBy: "@Model.criteria.strGroupBy"
                     },

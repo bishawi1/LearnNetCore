@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     public class OfferListViewModels
     {
-        public List<MSIS.ViewModels.SQLOffersViewModel> OfferList { get; set; }
+        public List<TMS.ViewModels.SQLOffersViewModel> OfferList { get; set; }
         //public List<OfferViewModel> OfferList { get; set; }
         [NotMapped]
         public UserPermissionDetailsViewModel userPermission { get; set; }

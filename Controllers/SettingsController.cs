@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MSIS.Models;
-using MSIS.ViewModels;
-
-namespace MultiSolution.Controllers
+using TMS.Models;
+using TMS.ViewModels;
+using Microsoft.EntityFrameworkCore;
+namespace TMS.Controllers
 {
     public class SettingsController : Controller
     {
@@ -25,6 +25,9 @@ namespace MultiSolution.Controllers
             HostingEnvironment = hostingEnvironment;
             this.userManager = userManager;
         }
+
+
+
         public IActionResult testSendMail()
         {
             //SettingsRepository.testSendMail();
@@ -47,7 +50,7 @@ namespace MultiSolution.Controllers
             SettingsRepository.SendEmail(Employees, Message);
             return new JsonResult(true);
         }
-
+        #region "Currency"
         //--------------------------- Currency
         [HttpPost]
         public IActionResult Delete(int Id)
@@ -93,7 +96,7 @@ namespace MultiSolution.Controllers
         {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
 
             ListCurrencyViewModel model = SettingsRepository.ListCurrencies();
             model.userPermission = permission.UserPermissions[0];
@@ -109,7 +112,7 @@ namespace MultiSolution.Controllers
         {
             CurrencyDetailsViewModel model = new CurrencyDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
 
             if (permission.UserPermissions.Count > 0)
             {
@@ -170,6 +173,9 @@ namespace MultiSolution.Controllers
             return View();
         }
         //--------------------------  end Currency
+        #endregion
+
+        #region "PurchaseOrderPermission"
         //--------------------------- PurchaseOrderPermission
         [HttpPost]
         public IActionResult DeletePurchaseOrderPermission(int Id)
@@ -197,7 +203,7 @@ namespace MultiSolution.Controllers
         {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "PurchaseOrderPermission");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "PurchaseOrderPermission");
 
             ListPurchaseOrderPermissionViewModel model = SettingsRepository.ListPurchaseOrderPermissions();
             if (permission.UserPermissions.Count() > 0)
@@ -219,7 +225,7 @@ namespace MultiSolution.Controllers
         {
             PurchaseOrderPermissionDetailsViewModels model = new PurchaseOrderPermissionDetailsViewModels();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "PurchaseOrderPermission");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "PurchaseOrderPermission");
             if (permission.UserPermissions.Count > 0)
             {
                 model.Permission = permission.UserPermissions[0];
@@ -293,6 +299,8 @@ namespace MultiSolution.Controllers
                     purchaseOrderPermission.AllowDelivery = purchaseOrderPermissionChanges.AllowDelivery;
                     purchaseOrderPermission.AllowPrint= purchaseOrderPermissionChanges.AllowDelivery;
                     purchaseOrderPermission.AllowVerify= purchaseOrderPermissionChanges.AllowVerify;
+                    purchaseOrderPermission.AllowBackToNew= purchaseOrderPermissionChanges.AllowBackToNew;
+                    purchaseOrderPermission.AllowPay= purchaseOrderPermissionChanges.AllowPay;
                     purchaseOrderPermission.Notes= purchaseOrderPermissionChanges.Notes;
                     purchaseOrderPermission.UserId= purchaseOrderPermissionChanges.UserId;
                     purchaseOrderPermission.BranchId = purchaseOrderPermissionChanges.BranchId;
@@ -326,7 +334,9 @@ namespace MultiSolution.Controllers
             return View();
         }
         //--------------------------  end Currency
+        #endregion
 
+        #region "Item Unit"
         //--------------------------  Item Unit
 
         [HttpPost]
@@ -372,7 +382,7 @@ namespace MultiSolution.Controllers
         public IActionResult ListItemUnit()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Units");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Units");
 
             ListItemUnitsViewModel model = SettingsRepository.ListItemUnits();
             model.userPermission = permission.UserPermissions[0];
@@ -389,7 +399,7 @@ namespace MultiSolution.Controllers
         {
             ItemUnitsDetailsViewModel model = new ItemUnitsDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Units");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Units");
 
             if (permission.UserPermissions.Count > 0)
             {
@@ -447,6 +457,9 @@ namespace MultiSolution.Controllers
             return View();
         }
         //--------------------------  end Item Unit
+        #endregion
+
+        #region "Item Category"
         //-------------------------------- Item Category
         [HttpPost]
         public IActionResult DeleteItemCategory(int Id)
@@ -492,7 +505,7 @@ namespace MultiSolution.Controllers
         {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Categories");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Categories");
 
             ListItemCategoriesViewModel model = SettingsRepository.ListItemCategories();
             model.userPermission = permission.UserPermissions[0];
@@ -509,7 +522,7 @@ namespace MultiSolution.Controllers
         {
             ItemCategoryDetailsViewModel model = new ItemCategoryDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Categories");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Item Categories");
 
             if (permission.UserPermissions.Count > 0)
             {
@@ -569,6 +582,9 @@ namespace MultiSolution.Controllers
             return View();
         }
         //--------------------------  end Item Category
+        #endregion
+
+        #region "Main Item"
         //-------------------------------- Main Item
         [HttpPost]
         public IActionResult DeleteMainItem(int Id)
@@ -614,7 +630,7 @@ namespace MultiSolution.Controllers
         {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Main Items");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Main Items");
 
             ListMainItemViewModel model = SettingsRepository.ListMainItems();
             model.userPermission = permission.UserPermissions[0];
@@ -631,7 +647,7 @@ namespace MultiSolution.Controllers
         {
             MainItemsDetailViewModel model = new MainItemsDetailViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Main Items");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Main Items");
 
             if (permission.UserPermissions.Count > 0)
             {
@@ -695,7 +711,9 @@ namespace MultiSolution.Controllers
             return View();
         }
         //--------------------------  end Item Category
+        #endregion
 
+        #region "Item"
         //--------------------------------  Item
         [HttpPost]
         public IActionResult DeleteItem(int Id)
@@ -740,7 +758,7 @@ namespace MultiSolution.Controllers
         public IActionResult ListItems()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Items");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Items");
 
             ListItemsViewModel model = SettingsRepository.ListItems();
             model.userPermission = permission.UserPermissions[0];
@@ -758,7 +776,7 @@ namespace MultiSolution.Controllers
         {
             ItemsDetailsViewModel model = new ItemsDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Items");
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Items");
 
             if (permission.UserPermissions.Count > 0)
             {
@@ -868,14 +886,9 @@ namespace MultiSolution.Controllers
             return View();
         }
         //--------------------------  end Item 
-        [HttpGet]
-        public IActionResult getMainMenuPermission(string UserId)
-        {
-            UserPermissionsViewModel Permission= SettingsRepository.GetUserParentMenuPermission(UserId);
-            return new JsonResult(Permission); 
-            //return PartialView("~/Views/Shared/_SideBar.cshtml", Permission); 
-        }
+        #endregion
 
+        #region "User ProjectsList"
         //--------------------------  User ProjectsList 
         [HttpGet]
         public IActionResult ListUserProjects(string UserId)
@@ -883,7 +896,7 @@ namespace MultiSolution.Controllers
             try
             {
                 UserProjectListViewModel model = new UserProjectListViewModel();
-                MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");             
+                TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");             
                 model.UserProjects = SettingsRepository.GetUserProjects(UserId);            
                 model.userPermission = permission.UserPermissions[0];
                 model.UserId = UserId;
@@ -990,15 +1003,18 @@ namespace MultiSolution.Controllers
 
             return new JsonResult(false);
         }
+        #endregion
 
+        #region "User Branches List"
         //--------------------------  User Branches List 
+
         [HttpGet]
         public IActionResult ListUserBranches(string UserId)
         {
             try
             {
                 UserBranchListViewModel model = new UserBranchListViewModel();
-                MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");
+                TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");
                 model.UserBranches = SettingsRepository.GetUserBranches(UserId);
                 model.userPermission = permission.UserPermissions[0];
                 model.UserId = UserId;
@@ -1103,6 +1119,9 @@ namespace MultiSolution.Controllers
                 //return PartialView("_PurchaseOrderItems", model);
             }
         }
+        #endregion
+
+        #region "User Employees List"
         //--------------------------  User Employees List 
         [HttpGet]
         public IActionResult ListUserEmployees(string UserId)
@@ -1110,7 +1129,7 @@ namespace MultiSolution.Controllers
             try
             {
                 UserEmployeesListViewModel model = new UserEmployeesListViewModel();
-                MSIS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");
+                TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetUserParentMenuPermission(UserId, "UserTaskPermissions");
                 model.UserEmployees = SettingsRepository.GetUserEmployees(UserId);
                 model.userPermission = permission.UserPermissions[0];
                 model.UserId = UserId;
@@ -1215,5 +1234,138 @@ namespace MultiSolution.Controllers
                 //return PartialView("_PurchaseOrderItems", model);
             }
         }
+
+        #endregion
+
+        #region "MenuPermnissions"
+        //--------------------------- MenuPermnissions
+        [HttpGet]
+        public IActionResult getMainMenuPermission(string UserId)
+        {
+            UserPermissionsViewModel Permission = SettingsRepository.GetUserParentMenuPermission(UserId);
+            return new JsonResult(Permission);
+            //return PartialView("~/Views/Shared/_SideBar.cshtml", Permission); 
+        }
+        [HttpPost]
+        public IActionResult DeleteMainMenu(int Id)
+        {
+            string errorMessage = "";
+            errorMessage = SettingsRepository.ValidateDeletMainItem(Id);
+            if (errorMessage == "")
+            {
+                Currency currency = SettingsRepository.Delete(Id);
+                if (currency == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                    //return new JsonResult("{Deleted:true,ErrorText:''}");
+                    List<Currency> model = SettingsRepository.GetCurrencyList().ToList();
+                    return new JsonResult(model);
+
+                    //return PartialView("_PurchaseOrderItems", model);
+
+                }
+
+            }
+            else
+            {
+                return new JsonResult(errorMessage);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ValidateDeleteMainMenu(int Id)
+        {
+            string errorMessage = "";
+            errorMessage = SettingsRepository.ValidateDeletCurrency(Id);
+            //PurchaseOrderDetails purchaseOrder = purchaseOrderRepository.DeletePurchaseOrderItem(Id);
+            return new JsonResult(errorMessage);
+        }
+
+        [HttpGet]
+        public IActionResult ListMainMenu()
+        {
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
+
+            ListCurrencyViewModel model = SettingsRepository.ListCurrencies();
+            model.userPermission = permission.UserPermissions[0];
+
+            return View(model);
+
+            //List<Currency> model = new List<Currency>();
+            //model = SettingsRepository.GetCurrencyList().ToList();
+            //return View(model);
+        }
+        [HttpGet]
+        public IActionResult MainMenuDetails(int Id)
+        {
+            CurrencyDetailsViewModel model = new CurrencyDetailsViewModel();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            TMS.ViewModels.UserPermissionsViewModel permission = SettingsRepository.GetSettingsUserParentMenuPermission(userId, "Currency");
+
+            if (permission.UserPermissions.Count > 0)
+            {
+                model.Permission = permission.UserPermissions[0];
+            }
+
+
+            var currency = SettingsRepository.GetCurrency(Id);
+            model.Currency = currency;
+            return View(model);
+        }
+        [HttpGet]
+        public IActionResult EditMainMenu(int Id)
+        {
+            Currency currency = SettingsRepository.GetCurrency(Id);
+            if (currency == null)
+            {
+                return Redirect("NotFound");
+            }
+            else
+            {
+                return View(currency);
+            }
+        }
+        [HttpPost]
+        public IActionResult EditMainMenu(Currency currencyChanges)
+        {
+            if (ModelState.IsValid)
+            {
+                Currency currency = SettingsRepository.GetCurrency(currencyChanges.Id);
+                if (currency == null)
+                {
+                    return Redirect("NotFound");
+                }
+                else
+                {
+                    currency.CurrencyCode = currencyChanges.CurrencyCode;
+                    currency.CurrencyName = currencyChanges.CurrencyName;
+                    SettingsRepository.Update(currency);
+                    return RedirectToAction("ListCurrency", "Settings");
+                }
+            }
+            return View(currencyChanges);
+        }
+        [HttpGet]
+        public IActionResult CreateMainMenu()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult CreateMainMenu(Currency currency)
+        {
+            if (ModelState.IsValid)
+            {
+                SettingsRepository.Add(currency);
+                return RedirectToAction("ListCurrency", "Settings");
+            }
+            return View();
+        }
+        //--------------------------  end MenuPermnissions
+        #endregion
     }
 }

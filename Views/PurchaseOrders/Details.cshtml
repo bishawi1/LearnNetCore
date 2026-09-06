@@ -19,7 +19,7 @@
     </div>
     <div class="card-body">
         <div class="row">
-            @if (User.IsInRole("Admin") && Model.StateId != 1)//Back to editable state
+            @if (Model.purchaseOrderPermission.AllowBackToNew && Model.StateId != 1)//Back to editable state
             {
                 @*<textarea id="Description"></textarea><br />*@
                 <form asp-action="BackToNewPurchaseOrder">
@@ -113,7 +113,7 @@
                     </div>
                 }
             }
-            else if (Model.StateId == 6 || Model.StateId == 7)
+            else if ((Model.StateId == 6 || Model.StateId == 7) && Model.purchaseOrderPermission.AllowPay)
             {
                 <div class="col-md-12">
                     <form id="verifyPurchaseOrder" asp-action="PayPurchaseOrder">

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.Models;
-using MSIS.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using TMS.Models;
+using TMS.ViewModels;
 
-namespace MSIS.Controllers
+namespace TMS.Controllers
 {
     public class AccountController : Controller
     {
@@ -97,7 +97,7 @@ namespace MSIS.Controllers
         //    }
         //    return View();
         //}
-        private async Task <Models.ApplicationUser> GetUser(string UserId)
+        private async Task <ApplicationUser> GetUser(string UserId)
         {
             var user = await userManager.FindByIdAsync(UserId);
             return user;
@@ -162,6 +162,7 @@ namespace MSIS.Controllers
             //}
             return View(model);
         }
+
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Register()
@@ -330,7 +331,7 @@ namespace MSIS.Controllers
                     var result = await signInManager.PasswordSignInAsync(model.Email, model.Password,
                                                                             model.RememberMe, false);
                     if (result.Succeeded)
-                    {;
+                    {
 
                         if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                         {

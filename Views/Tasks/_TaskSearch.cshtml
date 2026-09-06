@@ -1,4 +1,4 @@
-﻿@model MSIS.ViewModels.SearchTaskViewModel
+﻿@model TMS.ViewModels.SearchTaskViewModel
 
     <div class="flex-container  border" style="padding-left:0px;">
         <div class="row col-sm-12">
@@ -62,8 +62,9 @@
                         FromTaskDate: $('#FromTaskDate').val(),
                         ToTaskDate: $('#ToTaskDate').val(),
                         BranchId: $('#BranchId').val(),
+                        Exclude: $('#ExcludeResponsible').is(":checked"),
                         ContinuousTask: $('#ContinuousTask').is(":checked"),
-                        strGroupBy: "@Model.strGroupBy"
+                      strGroupBy: "@Model.strGroupBy"
                     },
                     function (data, status) {
                         $('#showWaiting').html(data);

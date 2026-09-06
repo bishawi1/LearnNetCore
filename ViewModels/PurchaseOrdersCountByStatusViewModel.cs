@@ -4,12 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     public class PurchaseOrdersCountByStatusViewModel
     {
         [Key]
-        public  int Id { get; set; }
+        public int Id { get; set; }
         public int NewOrdersCount { get; set; }
         public int ConfirmedOrdersCount { get; set; }
         public int RejectedOrdersCount { get; set; }

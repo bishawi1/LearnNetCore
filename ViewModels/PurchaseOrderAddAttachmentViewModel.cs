@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MSIS.Models;
+using TMS.Models;
 using Microsoft.AspNetCore.Http;
 
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     public class PurchaseOrderAddAttachmentViewModel:PurchaseOrderAttachment
     {

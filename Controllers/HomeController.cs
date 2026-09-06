@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.Models;
+using TMS.Models;
 using System.Net.Http;
-using MSIS.ViewModels;
+using TMS.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 
-namespace MSIS.wwwroot.Controllers
+namespace TMS.Controllers
 {
     public class HomeController:Controller
     {
@@ -202,7 +202,7 @@ namespace MSIS.wwwroot.Controllers
         public ViewResult Details(int? Id) {
             EmployeeDetailsViewModel model = new EmployeeDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
+            TMS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
             if (permission.UserPermissions.Count > 0)
             {
                 model.Permission = permission.UserPermissions[0];
@@ -226,7 +226,7 @@ namespace MSIS.wwwroot.Controllers
         public IActionResult EmployeeList()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
+            TMS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
 
             ListEmployeesViewModel model = _employeeRepository.ListActiveEmployees();
             model.userPermission = permission.UserPermissions[0];
@@ -240,7 +240,7 @@ namespace MSIS.wwwroot.Controllers
         public IActionResult InActiveEmployeeList()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
+            TMS.ViewModels.UserPermissionsViewModel permission = _employeeRepository.GetUserParentMenuPermission(userId, "Employees");
 
             ListEmployeesViewModel model = _employeeRepository.ListInActiveEmployees();
             model.userPermission = permission.UserPermissions[0];

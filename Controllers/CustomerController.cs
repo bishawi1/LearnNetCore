@@ -5,10 +5,10 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using MSIS.Models;
-using MSIS.ViewModels;
+using TMS.Models;
+using TMS.ViewModels;
 
-namespace MSIS.Controllers
+namespace TMS.Controllers
 {
     public class CustomerController : Controller
     {
@@ -64,7 +64,7 @@ namespace MSIS.Controllers
         public IActionResult ListCustomers()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = customersRepository.GetUserParentMenuPermission(userId, "Customers");
+            TMS.ViewModels.UserPermissionsViewModel permission = customersRepository.GetUserParentMenuPermission(userId, "Customers");
 
             ListCustomerViewModel model = customersRepository.ListCustomers();
             model.userPermission = permission.UserPermissions[0];
@@ -76,7 +76,7 @@ namespace MSIS.Controllers
         {
             CustomerDetailsViewModel model = new CustomerDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = customersRepository.GetUserParentMenuPermission(userId, "Customers");
+            TMS.ViewModels.UserPermissionsViewModel permission = customersRepository.GetUserParentMenuPermission(userId, "Customers");
 
             if (permission.UserPermissions.Count > 0)
             {
@@ -126,7 +126,7 @@ namespace MSIS.Controllers
                     customer.Email = customerChanges.Email;
                     customer.CustomerCode = customerChanges.CustomerCode;
                     customersRepository.Update(customer);
-                    return RedirectToAction("ListCustomers", "Customer");
+                    return RedirectToAction("ListCustomers", "Customers");
                 }
             }
             return View(customerChanges);
@@ -147,7 +147,7 @@ namespace MSIS.Controllers
                     return View(customer);
                 }
                 customersRepository.Add(customer);                
-                return RedirectToAction("ListCustomers","Customer");
+                return RedirectToAction("ListCustomers","Customers");
             }
             return View();
         }

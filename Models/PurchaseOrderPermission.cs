@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace MSIS.Models
+namespace TMS.Models
 {
     public class PurchaseOrderPermission
     {
@@ -18,6 +18,8 @@ namespace MSIS.Models
         public bool AllowDelivery { get; set; }
         public string Notes { get; set; }
         public int BranchId { get; set; }
+        public bool AllowBackToNew { get; set; }
+        public bool AllowPay { get; set; }
 
     }
 }

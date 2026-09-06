@@ -1,37 +1,90 @@
 ﻿@model ListPurchaseOrdersViewModel
 @{
     ViewData["Title"] = "ListPurchaseOrders";
+    var NewOrderCount = 0;
+    var ConfirmedCount = 0;
+    var RejectedOrderCount = 0;
+    var ApprovedOrderCount = 0;
+    var WaitingForDeliveryCount = 0;
+    var DeliveredCount = 0;
+    var DeliveredPartialyCount = 0;
+    var PayedOrderCount = 0;
 
 }
 
 
 
+@{
+    NewOrderCount = Model.CountByStatus.NewOrdersCount;
+    ConfirmedCount = Model.CountByStatus.ConfirmedOrdersCount;
+    RejectedOrderCount = Model.CountByStatus.RejectedOrdersCount;
+    ApprovedOrderCount = Model.CountByStatus.ApprovedOrdersCount;
+    WaitingForDeliveryCount = Model.CountByStatus.WaitForDeliveryCount;
+    DeliveredCount = Model.CountByStatus.DeliveredCount;
+    DeliveredPartialyCount = Model.CountByStatus.DeliveredPartialyCount;
+    PayedOrderCount = Model.CountByStatus.PayedOrderCount;
+
+}
 
 
-    <div id="showOrders">
+<div class="flex-container">
+    <div class="column">
+        <button id="NewOrder"  class="numberCircle btn btn-secondary text-center m-1 " style="width:50px;border-radius:20;">@NewOrderCount</button>
+    </div>
+    <div class="column">
+        <button id="ConfirmedOrder" class="numberCircle btn btn-primary text-center m-1" style="width:50px;border-radius:20;">@ConfirmedCount</button>
+    </div>
+    <div class="column">
+        <button id="RejectedOrder" class="numberCircle btn btn-danger text-center m-1" style="width:50px;border-radius:20;">@RejectedOrderCount</button>
+    </div>
+    <div class="column">
+        <button id="ApprovedOrder" class="numberCircle btn btn-info text-center m-1" style="width:50px;border-radius:20;">@ApprovedOrderCount</button>
+    </div>
+    <div class="column">
+        <button id="WaitingForDelivery" class="numberCircle btn btn-warning text-center m-1" style="width:50px;border-radius:20;">@WaitingForDeliveryCount</button>
+    </div>
+    <div class="column">
+        <button id="Delivered" class="numberCircle btn btn-success text-center m-1" style="width:50px;border-radius:20;">@DeliveredCount</button>
+    </div>
+    <div class="column">
+        <button id="DeliveredPartialy" class="numberCircle btn text-center m-1" style="width:50px;background-color:lightgreen; border-radius:20;">@DeliveredPartialyCount</button>
+    </div>
+    <div class="column">
+        <button id="PayedOrder" class="numberCircle btn text-center m-1" style="width:50px;background-color:wheat; border-radius:20;">@PayedOrderCount</button>
+    </div>
+    <div class="column">
+        <button id="showAll" class="numberCircle btn btn-outline-primary text-center m-1" style="width:50px;border-radius:20;">All</button>
+    </div>
 
-            <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
-                <table class="table table-hover" id="myTable">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>Order No</th>
-                            <th>Date</th>
-                            <th>Supplier</th>
-                            <th>Currency</th>
-                            <th>Total Price</th>
-                            <th style="width:50px;">State</th>
-                            <th style="width:30px;"></th>
-                            @if (Model.userPermission.CanDelete)
-                            {
-                                <th style="width:30px;"></th>
-                            }
-                        </tr>
-                    </thead>
+</div>
 
 
 
-                    @foreach (var order in Model.ListPurchaseOrders)
+
+<div id="showOrders">
+
+    <div id="OrderItems" style=" border:solid 1px black; padding:3px;">
+        <table class="table table-hover" id="myTable">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Order No</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Currency</th>
+                    <th>Total Price</th>
+                    <th style="width:50px;">State</th>
+                    <th style="width:30px;"></th>
+                    @if (Model.userPermission.CanDelete)
                     {
+                        <th style="width:30px;"></th>
+                    }
+                </tr>
+            </thead>
+
+
+
+            @foreach (var order in Model.ListPurchaseOrders)
+            {
 
                 <tr>
                     <td>@order.PurchaseOrderCode</td>
@@ -87,45 +140,46 @@
 
                 </tr>
 
-                    }
-                    @if (Model.ListPurchaseOrders.Any())
+            }
+            @if (Model.ListPurchaseOrders.Any())
+            {
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    @foreach (var total in Model.PurchaseOrderTotals)
                     {
-                        <tfoot>
-                            <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            @foreach (var total in Model.PurchaseOrderTotals)
-                            {
-                                <tr>
-                                    <td colspan=4></td>
-                                    <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
-                                </tr>
-                            }
-                        </tfoot>
+                        <tr>
+                            <td colspan=4></td>
+                            <td>@total.TotalAmount.ToString("#0.00")  @total.CurrencyName</td>
+                        </tr>
                     }
-                </table>
-            </div>
-
+                </tfoot>
+            }
+        </table>
     </div>
 
+</div>
 
-@section Scripts{
+
+@*@section Scripts{
 
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script src="~/js/CustomScript.js"></script>
-    <script src="~/lib/printthis/printThis.js"></script>
+    <script src="~/lib/printthis/printThis.js"></script>*@
 
     <script>
-        $(window).ready(function () {
-            $('#mnuTMS').removeClass('collapse show');
-            $('#mnuPurchaseOrders').addClass('collapse show');
-            $('#mnuTMS').addClass('collapse hide');
-        });
+       // $(window).ready(function () {
+       //     $('#mnuTMS').removeClass('collapse show');
+       //     $('#mnuPurchaseOrders').addClass('collapse show');
+       //     $('#mnuTMS').addClass('collapse hide');
 
+       //});
+/*
         //---------------Confirm Item Delete
         function contDelete(ItemId) {
             $('#txtDeleteItemID').val(ItemId);
@@ -144,11 +198,11 @@
                 }
             );
         };
-
+*/
         //----------------------------- filter By State
-        $('#NewOrder').click(function () {
+            $('#NewOrder').click(function () {
             $.ajax({
-                url: '/PurchaseOrders/ListNewPurchaseOrders',
+                url: '/PurchaseOrders/ListNewPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
                 type: 'Get',
                 success: function (response) {
                     $('#showOrders').html(response);
@@ -157,7 +211,105 @@
             });
         });
 
+        $('#ConfirmedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListConfirmedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+        $('#RejectedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListRejectedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+        $('#ApprovedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListApprovedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#WaitingForDelivery').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListWaitingForDeliveryPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#Delivered').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListDeliveredPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#PayedOrder').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListPayedPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+        $('#DeliveredPartialy').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListDeliveredPartialyPurchaseOrders/?EmployeeId=' + $("#EmployeeId").val() + '&SupplierId='+ $("#SupplierId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromPurchaseOrderDate=' + $("#FromPurchaseOrderDate").val() + '&ToPurchaseOrderDate=' + $("#ToPurchaseOrderDate").val()+ '&BranchId=' + $('#BranchId').val() ,
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+
+        $('#showAll').click(function () {
+            $.ajax({
+                url: '/PurchaseOrders/ListAllPurchaseOrders',
+                type: 'Get',
+                success: function (response) {
+                    $('#showOrders').html(response);
+                    $('#myTable').DataTable();
+                }
+            });
+        });
+      
+        //function btnTaskSearch_Click() {            
+        //        $.post("/PurchaseOrders/PurchaseOrdersSearchAsync",
+        //            {
+        //                EmployeeId: $('#EmployeeId').val(),
+        //                SupplierId: $('#SupplierId').val(),
+        //                ProjectId: $('#ProjectId').val(),
+        //                FromPurchaseOrderDate: $('#FromPurchaseOrderDate').val(),
+        //                ToPurchaseOrderDate: $('#ToPurchaseOrderDate').val(),
+        //                BranchId: $('#BranchId').val()
+        //            },
+        //            function (data, status) {
+        //                $('#showOrders').html(data);
+        //            });
+        //    };
 
 
     </script>
-}
+@*}*@

@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MSIS.Models
+namespace TMS.Models
 {
-    [NotMapped]
     public class Page
     {
         [Key]

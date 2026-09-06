@@ -181,7 +181,7 @@
         //////////////////////////////// Status filter
         $('#Waiting').click(function () {
             $.ajax({
-                url: '/Tasks/ListWaitingTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListWaitingTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId=' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -192,7 +192,7 @@
 
         $('#InProgress').click(function () {
             $.ajax({
-                url: '/Tasks/ListInProgressTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListInProgressTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -203,7 +203,7 @@
 
         $('#Done').click(function () {
             $.ajax({
-                url: '/Tasks/ListDoneTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListDoneTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -214,7 +214,7 @@
 
         $('#Approved').click(function () {
             $.ajax({
-                url: '/Tasks/ListApprovedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListApprovedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -224,7 +224,7 @@
         });
         $('#Rejected').click(function () {
             $.ajax({
-                url: '/Tasks/ListRejectedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListRejectedTasks/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);
@@ -235,7 +235,7 @@
 
         $('#showAll').click(function () {
             $.ajax({
-                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId='+ $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val()+ '&BranchId=' + $('#BranchId').val()+ '&ContinuousTask=' +  $('#ContinuousTask').is(":checked") + '&strGroupBy=All'  ,
+                url: '/Tasks/ListTasksPartial/?TaskOwnerId=' + $("#TaskOwnerId").val() + '&TaskResponsibleId=' + $("#TaskResponsibleId").val() + '&ProjectId =' + $("#ProjectId").val() + '&FromTaskDate=' + $("#FromTaskDate").val() + '&ToTaskDate=' + $("#ToTaskDate").val() + '&BranchId=' + $('#BranchId').val() + '&ContinuousTask=' + $('#ContinuousTask').is(":checked") + '&Exclude=' + $('#ExcludeResponsible').is(":checked") + '&strGroupBy=All'  ,
                 type: 'Get',
                 success: function (response) {
                     $('#showWaiting').html(response);

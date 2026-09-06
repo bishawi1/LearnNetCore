@@ -5,9 +5,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using MSIS.Models;
-using MSIS.ViewModels;
-namespace MSIS.Controllers
+using TMS.Models;
+using TMS.ViewModels;
+namespace TMS.Controllers
 {
     public class SuppliersController : Controller
     {
@@ -63,7 +63,7 @@ namespace MSIS.Controllers
         {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = suppliersRepository.GetUserParentMenuPermission(userId, "Suppliers");
+            TMS.ViewModels.UserPermissionsViewModel permission = suppliersRepository.GetUserParentMenuPermission(userId, "Suppliers");
 
             ListSupplierViewModel model = suppliersRepository.ListSuppliers();
             model.userPermission = permission.UserPermissions[0];
@@ -78,7 +78,7 @@ namespace MSIS.Controllers
         {
             SupplierDetailsViewModel model = new SupplierDetailsViewModel();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            MSIS.ViewModels.UserPermissionsViewModel permission = suppliersRepository.GetUserParentMenuPermission(userId, "Suppliers");
+            TMS.ViewModels.UserPermissionsViewModel permission = suppliersRepository.GetUserParentMenuPermission(userId, "Suppliers");
 
             if (permission.UserPermissions.Count > 0)
             {

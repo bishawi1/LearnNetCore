@@ -1,12 +1,12 @@
-﻿using MSIS.Models;
+﻿using TMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MSIS.ViewModels;
+using TMS.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace MSIS.Models
+namespace TMS.Models
 {
     public class SQLProjectRepository
     {
@@ -19,7 +19,7 @@ namespace MSIS.Models
         public UserPermissionsViewModel GetUserParentMenuPermission(string UserId, string PageName)
         {
             UserPermissionsViewModel model = new UserPermissionsViewModel();
-            var result = context.SQLUserAllowedParentMenuesViewModel.FromSql("SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Settings' And UserId = '" + UserId + "' And PageName ='" + PageName + "'").ToList();
+            var result = context.SQLUserAllowedParentMenuesViewModel.FromSqlInterpolated($"SELECT * FROM dbo.UserAllowedParentMenu Where ParentName = 'Settings' And UserId = {UserId} And PageName ={PageName}").ToList();
             var Menues = result.Select(x => x.ParentName).Distinct().ToList();
             model.ParentMenus = Menues;
             model.UserPermissions = result;
@@ -46,7 +46,7 @@ namespace MSIS.Models
 
         public Boolean IsProjectExists(int ProjectId, int ProjectYear, int ProjectSerial)
         {
-            var result = context.Projects.FromSql("Select * from dbo.Projects Where Id <> " + ProjectId.ToString() + " And ProjectYear = " + ProjectYear + " And ProjectSerial = " + ProjectSerial).ToList();
+            var result = context.Projects.FromSqlInterpolated($"Select * from dbo.Projects Where Id <> {ProjectId.ToString()} And ProjectYear = {ProjectYear} And ProjectSerial = {ProjectSerial}" ).ToList();
             Boolean value = true;
             if (result.Count > 0)
             {

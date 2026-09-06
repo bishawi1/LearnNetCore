@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-namespace MSIS.ViewModels
+namespace TMS.ViewModels
 {
     public class ListPurchaseOrdersViewModel
     {
@@ -15,6 +15,8 @@ namespace MSIS.ViewModels
         public List<PurchaseOrderTotalsViewModel> PurchaseOrderTotals { get; set; }
         public ViewModels.PurchaseOrdersCountByStatusViewModel CountByStatus { get; set; }
         public Models.PurchaseOrderPermission purchaseOrderPermission { get; set; }
+        public PurchaseOrderSearchCriteriaViewModel criteria { get; set; }
+
 
     }
 }

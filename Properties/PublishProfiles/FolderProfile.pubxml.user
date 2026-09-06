@@ -7,10 +7,6 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>D:\stage</_PublishTargetUrl>
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAA5KPhMD93EUqW8twjsZJfpwAAAAACAAAAAAAQZgAAAAEAACAAAACS0Lj5bwJxWr5EqsKW1GLvwXyBE4hn/XODpzIszy+9wgAAAAAOgAAAAAIAACAAAABF+FkRxSjiHj0agdfK+ql5o2td0tZcnPiNi9CA4+eVNCAAAACnfNE28cw0YJcLC/pINQgBt+x9JixLsuZSSPZA41aBzUAAAAA4XWPDotqaawpnvP+3MnvjNyod0WOcUPId88IbDL1Qi9xl8uCqXx1N1NQcC5t+ntDL08kkjZwxR1/VGHttd7QZ</EncryptedPassword>
   </PropertyGroup>
-  <ItemGroup>
-    <DestinationConnectionStrings Include="EmployeeDBConnectionString">
-      <Value>Data Source=DESKTOP-BFDITR7\SQLEXPRESS%3bInitial Catalog=MultiSolution%3bIntegrated Security=True</Value>
-    </DestinationConnectionStrings>
-  </ItemGroup>
 </Project>

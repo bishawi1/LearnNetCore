@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MSIS.Models;
-namespace MSIS.ViewModels
+using TMS.Models;
+namespace TMS.ViewModels
 {
     public class CreateTaskViewModel:Tasks
     {
@@ -19,7 +19,7 @@ namespace MSIS.ViewModels
         public List<Branch> Branches { get; set; }
         public List<Project> Projects { get; set; }
         public List<Employee> Employees { get; set; }
-        public List<MSIS.Models.TaskStatus> TaskStatusList { get; set; }
+        public List<TMS.Models.TaskStatus> TaskStatusList { get; set; }
         [NotMapped]
         public List<PeriodTypeModel> PeriodTypes { get; set; }
 
